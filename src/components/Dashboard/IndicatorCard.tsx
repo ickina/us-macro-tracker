@@ -50,7 +50,7 @@ export function IndicatorCard({ title, data }: Props) {
       </div>
       
       <div className="flex items-baseline gap-2 mt-1">
-        <span className="text-4xl sm:text-2xl font-bold tracking-tight text-gray-100">
+        <span className="text-3xl sm:text-2xl font-bold tracking-tight text-gray-100">
           {latest ? parseFloat(latest.value).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 'N/A'}
         </span>
         
