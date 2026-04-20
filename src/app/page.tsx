@@ -8,16 +8,16 @@ import { FredSeriesData } from '@/lib/fred';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const SERIES_TITLES: Record<string, string> = {
-  CPIAUCSL: '消費者物価指数 (CPI)',
-  CPILFESL: 'コアCPI',
-  PCE: 'PCEデフレーター (個人消費支出)',
-  WPSFD49207: '生産者物価指数 (PPI)',
+  CPIAUCSL: '消費者物価指数 (CPI) [前年同月比]',
+  CPILFESL: 'コアCPI [前年同月比]',
+  PCEPI: 'PCEデフレーター [前年同月比]',
+  WPSFD49207: '生産者物価指数 (PPI) [前年同月比]',
   UNRATE: '失業率 (%)',
   PAYEMS: '非農業部門雇用者数',
   ICSA: '新規失業保険申請件数',
   JTSJOL: 'JOLTS求人件数',
-  GDP: '実質国内総生産 (GDP)',
-  RSAFS: '小売売上高',
+  GDP: '実質国内総生産 (GDP) [前期比年率]',
+  RSAFS: '小売売上高 [前月比]',
   HOUST: '住宅着工件数',
   INDPRO: '鉱工業生産指数',
   FEDFUNDS: 'FF金利 (政策金利) (%)',
