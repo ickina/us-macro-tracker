@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { ALL_SERIES_IDS, fetchSeriesData, FredSeriesData } from '@/lib/fred';
 
+export const dynamic = "force-static";
+
 export async function GET() {
   const results: Record<string, FredSeriesData | null> = {};
   
