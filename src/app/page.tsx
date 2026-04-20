@@ -57,7 +57,7 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-[1400px] w-full mx-auto py-4 md:py-8 px-1 md:px-6">
         
         <div className="mb-4 md:mb-6 px-2 md:px-4 text-center sm:text-left">
-          <h2 className="text-4xl sm:text-2xl font-bold text-gray-200 tracking-tighter">イチの米経済指標ダッシュボード</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-200 tracking-tighter">イチの米経済指標ダッシュボード</h2>
           <p className="text-gray-400 mt-2 text-base md:text-base">FRED APIを通じて米国の主要なマクロ経済指標を時系列で可視化します。</p>
         </div>
 
