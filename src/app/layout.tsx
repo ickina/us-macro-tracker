@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { CalendarFAB } from '@/components/Dashboard/CalendarFAB';
 
 export const metadata: Metadata = {
   title: 'イチの米経済指標ダッシュボード',
@@ -15,13 +16,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="ja">
       <body className="antialiased bg-[#030712] text-[#f3f4f6] selection:bg-blue-500/30 font-sans">
         {children}
+        <CalendarFAB />
       </body>
     </html>
   );
