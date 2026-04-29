@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'イチの米経済指標ダッシュボード',
@@ -13,15 +16,19 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from '@/components/Layout/ThemeProvider';
+
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="ja">
-      <body className="antialiased bg-[#030712] text-[#f3f4f6] selection:bg-blue-500/30 font-sans">
-        {children}
+    <html lang="ja" suppressHydrationWarning>
+      <body className={`${inter.className} antialiased min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

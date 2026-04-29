@@ -43,20 +43,20 @@ export function IndicatorCard({ title, data }: Props) {
   const negativeChartColor = isInverse ? '#22c55e' : '#ef4444';
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg flex flex-col gap-4 transition-all hover:-translate-y-1 cursor-default duration-300">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg flex flex-col gap-4 transition-all hover:-translate-y-1 cursor-default duration-300">
       <div className="flex justify-between items-start gap-2">
-        <h3 className="text-gray-400 font-medium text-base sm:text-sm w-3/4 leading-snug">{title}</h3>
+        <h3 className="text-gray-600 dark:text-gray-400 font-medium text-sm sm:text-base w-3/4 leading-snug">{title}</h3>
         <span className="text-xs text-gray-500 whitespace-nowrap">{latest?.date}</span>
       </div>
       
       <div className="flex items-baseline gap-2 mt-1">
-        <span className="text-3xl sm:text-2xl font-bold tracking-tight text-gray-100">
+        <span className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
           {latest ? parseFloat(latest.value).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 'N/A'}
         </span>
         
         {latest && previous && (
           <div className={`flex items-center text-sm font-medium ${isPositive ? positiveColor : isNegative ? negativeColor : 'text-gray-500'}`}>
-            <span className="text-[10px] mr-1.5 px-1.5 py-0.5 border border-current rounded opacity-60 leading-none">{freqLabel}</span>
+            <span className="text-[10px] mr-1.5 px-1.5 py-0.5 border border-current rounded opacity-60 leading-none text-gray-500 dark:text-gray-400">{freqLabel}</span>
             {isPositive ? <ArrowUpIcon className="w-4 h-4" /> : isNegative ? <ArrowDownIcon className="w-4 h-4" /> : <MinusIcon className="w-4 h-4" />}
             <span>{Math.abs(change).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
             <span className="ml-1 opacity-80">({Math.abs(changePct).toFixed(2)}%)</span>
