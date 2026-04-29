@@ -1,6 +1,8 @@
 import { FredSeriesData } from '@/lib/fred';
 import { ArrowDownIcon, ArrowUpIcon, MinusIcon } from 'lucide-react';
 import { LineChartComponent } from '../Charts/LineChart';
+import { useState } from 'react';
+import { ChartModal } from './ChartModal';
 
 interface Props {
   title: string;
@@ -8,6 +10,8 @@ interface Props {
 }
 
 export function IndicatorCard({ title, data }: Props) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const obs = data.observations;
   const latest = obs.length > 0 ? obs[obs.length - 1] : null;
   const previous = obs.length > 1 ? obs[obs.length - 2] : null;
@@ -42,8 +46,14 @@ export function IndicatorCard({ title, data }: Props) {
   const positiveChartColor = isInverse ? '#ef4444' : '#22c55e';
   const negativeChartColor = isInverse ? '#22c55e' : '#ef4444';
 
+  const chartColor = isPositive ? positiveChartColor : isNegative ? negativeChartColor : '#6b7280';
+
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg flex flex-col gap-4 transition-all hover:-translate-y-1 cursor-default duration-300">
+    <>
+      <div 
+        className="bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg flex flex-col gap-4 transition-all hover:-translate-y-1 cursor-pointer duration-300"
+        onClick={() => setIsModalOpen(true)}
+      >
       <div className="flex justify-between items-start gap-2">
         <h3 className="text-gray-400 font-medium text-base sm:text-sm w-3/4 leading-snug">{title}</h3>
         <span className="text-xs text-gray-500 whitespace-nowrap">{latest?.date}</span>
@@ -65,8 +75,16 @@ export function IndicatorCard({ title, data }: Props) {
       </div>
 
       <div className="h-28 w-full mt-2 -ml-2">
-        <LineChartComponent data={obs} color={isPositive ? positiveChartColor : isNegative ? negativeChartColor : '#6b7280'} />
+        <LineChartComponent data={obs} color={chartColor} />
       </div>
-    </div>
+      </div>
+      <ChartModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title={title} 
+        data={obs} 
+        color={chartColor} 
+      />
+    </>
   );
 }
