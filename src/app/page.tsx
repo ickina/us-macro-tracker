@@ -57,12 +57,12 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-[1400px] w-full mx-auto py-4 md:py-8 px-1 md:px-6">
         
         <div className="mb-4 md:mb-6 px-2 md:px-4 text-center sm:text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tighter">最新のマクロ指標</h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm md:text-base">FRED APIを通じて米国の主要なマクロ経済指標を時系列で可視化します。</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-200 tracking-tighter">イチの米経済指標ダッシュボード</h2>
+          <p className="text-gray-400 mt-2 text-base md:text-base">FRED APIを通じて米国の主要なマクロ経済指標を時系列で可視化します。</p>
         </div>
 
         {loading && (
-          <div className="flex flex-col items-center justify-center h-64 gap-4 text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center h-64 gap-4 text-gray-400">
             <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
             <p>マクロ経済データを読み込み中...</p>
           </div>
