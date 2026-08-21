@@ -46,7 +46,14 @@ export function IndicatorCard({ title, data }: Props) {
   const positiveChartColor = isInverse ? '#ef4444' : '#22c55e';
   const negativeChartColor = isInverse ? '#22c55e' : '#ef4444';
 
-  const chartColor = isPositive ? positiveChartColor : isNegative ? negativeChartColor : '#6b7280';
+  // グラフ全体の色は大局トレンド（開始値 vs 最新値）で判定
+  const firstObs = obs.length > 0 ? obs[0] : null;
+  let overallChange = 0;
+  if (firstObs && latest) {
+    overallChange = parseFloat(latest.value) - parseFloat(firstObs.value);
+  }
+  const isOverallPositive = overallChange >= 0;
+  const chartColor = isOverallPositive ? positiveChartColor : negativeChartColor;
 
   const isYieldCurve = data.seriesId === 'T10Y2Y' || data.seriesId === 'T10Y3M';
   const latestValNum = latest ? parseFloat(latest.value) : 0;

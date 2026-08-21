@@ -74,6 +74,13 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
 
   if (!isOpen) return null;
 
+  const isInverse = title.includes('Unemployment') || title.includes('Claims') || title.includes('失業') || title.includes('ハイイールド') || title.includes('VIX');
+  const startVal = filteredData.length > 0 ? parseFloat(filteredData[0].value) : 0;
+  const isPeriodPositive = stats.latest >= startVal;
+  const activeColor = isInverse 
+    ? (isPeriodPositive ? '#ef4444' : '#22c55e')
+    : (isPeriodPositive ? '#22c55e' : '#ef4444');
+
   const timeframes: Timeframe[] = ['1Y', '3Y', '5Y', '10Y', 'ALL'];
 
   return (
@@ -128,7 +135,7 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
         
         {/* チャート描画領域 */}
         <div className="h-[45vh] sm:h-[55vh] w-full -ml-2 sm:-ml-4 mt-2 flex-1">
-          <LineChartComponent data={filteredData} color={color} showXAxis={true} />
+          <LineChartComponent data={filteredData} color={activeColor} showXAxis={true} />
         </div>
       </div>
     </div>
