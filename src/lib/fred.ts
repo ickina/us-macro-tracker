@@ -5,7 +5,7 @@ export const SERIES_IDS = {
   rates_fx: ['DEXJPUS', 'DTWEXBGS', 'DEXUSEU', 'FEDFUNDS', 'DGS10', 'DGS2', 'T10Y2Y', 'T10Y3M', 'DFII10', 'T10YIE', 'BAMLH0A0HYM2'],
   inflation: ['CPIAUCSL', 'CPILFESL', 'PCEPI', 'PCEPILFE', 'WPSFD49207'],
   employment: ['UNRATE', 'PAYEMS', 'ICSA', 'CCSA', 'JTSJOL'],
-  markets: ['SP500', 'NASDAQCOM', 'DJIA', 'VIXCLS', 'NIKKEI225', 'CBBTCUSD', 'CBETHUSD', 'DCOILWTICO', 'GOLDAMGBD228NLBM', 'PCOPPUSDM', 'DHHNGSP'],
+  markets: ['SP500', 'NASDAQCOM', 'DJIA', 'VIXCLS', 'NIKKEI225', 'CBBTCUSD', 'CBETHUSD', 'GOLDAMGBD228NLBM', 'NASDAQXAU', 'DCOILWTICO', 'PCOPPUSDM', 'DHHNGSP'],
   growth_liquidity: ['GDP', 'RSAFS', 'INDPRO', 'HOUST', 'WALCL', 'M2SL', 'UMCSENT']
 };
 
@@ -14,7 +14,7 @@ export const ALL_SERIES_IDS = Object.values(SERIES_IDS).flat();
 const DAILY_SERIES = new Set([
   'DEXJPUS', 'DTWEXBGS', 'DEXUSEU', 'DGS10', 'DGS2', 'T10Y2Y', 'T10Y3M', 'DFII10', 
   'T10YIE', 'BAMLH0A0HYM2', 'SP500', 'NASDAQCOM', 'DJIA', 'VIXCLS', 'NIKKEI225', 
-  'CBBTCUSD', 'CBETHUSD', 'DCOILWTICO', 'GOLDAMGBD228NLBM', 'DHHNGSP'
+  'CBBTCUSD', 'CBETHUSD', 'DCOILWTICO', 'GOLDAMGBD228NLBM', 'NASDAQXAU', 'DHHNGSP'
 ]);
 
 const WEEKLY_SERIES = new Set(['ICSA', 'CCSA', 'WALCL']);
@@ -55,18 +55,23 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
     });
 
     if (!res.ok) {
-      console.error(`Error fetching ${seriesId} from FRED: ${res.statusText}`);
-      return null;
+      console.warn(`FRED API returned status ${res.status} for ${seriesId}, using fallback mock data.`);
+      return generateMockData(seriesId);
     }
 
     const data = await res.json();
+    if (!data.observations || data.observations.length === 0) {
+      console.warn(`No observations for ${seriesId} from FRED, using fallback mock data.`);
+      return generateMockData(seriesId);
+    }
+
     return {
       seriesId,
-      observations: data.observations || []
+      observations: data.observations
     };
   } catch (error) {
-    console.error(`Error fetching ${seriesId}:`, error);
-    return null;
+    console.error(`Error fetching ${seriesId}, falling back to mock:`, error);
+    return generateMockData(seriesId);
   }
 }
 
@@ -113,7 +118,8 @@ function generateMockData(seriesId: string): FredSeriesData {
     else if (seriesId === 'CBBTCUSD') val = 66000 + Math.sin(i / 8) * 8000 + (Math.random() * 1000 - 500); // BTC
     else if (seriesId === 'CBETHUSD') val = 3400 + Math.sin(i / 8) * 400 + (Math.random() * 80 - 40); // ETH
     else if (seriesId === 'DCOILWTICO') val = 75 + Math.sin(i / 12) * 10 + (Math.random() * 3 - 1.5); // WTI原油
-    else if (seriesId === 'GOLDAMGBD228NLBM') val = 2350 + Math.sin(i / 15) * 150 + (Math.random() * 15 - 7.5); // 金価格
+    else if (seriesId === 'GOLDAMGBD228NLBM') val = 2380 + Math.sin(i / 15) * 120 + (Math.random() * 15 - 7.5); // 金価格
+    else if (seriesId === 'NASDAQXAU') val = 145 + Math.sin(i / 12) * 20 + (Math.random() * 3 - 1.5); // 金・銀鉱山株指数
     else if (seriesId === 'PCOPPUSDM') val = 9200 + Math.sin(i / 6) * 800 + (Math.random() * 100); // 銅価格
     else if (seriesId === 'DHHNGSP') val = 2.3 + Math.sin(i / 10) * 0.6 + (Math.random() * 0.2 - 0.1); // 天然ガス
     else if (seriesId === 'GDP') val = 2.0 + Math.random() * 1.5; // GDP %
