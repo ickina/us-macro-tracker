@@ -42,11 +42,18 @@ const SERIES_ITEMS: SeriesItem[] = [
   { id: 'CCSA', title: '失業保険継続受給者数', category: 'employment' },
   { id: 'JTSJOL', title: 'JOLTS求人件数', category: 'employment' },
 
-  // 株式・コモディティ
+  // 株式・コモディティ・暗号資産
   { id: 'SP500', title: 'S&P 500', category: 'markets' },
   { id: 'NASDAQCOM', title: 'NASDAQ 総合指数', category: 'markets' },
-  { id: 'DCOILWTICO', title: 'WTI 原油先物 (ドル/バレル)', category: 'markets' },
+  { id: 'DJIA', title: 'NYダウ (Dow Jones)', category: 'markets' },
+  { id: 'VIXCLS', title: 'VIX 恐怖指数', category: 'markets' },
+  { id: 'NIKKEI225', title: '日経平均株価 (円)', category: 'markets' },
+  { id: 'CBBTCUSD', title: 'ビットコイン (BTC/USD)', category: 'markets' },
+  { id: 'CBETHUSD', title: 'イーサリアム (ETH/USD)', category: 'markets' },
   { id: 'GOLDAMGBD228NLBM', title: '金価格 (LBMA Gold USD/oz)', category: 'markets' },
+  { id: 'DCOILWTICO', title: 'WTI 原油先物 (ドル/バレル)', category: 'markets' },
+  { id: 'PCOPPUSDM', title: '銅価格 (ドクターカッパー USD/トン)', category: 'markets' },
+  { id: 'DHHNGSP', title: '天然ガス (Henry Hub USD/MMBtu)', category: 'markets' },
 
   // 景気・流動性
   { id: 'GDP', title: '実質国内総生産 (GDP) [前期比年率]', category: 'growth_liquidity' },

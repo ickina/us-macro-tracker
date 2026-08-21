@@ -40,7 +40,7 @@ export function IndicatorCard({ title, data }: Props) {
   const isPositive = change > 0;
   const isNegative = change < 0;
 
-  const isInverse = title.includes('Unemployment') || title.includes('Claims') || title.includes('失業') || title.includes('ハイイールド');
+  const isInverse = title.includes('Unemployment') || title.includes('Claims') || title.includes('失業') || title.includes('ハイイールド') || title.includes('VIX');
   const positiveColor = isInverse ? 'text-red-500' : 'text-green-500';
   const negativeColor = isInverse ? 'text-green-500' : 'text-red-500';
   const positiveChartColor = isInverse ? '#ef4444' : '#22c55e';

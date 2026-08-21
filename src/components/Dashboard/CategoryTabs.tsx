@@ -23,7 +23,7 @@ export const CATEGORIES: CategoryInfo[] = [
   { key: 'rates_fx', label: '為替・金利', icon: TrendingUp },
   { key: 'inflation', label: 'インフレ', icon: Flame },
   { key: 'employment', label: '雇用', icon: Users },
-  { key: 'markets', label: '株式・商品', icon: BarChart3 },
+  { key: 'markets', label: '株・暗号資産・商品', icon: BarChart3 },
   { key: 'growth_liquidity', label: '景気・流動性', icon: Activity },
 ];
 
