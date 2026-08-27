@@ -197,15 +197,27 @@ export default function MacroNewsPage() {
                   </p>
 
                   {item.link && (
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-blue-400 hover:text-blue-300 font-medium hover:underline"
-                    >
-                      <span>公式発表・詳細データを確認</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-gray-800/60">
+                      <a
+                        href={`https://translate.google.com/translate?sl=auto&tl=ja&u=${encodeURIComponent(item.link)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
+                      >
+                        <span>🇯🇵 日本語翻訳で読む</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 font-medium transition-colors hover:underline cursor-pointer"
+                      >
+                        <span>🇺🇸 原文 (英語)</span>
+                        <ExternalLink className="w-3 h-3 opacity-60" />
+                      </a>
+                    </div>
                   )}
                 </div>
               ))
