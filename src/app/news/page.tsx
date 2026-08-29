@@ -179,6 +179,11 @@ export default function MacroNewsPage() {
                       <span className="text-xs text-gray-400 bg-gray-800 px-2 py-0.5 rounded-md font-medium">
                         {item.source}
                       </span>
+                      {item.badge && (
+                        <span className="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-md font-semibold">
+                          {item.badge}
+                        </span>
+                      )}
                     </div>
 
                     {item.impact === 'High' && (

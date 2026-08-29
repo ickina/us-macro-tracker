@@ -9,115 +9,180 @@ export interface MacroNewsItem {
   category: 'inflation' | 'employment' | 'policy' | 'market' | 'growth';
   impact: 'High' | 'Medium' | 'Low';
   link?: string;
+  badge?: string;
 }
 
 export const dynamic = 'force-static';
 
-const MOCK_NEWS: MacroNewsItem[] = [
+// 超主要指標のホワイトリスト（マイナーな学術論文データを完全排除）
+const MAJOR_RELEASE_KEYWORDS = [
+  { keyword: 'Consumer Price', name: '消費者物価指数 (CPI)', category: 'inflation' as const, impact: 'High' as const },
+  { keyword: 'Employment Situation', name: '米雇用統計 (NFP / 失業率)', category: 'employment' as const, impact: 'High' as const },
+  { keyword: 'Personal Income and Outlays', name: '個人所得・PCEデフレーター', category: 'inflation' as const, impact: 'High' as const },
+  { keyword: 'Gross Domestic Product', name: '実質国内総生産 (GDP)', category: 'growth' as const, impact: 'High' as const },
+  { keyword: 'Producer Price', name: '生産者物価指数 (PPI)', category: 'inflation' as const, impact: 'High' as const },
+  { keyword: 'Advance Monthly Sales', name: '小売売上高 (Retail Sales)', category: 'growth' as const, impact: 'High' as const },
+  { keyword: 'Industrial Production', name: '鉱工業生産指数', category: 'growth' as const, impact: 'Medium' as const },
+  { keyword: 'Job Openings', name: 'JOLTS求人件数', category: 'employment' as const, impact: 'Medium' as const },
+  { keyword: 'FOMC', name: 'FOMC 政策金利・声明文', category: 'policy' as const, impact: 'High' as const },
+  { keyword: 'Treasury', name: '米国債利回り・入札結果', category: 'market' as const, impact: 'Medium' as const },
+];
+
+const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
   {
-    id: 'news-1',
-    date: '2026-08-20',
-    title: 'FOMC議事要旨：年内の追加利下げに向けインフレ鈍化と雇用動向を注視',
-    summary: '連邦準備制度理事会（FRB）は公表した最新のFOMC議事録において、インフレ率が目標の2%に向かって持続的に低下していることを確認しつつも、労働市場の軟化リスクを警戒する姿勢を鮮明にした。',
+    id: 'insight-1',
+    date: '2026-08-28',
+    title: '【FRB動向】パウエル議長発言とジャクソンホール会合：政策金利の調整局面へ',
+    summary: '連邦準備制度（FRB）はインフレ鈍化と労働市場の需給バランス正常化を踏まえ、景気抑制的な金融政策から中立水準への利下げペースについて慎重に議論を進めている。',
     source: 'Federal Reserve Board (FRB)',
     category: 'policy',
     impact: 'High',
-    link: 'https://www.federalreserve.gov'
+    link: 'https://www.federalreserve.gov',
+    badge: '金融政策'
   },
   {
-    id: 'news-2',
-    date: '2026-08-18',
-    title: '米10年債利回りと2年債利回りのスプレッド縮小：逆イールド解消後の市場動向',
-    summary: '長短金利差（10Y-2Y）がプラス圏へと浮上したことを受け、市場では過去の景気サイクルにおける景気後退シグナルの発現パターンについての検証が活発化している。',
+    id: 'insight-2',
+    date: '2026-08-25',
+    title: '【金利・為替】10年債利回りとドル円相場の相関：日米金利差の縮小観測',
+    summary: '米10年国債利回りの低下と日銀の金融政策正常化観測が交錯する中、ドル円レートはボラティリティを保ちつつ推移。実質金利の推移が今後の市場心理を左右する。',
     source: 'FRED Economic Research',
     category: 'market',
     impact: 'High',
-    link: 'https://fred.stlouisfed.org'
+    link: 'https://fred.stlouisfed.org',
+    badge: '市場動向'
   },
   {
-    id: 'news-3',
-    date: '2026-08-14',
-    title: '米7月消費者物価指数（CPI）：前年比+2.9%へ小幅鈍化、住居費インフレも軟化傾向',
-    summary: '米労働省（BLS）発表の7月CPIは市場予想と一致。コアCPIも落ち着きを見せ、FRBの物価安定目標に向けた進展が継続していることが確認された。',
-    source: 'Bureau of Labor Statistics (BLS)',
+    id: 'insight-3',
+    date: '2026-08-20',
+    title: '【物価分析】PCEデフレーターとコアインフレの基調：目標2%への収束状況',
+    summary: '家賃などの住居費インフレが緩やかな低下傾向を示し、サービス価格の高止まりリスクが後退。モノとサービス両面でのインフレ沈静化が確認されている。',
+    source: 'Bureau of Economic Analysis (BEA)',
     category: 'inflation',
     impact: 'High',
-    link: 'https://www.bls.gov/cpi/'
+    link: 'https://www.bea.gov/data/personal-consumption-expenditures-price-index',
+    badge: 'インフレ'
   },
   {
-    id: 'news-4',
-    date: '2026-08-12',
-    title: '米7月小売売上高（Retail Sales）：前月比+0.4%で個人消費の底堅さを示す',
-    summary: '商務省発表の小売売上高は市場予想を上回る堅調な伸びを記録。高金利環境下でも米国の個人消費と家計の購買力が維持されていることを裏付けた。',
-    source: 'U.S. Census Bureau',
-    category: 'growth',
-    impact: 'Medium',
-    link: 'https://www.census.gov/retail/'
-  },
-  {
-    id: 'news-5',
-    date: '2026-08-08',
-    title: '米7月雇用統計（NFP）：非農業部門雇用者数+16.5万人、失業率は3.9%で横ばい',
-    summary: '労働市場は急激な悪化を避けつつ、需給バランスの正常化（ソフトランディング）に向かうペースを維持していると評価されている。',
+    id: 'insight-4',
+    date: '2026-08-15',
+    title: '【雇用・労働】失業率と新規失業保険申請件数から見る米雇用環境の実態',
+    summary: '雇用の急激な縮小はみられないものの、求人倍率の低下とともに賃金上昇圧力が緩和。ソフトランディング期待を支えるデータ推移が続いている。',
     source: 'Bureau of Labor Statistics (BLS)',
     category: 'employment',
     impact: 'High',
-    link: 'https://www.bls.gov/ces/'
-  },
-  {
-    id: 'news-6',
-    date: '2026-08-05',
-    title: 'FRBバランスシート（QT）：量的引き締め継続に伴うリバースレポ残高の推移',
-    summary: 'FRBの総資産規模は着実に縮小を続けており、金融システム内の余剰流動性と短期金融市場の金利安定性が保たれている。',
-    source: 'Federal Reserve Bank of St. Louis',
-    category: 'policy',
-    impact: 'Medium',
-    link: 'https://fred.stlouisfed.org/series/WALCL'
+    link: 'https://www.bls.gov/news.release/empsit.nr0.htm',
+    badge: '雇用統計'
   }
 ];
 
-export async function GET() {
-  const FRED_API_KEY = process.env.FRED_API_KEY;
-
-  if (!FRED_API_KEY || FRED_API_KEY === 'YOUR_FRED_API_KEY_HERE') {
-    return NextResponse.json({ success: true, data: MOCK_NEWS });
-  }
-
+// FRED Blog RSS から記事を取得してパースする関数
+async function fetchFredBlogPosts(): Promise<MacroNewsItem[]> {
   try {
-    // FRED Releases API から公式リリース情報を取得
-    const url = `https://api.stlouisfed.org/fred/releases?api_key=${FRED_API_KEY}&file_type=json&limit=20&sort_order=desc`;
-    const res = await fetch(url, { next: { revalidate: 86400 } });
+    const res = await fetch('https://fredblog.stlouisfed.org/feed/', {
+      next: { revalidate: 3600 }
+    });
 
-    if (!res.ok) {
-      return NextResponse.json({ success: true, data: MOCK_NEWS });
+    if (!res.ok) return [];
+
+    const xml = await res.text();
+    const items: MacroNewsItem[] = [];
+
+    // 正規表現で <item>...</item> を抽出
+    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+    let match;
+    let count = 0;
+
+    while ((match = itemRegex.exec(xml)) !== null && count < 8) {
+      const itemContent = match[1];
+      const titleMatch = itemContent.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || itemContent.match(/<title>(.*?)<\/title>/);
+      const linkMatch = itemContent.match(/<link>(.*?)<\/link>/);
+      const pubDateMatch = itemContent.match(/<pubDate>(.*?)<\/pubDate>/);
+      const descMatch = itemContent.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || itemContent.match(/<description>([\s\S]*?)<\/description>/);
+
+      const title = titleMatch ? titleMatch[1].trim() : '';
+      const link = linkMatch ? linkMatch[1].trim() : 'https://fredblog.stlouisfed.org';
+      const pubDateStr = pubDateMatch ? pubDateMatch[1].trim() : '';
+      
+      let date = new Date().toISOString().split('T')[0];
+      if (pubDateStr) {
+        const d = new Date(pubDateStr);
+        if (!isNaN(d.getTime())) {
+          date = d.toISOString().split('T')[0];
+        }
+      }
+
+      // 要約のHTMLタグと不要な文字列を除去
+      let summary = descMatch ? descMatch[1].replace(/<[^>]+>/g, '').replace(/Continue reading.*/, '').trim() : '';
+      if (!summary || summary.length < 10) {
+        summary = 'セントルイス連銀のエコノミストによるマクロ経済データ分析記事です。詳細なグラフと考察が掲載されています。';
+      }
+
+      if (title) {
+        items.push({
+          id: `fred-blog-${count}`,
+          date,
+          title: `【連銀エコノミスト解説】${title}`,
+          summary,
+          source: 'FRED Blog (セントルイス連銀)',
+          category: title.toLowerCase().includes('inflation') || title.toLowerCase().includes('price') ? 'inflation' : title.toLowerCase().includes('ai') || title.toLowerCase().includes('tech') || title.toLowerCase().includes('gdp') ? 'growth' : 'market',
+          impact: 'Medium',
+          link,
+          badge: '連銀マクロコラム'
+        });
+        count++;
+      }
     }
 
-    const data = await res.json();
-    const releases = data.releases || [];
-
-    if (releases.length === 0) {
-      return NextResponse.json({ success: true, data: MOCK_NEWS });
-    }
-
-    // FRED Releases と MOCK_NEWS を統合
-    const formattedReleases: MacroNewsItem[] = releases.slice(0, 10).map((r: any) => ({
-      id: `release-${r.id}`,
-      date: r.realtime_start || new Date().toISOString().split('T')[0],
-      title: `【公式発表】${r.name}`,
-      summary: `FREDデータベースにおいて公式データ「${r.name}」の最新リリースおよび時系列更新が記録されました。`,
-      source: r.link ? new URL(r.link).hostname : 'FRED St. Louis Fed',
-      category: r.name.includes('Price') || r.name.includes('CPI') ? 'inflation' : r.name.includes('Employment') ? 'employment' : 'growth',
-      impact: r.press_release ? 'High' : 'Medium',
-      link: r.link || `https://fred.stlouisfed.org/releases`
-    }));
-
-    const allNews = [...MOCK_NEWS, ...formattedReleases].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    return NextResponse.json({ success: true, data: allNews });
-  } catch (error) {
-    console.error('Error in /api/news:', error);
-    return NextResponse.json({ success: true, data: MOCK_NEWS });
+    return items;
+  } catch (err) {
+    console.error('Error fetching FRED Blog RSS:', err);
+    return [];
   }
 }
+
+export async function GET() {
+  const FRED_API_KEY = process.env.FRED_API_KEY;
+  const blogPosts = await fetchFredBlogPosts();
+
+  let majorReleases: MacroNewsItem[] = [];
+
+  if (FRED_API_KEY && FRED_API_KEY !== 'YOUR_FRED_API_KEY_HERE') {
+    try {
+      const url = `https://api.stlouisfed.org/fred/releases?api_key=${FRED_API_KEY}&file_type=json&limit=50&sort_order=desc`;
+      const res = await fetch(url, { next: { revalidate: 86400 } });
+
+      if (res.ok) {
+        const data = await res.json();
+        const releases = data.releases || [];
+
+        // ホワイトリスト（超主要指標）に一致するものだけを厳選
+        releases.forEach((r: any) => {
+          const matched = MAJOR_RELEASE_KEYWORDS.find(k => r.name.toLowerCase().includes(k.keyword.toLowerCase()));
+          if (matched) {
+            majorReleases.push({
+              id: `release-${r.id}`,
+              date: r.realtime_start || new Date().toISOString().split('T')[0],
+              title: `【公式発表】${matched.name} (${r.name})`,
+              summary: `米連邦政府・関係機関より「${matched.name}」の最新公式データが更新されました。時系列トレンドおよびマクロ経済への影響が記録されています。`,
+              source: r.link ? new URL(r.link).hostname : 'FRED Official Release',
+              category: matched.category,
+              impact: matched.impact,
+              link: r.link || `https://fred.stlouisfed.org/releases`,
+              badge: '公式データ発表'
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching FRED releases:', error);
+    }
+  }
+
+  // キュレーションされた重要解説 ＋ 連銀ブログ最新記事 ＋ 厳選された主要指標リリース を統合
+  const allNews = [...CURATED_MACRO_INSIGHTS, ...blogPosts, ...majorReleases].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  return NextResponse.json({ success: true, data: allNews });
+}
+
