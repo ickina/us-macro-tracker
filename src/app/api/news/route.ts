@@ -32,45 +32,45 @@ const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
   {
     id: 'insight-1',
     date: '2026-08-28',
-    title: '【FRB動向】パウエル議長発言とジャクソンホール会合：政策金利の調整局面へ',
-    summary: '連邦準備制度（FRB）はインフレ鈍化と労働市場の需給バランス正常化を踏まえ、景気抑制的な金融政策から中立水準への利下げペースについて慎重に議論を進めている。',
+    title: '【FRB金融政策】パウエル議長発言と金利見通し：政策金利の調整局面へ',
+    summary: '連邦準備制度（FRB）はインフレの着実な鈍化と労働市場の需給正常化を踏まえ、景気抑制的な政策金利（FF金利）の調整方針を慎重に検討。市場では年内の段階的な利下げ期待が織り込まれています。',
     source: 'Federal Reserve Board (FRB)',
     category: 'policy',
     impact: 'High',
-    link: 'https://www.federalreserve.gov',
+    link: 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
     badge: '金融政策'
   },
   {
     id: 'insight-2',
     date: '2026-08-25',
-    title: '【金利・為替】10年債利回りとドル円相場の相関：日米金利差の縮小観測',
-    summary: '米10年国債利回りの低下と日銀の金融政策正常化観測が交錯する中、ドル円レートはボラティリティを保ちつつ推移。実質金利の推移が今後の市場心理を左右する。',
-    source: 'FRED Economic Research',
+    title: '【金利・為替】米10年債利回りとドル円相場の動向：日米金利差の推移',
+    summary: '米10年国債利回りの推移とドル円（USD/JPY）相場は高い相関を維持。米国の実質金利の低下やインフレ動向が、為替レートのボラティリティに直接的な影響を与えています。',
+    source: 'FRED Economic Data',
     category: 'market',
     impact: 'High',
-    link: 'https://fred.stlouisfed.org',
-    badge: '市場動向'
+    link: 'https://fred.stlouisfed.org/series/DEXJPUS',
+    badge: '為替・金利'
   },
   {
     id: 'insight-3',
     date: '2026-08-20',
-    title: '【物価分析】PCEデフレーターとコアインフレの基調：目標2%への収束状況',
-    summary: '家賃などの住居費インフレが緩やかな低下傾向を示し、サービス価格の高止まりリスクが後退。モノとサービス両面でのインフレ沈静化が確認されている。',
+    title: '【物価・インフレ】PCEデフレーターとコアインフレ：物価目標2%への進展',
+    summary: 'FRBが最も重視するコアPCEデフレーターは前年比2%台で推移。住居費やサービス価格の上昇圧力が和らぎ、インフレの持続的な沈静化傾向が確認されています。',
     source: 'Bureau of Economic Analysis (BEA)',
     category: 'inflation',
     impact: 'High',
-    link: 'https://www.bea.gov/data/personal-consumption-expenditures-price-index',
-    badge: 'インフレ'
+    link: 'https://fred.stlouisfed.org/series/PCEPILFE',
+    badge: 'インフレ指標'
   },
   {
     id: 'insight-4',
     date: '2026-08-15',
-    title: '【雇用・労働】失業率と新規失業保険申請件数から見る米雇用環境の実態',
-    summary: '雇用の急激な縮小はみられないものの、求人倍率の低下とともに賃金上昇圧力が緩和。ソフトランディング期待を支えるデータ推移が続いている。',
+    title: '【雇用・労働】失業率と非農業部門雇用者数（NFP）：労働市場の安定性',
+    summary: '米雇用統計では非農業部門雇用者数が堅調なペースを維持し、失業率も低水準で推移。労働市場の急激な悪化を避けつつ、ソフトランディング（軟着陸）シナリオを支持するデータとなっています。',
     source: 'Bureau of Labor Statistics (BLS)',
     category: 'employment',
     impact: 'High',
-    link: 'https://www.bls.gov/news.release/empsit.nr0.htm',
+    link: 'https://fred.stlouisfed.org/series/PAYEMS',
     badge: '雇用統計'
   }
 ];
@@ -167,7 +167,7 @@ export async function GET() {
               source: r.link ? new URL(r.link).hostname : 'FRED Official Release',
               category: matched.category,
               impact: matched.impact,
-              link: r.link || `https://fred.stlouisfed.org/releases`,
+              link: r.link || `https://fred.stlouisfed.org/release?rid=${r.id}`,
               badge: '公式データ発表'
             });
           }

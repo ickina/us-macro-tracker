@@ -204,7 +204,7 @@ export default function MacroNewsPage() {
                   {item.link && (
                     <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-gray-800/60">
                       <a
-                        href={`https://translate.google.com/translate?sl=auto&tl=ja&u=${encodeURIComponent(item.link)}`}
+                        href={`https://translate.google.com/translate?sl=en&tl=ja&u=${encodeURIComponent(item.link)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
