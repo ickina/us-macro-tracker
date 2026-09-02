@@ -197,30 +197,37 @@ export default function MacroNewsPage() {
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
                     {item.summary}
                   </p>
 
-                  {item.link && (
-                    <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-gray-800/60">
-                      <a
-                        href={`https://translate.google.com/translate?sl=en&tl=ja&u=${encodeURIComponent(item.link)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 hover:text-blue-300 rounded-lg text-xs font-semibold transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
-                      >
-                        <span>🇯🇵 日本語翻訳で読む</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
+                  {/* 要点・市場への影響（箇条書きボックス） */}
+                  {item.points && item.points.length > 0 && (
+                    <div className="bg-gray-950/70 border border-gray-800/80 rounded-xl p-3 sm:p-4 mb-4">
+                      <div className="text-xs font-semibold text-blue-400 mb-2 flex items-center gap-1.5">
+                        <span>📌 要点と市場への影響</span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {item.points.map((pt, idx) => (
+                          <li key={idx} className="text-xs sm:text-sm text-gray-300 flex items-start gap-2 leading-relaxed">
+                            <span className="text-blue-500 font-bold select-none">•</span>
+                            <span>{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
+                  {item.link && (
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-800/60">
                       <a
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 font-medium transition-colors hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-medium transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
                       >
-                        <span>🇺🇸 原文 (英語)</span>
-                        <ExternalLink className="w-3 h-3 opacity-60" />
+                        <span>📊 公式元データ・記事を開く</span>
+                        <ExternalLink className="w-3.5 h-3.5 opacity-70" />
                       </a>
                     </div>
                   )}

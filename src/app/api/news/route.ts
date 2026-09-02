@@ -5,6 +5,7 @@ export interface MacroNewsItem {
   date: string;
   title: string;
   summary: string;
+  points?: string[];
   source: string;
   category: 'inflation' | 'employment' | 'policy' | 'market' | 'growth';
   impact: 'High' | 'Medium' | 'Low';
@@ -33,7 +34,12 @@ const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
     id: 'insight-1',
     date: '2026-08-28',
     title: '【FRB金融政策】パウエル議長発言と金利見通し：政策金利の調整局面へ',
-    summary: '連邦準備制度（FRB）はインフレの着実な鈍化と労働市場の需給正常化を踏まえ、景気抑制的な政策金利（FF金利）の調整方針を慎重に検討。市場では年内の段階的な利下げ期待が織り込まれています。',
+    summary: '連邦準備制度（FRB）はインフレの着実な鈍化と労働市場の需給正常化を踏まえ、景気抑制的な政策金利（FF金利）の調整方針を慎重に検討しています。',
+    points: [
+      'FRBは物価目標2%に向けたインフレ沈静化の進展を評価',
+      '雇用の急激な減速を防ぐため、予防的な利下げペースを議論',
+      '今後のCPIや雇用統計データ次第で年内の利下げ幅が決定される見通し'
+    ],
     source: 'Federal Reserve Board (FRB)',
     category: 'policy',
     impact: 'High',
@@ -44,7 +50,12 @@ const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
     id: 'insight-2',
     date: '2026-08-25',
     title: '【金利・為替】米10年債利回りとドル円相場の動向：日米金利差の推移',
-    summary: '米10年国債利回りの推移とドル円（USD/JPY）相場は高い相関を維持。米国の実質金利の低下やインフレ動向が、為替レートのボラティリティに直接的な影響を与えています。',
+    summary: '米10年国債利回りの推移とドル円（USD/JPY）相場は高い連動性を維持しています。実質金利の動向が市場心理を左右しています。',
+    points: [
+      '米長期金利の低下観測に伴い、ドル円の上値が重くなりやすい地合い',
+      '日銀の金融政策正常化とFRBの利下げ見通しによる金利差縮小が焦点',
+      '短期的なボラティリティの上昇に注意しつつ、トレンドの転換点を注視'
+    ],
     source: 'FRED Economic Data',
     category: 'market',
     impact: 'High',
@@ -55,7 +66,12 @@ const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
     id: 'insight-3',
     date: '2026-08-20',
     title: '【物価・インフレ】PCEデフレーターとコアインフレ：物価目標2%への進展',
-    summary: 'FRBが最も重視するコアPCEデフレーターは前年比2%台で推移。住居費やサービス価格の上昇圧力が和らぎ、インフレの持続的な沈静化傾向が確認されています。',
+    summary: 'FRBが最重要視するコアPCEデフレーターは前年比2%台で安定推移。サービス価格と住居費の落ち着きが確認されています。',
+    points: [
+      'コアPCEデフレーターは目標の2%への収束トレンドを維持',
+      'サプライチェーン正常化に加え、消費者の価格感応度の上昇が価格抑制に寄与',
+      'インフレ再燃リスクが限定的となり、FRBの政策判断の柔軟性が拡大'
+    ],
     source: 'Bureau of Economic Analysis (BEA)',
     category: 'inflation',
     impact: 'High',
@@ -66,7 +82,12 @@ const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
     id: 'insight-4',
     date: '2026-08-15',
     title: '【雇用・労働】失業率と非農業部門雇用者数（NFP）：労働市場の安定性',
-    summary: '米雇用統計では非農業部門雇用者数が堅調なペースを維持し、失業率も低水準で推移。労働市場の急激な悪化を避けつつ、ソフトランディング（軟着陸）シナリオを支持するデータとなっています。',
+    summary: '米雇用統計では非農業部門雇用者数が堅調な伸びを保ち、失業率も低水準を維持。ソフトランディング期待を支える結果となっています。',
+    points: [
+      '新規雇用は急減を避けつつ、持続可能なペースへと緩やかに正常化',
+      '求人倍率の低下に伴い、賃金主導のインフレ圧力は大幅に沈静化',
+      '米経済の底堅い成長力を裏付け、急激なリセッションリスクは後退'
+    ],
     source: 'Bureau of Labor Statistics (BLS)',
     category: 'employment',
     impact: 'High',
@@ -123,6 +144,11 @@ async function fetchFredBlogPosts(): Promise<MacroNewsItem[]> {
           date,
           title: `【連銀エコノミスト解説】${title}`,
           summary,
+          points: [
+            'セントルイス連銀のエコノミストによる最新マクロ経済分析コラム',
+            'FREDの時系列データを活用した構造的トレンドの可視化と考察',
+            '景気サイクル・金融市場への長期的な示唆を提供する調査レポート'
+          ],
           source: 'FRED Blog (セントルイス連銀)',
           category: title.toLowerCase().includes('inflation') || title.toLowerCase().includes('price') ? 'inflation' : title.toLowerCase().includes('ai') || title.toLowerCase().includes('tech') || title.toLowerCase().includes('gdp') ? 'growth' : 'market',
           impact: 'Medium',
@@ -162,8 +188,13 @@ export async function GET() {
             majorReleases.push({
               id: `release-${r.id}`,
               date: r.realtime_start || new Date().toISOString().split('T')[0],
-              title: `【公式発表】${matched.name} (${r.name})`,
-              summary: `米連邦政府・関係機関より「${matched.name}」の最新公式データが更新されました。時系列トレンドおよびマクロ経済への影響が記録されています。`,
+              title: `【公式データ更新】${matched.name} (${r.name})`,
+              summary: `米連邦政府・公的機関より「${matched.name}」の最新時系列データが更新されました。`,
+              points: [
+                `米公的機関が発表した公式統計「${matched.name}」の最新値`,
+                '金融市場やFRBの金融政策判断に影響を与える重要マクロ指標',
+                'ダッシュボードの各指標カードと連動してトレンドの確認が可能'
+              ],
               source: r.link ? new URL(r.link).hostname : 'FRED Official Release',
               category: matched.category,
               impact: matched.impact,
