@@ -29,6 +29,21 @@ const MAJOR_RELEASE_KEYWORDS = [
   { keyword: 'Treasury', name: '米国債利回り・入札結果', category: 'market' as const, impact: 'Medium' as const },
 ];
 
+// タイトルの日本語変換ヘルパー
+function translateBlogTitleToJa(enTitle: string): string {
+  const t = enTitle.toLowerCase();
+  if (t.includes('is this a good time to rent')) return '住宅購入と賃貸のコスト比較：住宅市場とインフレ動向';
+  if (t.includes('generative ai save time')) return '生成AIは労働時間を削減しているか？：生産性と労働データ';
+  if (t.includes('what securities do fdic')) return '米銀が保有する証券の内訳：銀行システムと保有資産動向';
+  if (t.includes('state and metro employment')) return '全米および主要都市の雇用動向分析（第2四半期）';
+  if (t.includes('ai reducing employment')) return 'AIはソフトウェア開発者の雇用を減少させているか？';
+  if (t.includes('minimum wages')) return '州別最低賃金と生活費・インフレコストの比較分析';
+  if (t.includes('inflation')) return `インフレ動向分析：${enTitle}`;
+  if (t.includes('employment') || t.includes('job')) return `雇用・労働市場の分析：${enTitle}`;
+  if (t.includes('interest rate') || t.includes('yield')) return `金利・債券市場の分析：${enTitle}`;
+  return enTitle;
+}
+
 const CURATED_MACRO_INSIGHTS: MacroNewsItem[] = [
   {
     id: 'insight-1',
@@ -139,10 +154,11 @@ async function fetchFredBlogPosts(): Promise<MacroNewsItem[]> {
       }
 
       if (title) {
+        const jaTitle = translateBlogTitleToJa(title);
         items.push({
           id: `fred-blog-${count}`,
           date,
-          title: `【連銀エコノミスト解説】${title}`,
+          title: `【連銀エコノミスト解説】${jaTitle}`,
           summary,
           points: [
             'セントルイス連銀のエコノミストによる最新マクロ経済分析コラム',

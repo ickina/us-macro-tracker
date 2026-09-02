@@ -43,7 +43,7 @@ export default function MacroNewsPage() {
     setError(null);
 
     try {
-      const res = await fetch('/api/news');
+      const res = await fetch(`/api/news?t=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
         setNews(json.data);
