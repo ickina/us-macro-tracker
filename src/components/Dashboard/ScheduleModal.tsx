@@ -110,65 +110,65 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
           </div>
         </div>
 
-        {/* フィルタータブ */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
+        {/* フィルタータブ（スマホ・PC両対応で見切れゼロ） */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3">
           <button
             onClick={() => setFilter('upcoming')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'upcoming'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-800/80 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm font-bold'
+                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>⚡ 直近の重要予定</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>⚡ 直近</span>
           </button>
 
           <button
             onClick={() => setFilter('all')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'all'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-800/80 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm font-bold'
+                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
             }`}
           >
-            <span>📅 すべての予定</span>
+            <span>📅 全予定</span>
           </button>
 
           <button
             onClick={() => setFilter('policy')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'policy'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-800/80 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm font-bold'
+                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
             }`}
           >
-            <Building2 className="w-3 h-3" />
-            <span>FOMC・金融政策</span>
+            <Building2 className="w-3.5 h-3.5" />
+            <span>🏦 FOMC</span>
           </button>
 
           <button
             onClick={() => setFilter('inflation')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'inflation'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-800/80 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm font-bold'
+                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
             }`}
           >
-            <Flame className="w-3 h-3" />
-            <span>物価・CPI</span>
+            <Flame className="w-3.5 h-3.5 text-red-400" />
+            <span>🔥 物価</span>
           </button>
 
           <button
             onClick={() => setFilter('employment')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'employment'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-gray-800/80 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                ? 'bg-blue-600 text-white shadow-sm font-bold'
+                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
             }`}
           >
-            <Users className="w-3 h-3" />
-            <span>雇用統計</span>
+            <Users className="w-3.5 h-3.5 text-blue-400" />
+            <span>👥 雇用</span>
           </button>
         </div>
         
