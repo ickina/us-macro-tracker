@@ -67,10 +67,17 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
 
     const obs = data.observations;
 
-    // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完
-    if (seriesId === 'DEXJPUS' || seriesId === 'DEXUSEU') {
+    // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完（安全対策付き）
+    const ENABLE_REALTIME_FX_SUPPLEMENT = true; // 万が一の時はfalseにするだけでFRED単一ソースに即座に復帰可能
+
+    if (ENABLE_REALTIME_FX_SUPPLEMENT && (seriesId === 'DEXJPUS' || seriesId === 'DEXUSEU')) {
       try {
-        const fxRes = await fetch('https://open.er-api.com/v6/latest/USD', { next: { revalidate: 3600 } });
+        // 2.5秒タイムアウト設定（外部APIの遅延でアプリ全体が重くなるのを100%防止）
+        const fxRes = await fetch('https://open.er-api.com/v6/latest/USD', { 
+          next: { revalidate: 3600 },
+          signal: AbortSignal.timeout(2500)
+        });
+
         if (fxRes.ok) {
           const fxData = await fxRes.json();
           const todayDate = new Date().toISOString().split('T')[0];
@@ -78,11 +85,18 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
 
           if (latestObsDate && latestObsDate < todayDate) {
             let currentVal = '';
-            if (seriesId === 'DEXJPUS' && fxData.rates?.JPY) {
-              currentVal = fxData.rates.JPY.toFixed(2);
-            } else if (seriesId === 'DEXUSEU' && fxData.rates?.EUR) {
-              // ユーロドル (EUR/USD) は 1 / USD_EUR
-              currentVal = (1 / fxData.rates.EUR).toFixed(4);
+            
+            // 異常値バリデーション（万が一の異常データ混入を防止）
+            if (seriesId === 'DEXJPUS' && typeof fxData.rates?.JPY === 'number') {
+              const jpy = fxData.rates.JPY;
+              if (jpy >= 80 && jpy <= 250) { // 妥当な為替レート範囲内のみ採用
+                currentVal = jpy.toFixed(2);
+              }
+            } else if (seriesId === 'DEXUSEU' && typeof fxData.rates?.EUR === 'number') {
+              const eurRate = 1 / fxData.rates.EUR;
+              if (eurRate >= 0.5 && eurRate <= 2.0) { // 妥当なユーロドル範囲内のみ採用
+                currentVal = eurRate.toFixed(4);
+              }
             }
 
             if (currentVal) {
@@ -91,7 +105,8 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
           }
         }
       } catch (fxErr) {
-        console.warn('Real-time FX supplement failed, using pure FRED data:', fxErr);
+        // 外部API障害時はサイレントにFRED純粋データへフォールバック（ユーザーには一切エラーを出さない）
+        console.warn('Real-time FX supplement bypassed, safely falling back to pure FRED data.');
       }
     }
 
