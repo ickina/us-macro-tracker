@@ -77,7 +77,7 @@ export default function DashboardPage() {
     setError(null);
 
     try {
-      const res = await fetch('/api/fred');
+      const res = await fetch(`/api/fred?t=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
         setData(json.data);

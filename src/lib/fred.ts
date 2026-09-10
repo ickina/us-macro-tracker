@@ -65,9 +65,39 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
       return generateMockData(seriesId);
     }
 
+    const obs = data.observations;
+
+    // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完
+    if (seriesId === 'DEXJPUS' || seriesId === 'DEXUSEU') {
+      try {
+        const fxRes = await fetch('https://open.er-api.com/v6/latest/USD', { next: { revalidate: 3600 } });
+        if (fxRes.ok) {
+          const fxData = await fxRes.json();
+          const todayDate = new Date().toISOString().split('T')[0];
+          const latestObsDate = obs.length > 0 ? obs[0].date : ''; // sort_order=desc なので obs[0] が最新
+
+          if (latestObsDate && latestObsDate < todayDate) {
+            let currentVal = '';
+            if (seriesId === 'DEXJPUS' && fxData.rates?.JPY) {
+              currentVal = fxData.rates.JPY.toFixed(2);
+            } else if (seriesId === 'DEXUSEU' && fxData.rates?.EUR) {
+              // ユーロドル (EUR/USD) は 1 / USD_EUR
+              currentVal = (1 / fxData.rates.EUR).toFixed(4);
+            }
+
+            if (currentVal) {
+              obs.unshift({ date: todayDate, value: currentVal });
+            }
+          }
+        }
+      } catch (fxErr) {
+        console.warn('Real-time FX supplement failed, using pure FRED data:', fxErr);
+      }
+    }
+
     return {
       seriesId,
-      observations: data.observations
+      observations: obs
     };
   } catch (error) {
     console.error(`Error fetching ${seriesId}, falling back to mock:`, error);
