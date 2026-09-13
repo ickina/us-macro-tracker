@@ -6,6 +6,7 @@ import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
+import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface SeriesItem {
@@ -80,7 +81,9 @@ export default function DashboardPage() {
       const res = await fetch(`/api/fred?t=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
-        setData(json.data);
+        // クライアント側でリアルタイム為替レートを最新日付に即時更新
+        const liveData = await updateRealtimeFxClientSide(json.data);
+        setData(liveData);
       } else {
         setError(json.error || 'データの取得に失敗しました');
       }
