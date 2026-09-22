@@ -1,33 +1,32 @@
 import { MacroNewsItem } from '@/app/api/news/route';
 
-// タイトルの日本語変換ヘルパー
+// タイトルの日本語変換ヘルパー（直感的で分かりやすい表現）
 function translateBlogTitleToJa(enTitle: string): string {
   const t = enTitle.toLowerCase();
-  if (t.includes('is this a good time to rent')) return '住宅購入と賃貸のコスト比較：住宅市場とインフレ動向';
-  if (t.includes('generative ai save time')) return '生成AIは労働時間を削減しているか？：生産性と労働データ';
-  if (t.includes('what securities do fdic')) return '米銀が保有する証券の内訳：銀行システムと保有資産動向';
-  if (t.includes('state and metro employment')) return '全米および主要都市の雇用動向分析（第2四半期）';
-  if (t.includes('ai reducing employment')) return 'AIはソフトウェア開発者の雇用を減少させているか？';
-  if (t.includes('minimum wages')) return '州別最低賃金と生活費・インフレコストの比較分析';
-  if (t.includes('inflation')) return `インフレ動向分析：${enTitle}`;
-  if (t.includes('employment') || t.includes('job')) return `雇用・労働市場の分析：${enTitle}`;
-  if (t.includes('interest rate') || t.includes('yield')) return `金利・債券市場の分析：${enTitle}`;
+  if (t.includes('is this a good time to rent')) return '住宅購入 vs 賃貸：今はどちらが得か？住宅コスト動向';
+  if (t.includes('generative ai save time')) return '生成AIは実際に仕事時間を減らしているか？労働データ分析';
+  if (t.includes('what securities do fdic')) return '米国の銀行はどんな資産を持っているか？銀行システムの安全性';
+  if (t.includes('state and metro employment')) return '全米の地域別・都市別雇用データ（第2四半期）';
+  if (t.includes('ai reducing employment')) return 'AIはプログラマー・開発者の仕事を奪っているか？';
+  if (t.includes('minimum wages')) return '州別の最低賃金と生活費の比較：インフレによる影響';
+  if (t.includes('inflation')) return `インフレ分析：${enTitle}`;
+  if (t.includes('employment') || t.includes('job')) return `雇用・労働市場：${enTitle}`;
+  if (t.includes('interest rate') || t.includes('yield')) return `金利・債券市場：${enTitle}`;
   return enTitle;
 }
 
-// クライアント側で最新のニュース・解説を補完・マージする
+// クライアント側で最新のニュース・解説を補完・マージする（回りくどさゼロ・超明快要約）
 export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNewsItem[] {
-  // 9月の最新重要マクロ動向（FOMC利下げ決定、最新CPI、雇用情勢）の最新解説
   const LATEST_CURATED_INSIGHTS: MacroNewsItem[] = [
     {
       id: 'fomc-sep-2026',
       date: '2026-09-16',
-      title: '【FOMC声明】FRB政策金利の利下げ決定 ＆ パウエル議長記者会見',
-      summary: '連邦公開市場委員会（FOMC）は最新会合で政策金利（FF金利）の利下げを決定。インフレが2%目標に向けて持続的に前進していることへの確信を強め、労働市場の軟化を防ぐための政策スタンスを明確にしました。',
+      title: '【FOMC結果】FRBが政策金利の変更を決定！パウエル議長記者会見まとめ',
+      summary: 'FRBは9月16日のFOMC会合で、政策金利（FFレート）の最新方針を決定しました。インフレ低下への確信を深めつつ、雇用の冷え込みを防ぐための新たな金融政策サイクルに突入しました。',
       points: [
-        '政策金利（FFレート）の引き下げを決定し、金融政策の正常化サイクルへ移行',
-        'パウエル議長は「労働市場のこれ以上の冷え込みは望まない」と強調',
-        '今後の利下げペースはCPI物価データと雇用指標に連動して慎重に決定'
+        '【金利決定】FRBが政策金利の引き下げ方針を決定。金利正常化へ舵を切る',
+        '【パウエル発言】「インフレは目標2%へ順調。労働市場のこれ以上の減速は望まない」と強調',
+        '【今後の見通し】今後の利下げペースは次回以降のCPI（物価）と雇用統計データ次第'
       ],
       source: 'Federal Reserve Board (FRB)',
       category: 'policy',
@@ -38,12 +37,12 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
     {
       id: 'cpi-sep-2026',
       date: '2026-09-11',
-      title: '【米CPI速報】8月消費者物価指数：前年比+2.5%へ減速、インフレ沈静化が鮮明',
-      summary: '米労働省（BLS）が発表した8月CPIは前年比+2.5%となり市場予想と一致。ガソリン価格の下落と住居費インフレの軟化が全体の物価低下を力強く牽引しました。',
+      title: '【米CPI速報】8月消費者物価指数：前年比+2.5%へ鈍化！インフレ沈静化が鮮明',
+      summary: '8月の消費者物価指数（CPI）は前年比+2.5%となり、約3年ぶりの低水準までインフレが落ち着きました。ガソリンや中古車価格の下落が大きく貢献しています。',
       points: [
-        '総合CPIは前年比+2.5%まで順調に鈍化し、約3年ぶりの低水準を記録',
-        'エネルギー価格の下落が寄与し、消費者のインフレ期待も安定推移',
-        '実質賃金のプラス成長が維持され、家計の購買力低下リスクが後退'
+        '【インフレ低下】CPIが+2.5%まで順調に鈍化。FRBの利下げ判断を力強く後押し',
+        '【要因】ガソリン代・エネルギー価格の低下が物価押し下げに寄与',
+        '【市場の反応】インフレ再燃リスクが後退し、金利低下・株高・ドル安要因に'
       ],
       source: 'Bureau of Labor Statistics (BLS)',
       category: 'inflation',
@@ -54,12 +53,12 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
     {
       id: 'nfp-sep-2026',
       date: '2026-09-06',
-      title: '【米雇用統計】8月雇用情勢：非農業部門雇用者数+14.2万人、失業率4.2%に改善',
-      summary: '8月の米雇用統計は非農業部門雇用者数が緩やかな伸びを示し、失業率は前月の4.3%から4.2%へと小幅改善。極端な失速を回避するソフトランディング基調が示されました。',
+      title: '【米雇用統計】8月雇用者数+14.2万人・失業率4.2%：景気急減速を回避',
+      summary: '8月の非農業部門雇用者数は+14.2万人、失業率は4.2%に改善しました。雇用の急激な崩れは起きておらず、景気の軟着陸（ソフトランディング）期待が維持されています。',
       points: [
-        '失業率が4.2%へ小幅改善し、雇用市場のパニック的悪化懸念が後退',
-        'ヘルスケアや建設部門を中心とした底堅い求人が雇用を支える',
-        '賃金上昇率は前年比+3.8%と安定し、インフレへの二次的波及圧力が低下'
+        '【雇用情勢】失業率が4.2%へ小幅改善。リセッション（景気後退）懸念が和らぐ',
+        '【賃金】平均時給は前年比+3.8%と安定。賃金高騰によるインフレ圧力は沈静化',
+        '【市場の反応】雇用崩壊の警戒感が後退し、市場の過度な不安が沈静化'
       ],
       source: 'Bureau of Labor Statistics (BLS)',
       category: 'employment',
@@ -69,7 +68,6 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
     }
   ];
 
-  // 既存のリストと統合し、重複をIDで除外
   const existingIds = new Set(newsList.map(n => n.id));
   const merged = [...newsList];
 
