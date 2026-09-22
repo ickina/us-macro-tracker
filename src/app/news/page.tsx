@@ -34,6 +34,7 @@ export default function MacroNewsPage() {
   const [news, setNews] = useState<MacroNewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<NewsCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +50,10 @@ export default function MacroNewsPage() {
       if (json.success) {
         const enriched = enrichNewsWithLatestInsights(json.data);
         setNews(enriched);
+        if (isManual) {
+          setJustUpdated(true);
+          setTimeout(() => setJustUpdated(false), 2000);
+        }
       } else {
         setError('ニュースデータの取得に失敗しました');
       }
@@ -96,11 +101,15 @@ export default function MacroNewsPage() {
           <button
             onClick={() => fetchNews(true)}
             disabled={loading || isRefreshing}
-            className="self-start sm:self-center flex items-center gap-2 px-3.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 hover:text-white rounded-xl text-sm font-medium transition-all cursor-pointer disabled:opacity-50"
+            className={`self-start sm:self-center flex items-center gap-2 px-3.5 py-2 border rounded-xl text-sm font-medium transition-all cursor-pointer disabled:opacity-50 ${
+              justUpdated
+                ? 'bg-green-600/20 border-green-500/40 text-green-400'
+                : 'bg-gray-900 hover:bg-gray-800 border-gray-800 text-gray-300 hover:text-white'
+            }`}
             aria-label="ニュースを再取得"
           >
-            <RefreshCw className={`w-4 h-4 text-blue-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? '更新中...' : '最新ニュースを取得'}</span>
+            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-green-400' : 'text-blue-400'} ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新ニュースを取得'}</span>
           </button>
         </div>
 
