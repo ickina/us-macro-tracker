@@ -21,18 +21,18 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
     {
       id: 'fomc-sep-2026',
       date: '2026-09-16',
-      title: '【FOMC結果】FRBが政策金利の変更を決定！パウエル議長記者会見まとめ',
-      summary: 'FRBは9月16日のFOMC会合で、政策金利（FFレート）の最新方針を決定しました。インフレ低下への確信を深めつつ、雇用の冷え込みを防ぐための新たな金融政策サイクルに突入しました。',
+      title: '【FOMC速報】FRBが0.25%利上げを決定（3.75%〜4.00%）！約3年ぶり利上げ再開',
+      summary: 'FRBは9月16日のFOMC会合で、政策金利（FFレート）を0.25%引き上げ「3.75%〜4.00%」とすることを全会一致で決定しました。経済の底堅さと原油高・地政学リスクに伴うインフレ高止まりを警戒し、タカ派姿勢へのシフトを明確にしました。',
       points: [
-        '【金利決定】FRBが政策金利の引き下げ方針を決定。金利正常化へ舵を切る',
-        '【パウエル発言】「インフレは目標2%へ順調。労働市場のこれ以上の減速は望まない」と強調',
-        '【今後の見通し】今後の利下げペースは次回以降のCPI（物価）と雇用統計データ次第'
+        '【利上げ決定】政策金利を0.25%引き上げ「3.75%〜4.00%」へ（2023年7月以来、約3年2ヶ月ぶり）',
+        '【実施背景】米国内支出の強い底堅さと、原油高・中東情勢によるインフレ高止まりリスク',
+        '【今後の見通し】ドットチャートでは年内の追加利上げを示唆。物価抑制を最優先する姿勢'
       ],
       source: 'Federal Reserve Board (FRB)',
       category: 'policy',
       impact: 'High',
-      link: 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
-      badge: 'FOMC金融政策'
+      link: 'https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm',
+      badge: 'FOMC利上げ決定'
     },
     {
       id: 'cpi-sep-2026',
