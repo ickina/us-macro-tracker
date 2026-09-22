@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { MacroNewsItem } from '../api/news/route';
+import { enrichNewsWithLatestInsights } from '@/lib/clientNews';
 import { 
   Calendar, 
   ExternalLink, 
@@ -46,7 +47,8 @@ export default function MacroNewsPage() {
       const res = await fetch(`/api/news?t=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
-        setNews(json.data);
+        const enriched = enrichNewsWithLatestInsights(json.data);
+        setNews(enriched);
       } else {
         setError('ニュースデータの取得に失敗しました');
       }
