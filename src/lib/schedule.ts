@@ -85,7 +85,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
       impact: 'Critical',
       date: `${y}-${pad(m + 1)}-${pad(cpiDate.getDate())}`,
       timeJST: '21:30',
-      description: 'インフレの最重要先行指標。FRBの利下げペースや金利動向を決定づける。',
+      description: 'インフレの最重要先行指標。FRBの金融政策方針や金利動向を決定づける。',
       period: `${prevMonthNum}月分`
     });
 
