@@ -146,6 +146,48 @@ function getFredBlogDetail(rawTitle: string, rawDesc: string): BlogMeta {
     };
   }
 
+  // 9. 労働市場ダイナミクス・転職離職
+  if (t.includes('labor market dynamics') || t.includes('change jobs') || t.includes('turnover') || t.includes('job opening')) {
+    return {
+      title: '【連銀エコノミスト解説】労働市場ダイナミクス：転職・離職動向と雇用の流動性',
+      summary: '毎月数百万人が転職・離職する米国労働市場の流動性データと、就業移動が賃金や求人充足に与える影響を分析。',
+      points: [
+        '【雇用の流動性】自発的離職（Quits）と解雇率の推移から見る労働市場の引き締まり度',
+        '【賃金プレミアム】転職者と勤続者の賃金上昇率格差（Wage Growth）の推移',
+        '【需給バランス】求人件数と失業者数の比率（V/U比率）の正常化トレンド'
+      ],
+      category: 'employment'
+    };
+  }
+
+  // 10. 雇用統計ベンチマーク改定
+  if (t.includes('benchmark revision') || t.includes('employment benchmark') || t.includes('establishment survey')) {
+    return {
+      title: '【連銀エコノミスト解説】雇用統計ベンチマーク年次改定の読み解き方',
+      summary: 'BLSによる雇用統計の年次ベンチマーク改定の仕組みと、速報値と確定値の乖離要因（事業所サンプル推計）を解説。',
+      points: [
+        '【改定の仕組み】納税記録（QCEW）に基づく非農業部門雇用者数の年次遡及改定',
+        '【速報値との乖離】誕生・消滅モデル（Birth-Death Model）が推計に与える影響',
+        '【実体経済への示唆】改定データから浮かび上がる基調的な雇用創出力の実態'
+      ],
+      category: 'employment'
+    };
+  }
+
+  // 11. 季節調整と産業別雇用
+  if (t.includes('seasonal') || t.includes('construction employment') || t.includes('industry employment')) {
+    return {
+      title: '【連銀エコノミスト解説】季節調整と産業別雇用の変動分析',
+      summary: '天候要因や季節的変動（建設業・教育・観光等）が雇用統計の月次データに与える影響と、真のトレンドの見極め方を解説。',
+      points: [
+        '【季節調整要因】夏期休暇や天候異変が単月の雇用増減に及ぼす歪みの補正',
+        '【主要セクター】ヘルスケア・政府・建設など雇用を牽引する特定産業の偏り',
+        '【基調判断】単月の振れに惑わされない3ヶ月・6ヶ月移動平均によるトレンド把握'
+      ],
+      category: 'employment'
+    };
+  }
+
   // 9. インフレ一般
   if (t.includes('inflation') || t.includes('cpi') || t.includes('pce') || t.includes('price')) {
     return {
