@@ -39,6 +39,9 @@ const SERIES_ITEMS: SeriesItem[] = [
   // 雇用
   { id: 'UNRATE', title: '失業率 (%)', category: 'employment' },
   { id: 'PAYEMS', title: '非農業部門雇用者数', category: 'employment' },
+  { id: 'CES0500000003', title: '平均時給 [前年同月比]', category: 'employment' },
+  { id: 'CIVPART', title: '労働参加率 (%)', category: 'employment' },
+  { id: 'U6RATE', title: 'U-6広義失業率 (%)', category: 'employment' },
   { id: 'ICSA', title: '新規失業保険申請件数', category: 'employment' },
   { id: 'CCSA', title: '失業保険継続受給者数', category: 'employment' },
   { id: 'JTSJOL', title: 'JOLTS求人件数', category: 'employment' },

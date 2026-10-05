@@ -181,6 +181,22 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
   // 厳選キュレーション速報（最新の正確なマクロ事実）
   const LATEST_CURATED_INSIGHTS: MacroNewsItem[] = [
     {
+      id: 'nfp-oct-2026',
+      date: '2026-10-02',
+      title: '【米雇用統計速報】9月雇用者数+2.9万人へ急減速・失業率4.2%：労働市場の軟化が進行',
+      summary: '9月の米非農業部門雇用者数は前月比+2.9万人と急減速（前月分も+13.3万人へ下方修正）。失業率は4.2%へ小幅上昇しました。平均時給は前年比+3.0%へ落ち着き、労働参加率は62.7%で推移しています。',
+      points: [
+        '【雇用者数】非農業部門雇用者数は+2.9万人と大幅鈍化。採用ペースの明確な減速を示す',
+        '【失業率・賃金】失業率は4.2%へ小幅上昇。平均時給は前年比+3.0%へ鈍化し賃金インフレは沈静化',
+        '【市場への影響】労働市場の急速な冷え込みにより、次回FOMCでの政策金利判断に注目が集まる'
+      ],
+      source: 'Bureau of Labor Statistics (BLS)',
+      category: 'employment',
+      impact: 'High',
+      link: 'https://fred.stlouisfed.org/series/PAYEMS',
+      badge: '雇用統計速報'
+    },
+    {
       id: 'fomc-sep-2026',
       date: '2026-09-16',
       title: '【FOMC速報】FRBが0.25%利上げを決定（3.75%〜4.00%）！約3年ぶり利上げ再開',

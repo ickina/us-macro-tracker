@@ -4,7 +4,7 @@ const FRED_API_BASE_URL = 'https://api.stlouisfed.org/fred/series/observations';
 export const SERIES_IDS = {
   rates_fx: ['DEXJPUS', 'DTWEXBGS', 'DEXUSEU', 'FEDFUNDS', 'DGS10', 'DGS2', 'T10Y2Y', 'T10Y3M', 'DFII10', 'T10YIE', 'BAMLH0A0HYM2'],
   inflation: ['CPIAUCSL', 'CPILFESL', 'PCEPI', 'PCEPILFE', 'WPSFD49207'],
-  employment: ['UNRATE', 'PAYEMS', 'ICSA', 'CCSA', 'JTSJOL'],
+  employment: ['UNRATE', 'PAYEMS', 'CES0500000003', 'CIVPART', 'U6RATE', 'ICSA', 'CCSA', 'JTSJOL'],
   markets: ['SP500', 'NASDAQCOM', 'DJIA', 'VIXCLS', 'NIKKEI225', 'CBBTCUSD', 'CBETHUSD', 'NASDAQXAU', 'DCOILWTICO', 'DHHNGSP'],
   growth_liquidity: ['GDP', 'RSAFS', 'INDPRO', 'HOUST', 'WALCL', 'M2SL', 'UMCSENT']
 };
@@ -25,6 +25,7 @@ const SERIES_UNITS: Record<string, string> = {
   PCEPI: 'pc1',
   PCEPILFE: 'pc1', // コアPCE 前年比 %
   WPSFD49207: 'pc1',
+  CES0500000003: 'pc1', // 平均時給 前年比 %
   GDP: 'pca', // 前期比年率 %
   RSAFS: 'pch', // 前月比 %
 };
@@ -51,7 +52,7 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
     const url = `${FRED_API_BASE_URL}?series_id=${seriesId}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=${limit}${units}`;
     
     const res = await fetch(url, {
-      next: { revalidate: 86400 }
+      next: { revalidate: 3600 }
     });
 
     if (!res.ok) {
@@ -68,11 +69,10 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
     const obs = data.observations;
 
     // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完（安全対策付き）
-    const ENABLE_REALTIME_FX_SUPPLEMENT = true; // 万が一の時はfalseにするだけでFRED単一ソースに即座に復帰可能
+    const ENABLE_REALTIME_FX_SUPPLEMENT = true;
 
     if (ENABLE_REALTIME_FX_SUPPLEMENT && (seriesId === 'DEXJPUS' || seriesId === 'DEXUSEU')) {
       try {
-        // 2.5秒タイムアウト設定（外部APIの遅延でアプリ全体が重くなるのを100%防止）
         const fxRes = await fetch('https://open.er-api.com/v6/latest/USD', { 
           next: { revalidate: 3600 },
           signal: AbortSignal.timeout(2500)
@@ -81,20 +81,19 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
         if (fxRes.ok) {
           const fxData = await fxRes.json();
           const todayDate = new Date().toISOString().split('T')[0];
-          const latestObsDate = obs.length > 0 ? obs[0].date : ''; // sort_order=desc なので obs[0] が最新
+          const latestObsDate = obs.length > 0 ? obs[0].date : '';
 
           if (latestObsDate && latestObsDate < todayDate) {
             let currentVal = '';
             
-            // 異常値バリデーション（万が一の異常データ混入を防止）
             if (seriesId === 'DEXJPUS' && typeof fxData.rates?.JPY === 'number') {
               const jpy = fxData.rates.JPY;
-              if (jpy >= 80 && jpy <= 250) { // 妥当な為替レート範囲内のみ採用
+              if (jpy >= 80 && jpy <= 250) {
                 currentVal = jpy.toFixed(2);
               }
             } else if (seriesId === 'DEXUSEU' && typeof fxData.rates?.EUR === 'number') {
               const eurRate = 1 / fxData.rates.EUR;
-              if (eurRate >= 0.5 && eurRate <= 2.0) { // 妥当なユーロドル範囲内のみ採用
+              if (eurRate >= 0.5 && eurRate <= 2.0) {
                 currentVal = eurRate.toFixed(4);
               }
             }
@@ -105,7 +104,6 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
           }
         }
       } catch (fxErr) {
-        // 外部API障害時はサイレントにFRED純粋データへフォールバック（ユーザーには一切エラーを出さない）
         console.warn('Real-time FX supplement bypassed, safely falling back to pure FRED data.');
       }
     }
@@ -122,15 +120,14 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
 
 function generateMockData(seriesId: string): FredSeriesData {
   const observations: Observation[] = [];
-  const now = new Date();
+  const now = new Date('2026-10-05T00:00:00Z');
   const isDaily = DAILY_SERIES.has(seriesId);
-  const count = isDaily ? 240 : 60; // 日次は240営業日分(約1年分)、月次は60ヶ月分(5年分)
+  const count = isDaily ? 240 : 60; // 日次は240営業日分、月次は60ヶ月分
 
   for (let i = 0; i < count; i++) {
     const d = new Date(now);
     if (isDaily) {
       d.setDate(d.getDate() - i);
-      // 土日スキップ
       if (d.getDay() === 0 || d.getDay() === 6) continue;
     } else {
       d.setMonth(d.getMonth() - i);
@@ -139,40 +136,56 @@ function generateMockData(seriesId: string): FredSeriesData {
     const dateStr = d.toISOString().split('T')[0];
     let val = 0;
     
-    if (seriesId === 'DEXJPUS') val = 150.0 + Math.sin(i / 15) * 5 + (Math.random() * 2 - 1); // ドル円 (145-155)
-    else if (seriesId === 'DTWEXBGS') val = 120.0 + Math.sin(i / 20) * 3 + (Math.random() * 1.5 - 0.75); // ドルインデックス
-    else if (seriesId === 'DEXUSEU') val = 1.08 + Math.sin(i / 15) * 0.04 + (Math.random() * 0.02 - 0.01); // ユーロドル
-    else if (seriesId === 'T10Y2Y') val = -0.3 + (i * 0.005) + (Math.random() * 0.1 - 0.05); // 逆イールド (-0.5 ~ +0.5%)
-    else if (seriesId === 'T10Y3M') val = -0.5 + (i * 0.004) + (Math.random() * 0.1 - 0.05);
-    else if (seriesId === 'DFII10') val = 1.8 + Math.random() * 0.5; // 10年実質金利
-    else if (seriesId === 'T10YIE') val = 2.2 + Math.random() * 0.4; // 期待インフレ率
-    else if (seriesId === 'BAMLH0A0HYM2') val = 3.5 + Math.random() * 1.2; // HYスプレッド %
+    if (seriesId === 'DEXJPUS') val = 150.0 + Math.sin(i / 15) * 5 + (Math.random() * 2 - 1);
+    else if (seriesId === 'DTWEXBGS') val = 120.0 + Math.sin(i / 20) * 3 + (Math.random() * 1.5 - 0.75);
+    else if (seriesId === 'DEXUSEU') val = 1.08 + Math.sin(i / 15) * 0.04 + (Math.random() * 0.02 - 0.01);
+    else if (seriesId === 'T10Y2Y') val = -0.15 + (i * 0.005) + (Math.random() * 0.1 - 0.05);
+    else if (seriesId === 'T10Y3M') val = -0.3 + (i * 0.004) + (Math.random() * 0.1 - 0.05);
+    else if (seriesId === 'DFII10') val = 1.8 + Math.random() * 0.5;
+    else if (seriesId === 'T10YIE') val = 2.2 + Math.random() * 0.4;
+    else if (seriesId === 'BAMLH0A0HYM2') val = 3.5 + Math.random() * 1.2;
     else if (seriesId.includes('CPI') || seriesId === 'PCEPI' || seriesId === 'PCEPILFE' || seriesId === 'WPSFD49207') {
-      val = 2.4 + Math.random() * 1.5; // Inflation %
+      val = 2.5 + Math.random() * 0.5;
     }
-    else if (seriesId === 'UNRATE') val = 3.9 + Math.random() * 0.6; // 失業率 %
-    else if (seriesId === 'PAYEMS') val = 158000 + (Math.random() * 300 - i * 50); // 非農業部門雇用者数
-    else if (seriesId === 'ICSA') val = 215 + Math.random() * 25; // 新規失業保険 (千件)
-    else if (seriesId === 'CCSA') val = 1800 + Math.random() * 100; // 継続受給 (千件)
-    else if (seriesId === 'JTSJOL') val = 8000 + Math.random() * 500; // JOLTS (千件)
-    else if (seriesId === 'SP500') val = 5200 + Math.sin(i / 10) * 200 + (Math.random() * 30 - 15); // S&P500
-    else if (seriesId === 'NASDAQCOM') val = 17500 + Math.sin(i / 10) * 800 + (Math.random() * 80 - 40); // NASDAQ
-    else if (seriesId === 'DJIA') val = 39500 + Math.sin(i / 12) * 1200 + (Math.random() * 100 - 50); // NYダウ
-    else if (seriesId === 'VIXCLS') val = 15.2 + Math.sin(i / 6) * 4 + (Math.random() * 2 - 1); // VIX
-    else if (seriesId === 'NIKKEI225') val = 38500 + Math.sin(i / 10) * 1500 + (Math.random() * 150 - 75); // 日経平均
-    else if (seriesId === 'CBBTCUSD') val = 66000 + Math.sin(i / 8) * 8000 + (Math.random() * 1000 - 500); // BTC
-    else if (seriesId === 'CBETHUSD') val = 3400 + Math.sin(i / 8) * 400 + (Math.random() * 80 - 40); // ETH
-    else if (seriesId === 'DCOILWTICO') val = 75 + Math.sin(i / 12) * 10 + (Math.random() * 3 - 1.5); // WTI原油
-    else if (seriesId === 'GOLDAMGBD228NLBM') val = 2380 + Math.sin(i / 15) * 120 + (Math.random() * 15 - 7.5); // 金価格
-    else if (seriesId === 'NASDAQXAU') val = 145 + Math.sin(i / 12) * 20 + (Math.random() * 3 - 1.5); // 金・銀鉱山株指数
-    else if (seriesId === 'PCOPPUSDM') val = 9200 + Math.sin(i / 6) * 800 + (Math.random() * 100); // 銅価格
-    else if (seriesId === 'DHHNGSP') val = 2.3 + Math.sin(i / 10) * 0.6 + (Math.random() * 0.2 - 0.1); // 天然ガス
-    else if (seriesId === 'GDP') val = 2.0 + Math.random() * 1.5; // GDP %
-    else if (seriesId === 'RSAFS') val = 0.4 + Math.random() * 0.8; // 小売 %
-    else if (seriesId === 'WALCL') val = 7200000 - (i * 10000) + (Math.random() * 5000 - 2500); // FRB総資産 (百万ドル)
-    else if (seriesId.includes('DGS') || seriesId === 'FEDFUNDS') val = 4.2 + Math.random() * 1.0;
-    else if (seriesId === 'M2SL') val = 20800 + (i * 50) + (Math.random() * 50);
-    else if (seriesId === 'UMCSENT') val = 68 + Math.random() * 10;
+    else if (seriesId === 'UNRATE') {
+      // 2026年9月=4.2%, 8月=4.1%, 7月=4.3%
+      val = i === 0 ? 4.2 : i === 1 ? 4.1 : 4.2 + (Math.random() * 0.4 - 0.2);
+    }
+    else if (seriesId === 'PAYEMS') {
+      // 2026年9月=159,104 (2.9万人増), 8月=159,075 (13.3万人増)
+      val = 159104 - (i * 100);
+    }
+    else if (seriesId === 'CES0500000003') {
+      // 平均時給 前年比: 3.0% (9月), 3.8% (8月)
+      val = i === 0 ? 3.0 : 3.5 + (Math.random() * 0.4 - 0.2);
+    }
+    else if (seriesId === 'CIVPART') {
+      // 労働参加率: 62.7%
+      val = i === 0 ? 62.7 : 62.6 + (Math.random() * 0.2 - 0.1);
+    }
+    else if (seriesId === 'U6RATE') {
+      // U-6失業率: 7.9%
+      val = i === 0 ? 7.9 : 7.8 + (Math.random() * 0.3 - 0.15);
+    }
+    else if (seriesId === 'ICSA') val = 215 + Math.random() * 25;
+    else if (seriesId === 'CCSA') val = 1800 + Math.random() * 100;
+    else if (seriesId === 'JTSJOL') val = 7500 + Math.random() * 500;
+    else if (seriesId === 'SP500') val = 5600 + Math.sin(i / 10) * 200 + (Math.random() * 30 - 15);
+    else if (seriesId === 'NASDAQCOM') val = 18000 + Math.sin(i / 10) * 800 + (Math.random() * 80 - 40);
+    else if (seriesId === 'DJIA') val = 41500 + Math.sin(i / 12) * 1200 + (Math.random() * 100 - 50);
+    else if (seriesId === 'VIXCLS') val = 16.5 + Math.sin(i / 6) * 4 + (Math.random() * 2 - 1);
+    else if (seriesId === 'NIKKEI225') val = 39000 + Math.sin(i / 10) * 1500 + (Math.random() * 150 - 75);
+    else if (seriesId === 'CBBTCUSD') val = 64000 + Math.sin(i / 8) * 8000 + (Math.random() * 1000 - 500);
+    else if (seriesId === 'CBETHUSD') val = 2600 + Math.sin(i / 8) * 400 + (Math.random() * 80 - 40);
+    else if (seriesId === 'DCOILWTICO') val = 74 + Math.sin(i / 12) * 10 + (Math.random() * 3 - 1.5);
+    else if (seriesId === 'NASDAQXAU') val = 155 + Math.sin(i / 12) * 20 + (Math.random() * 3 - 1.5);
+    else if (seriesId === 'DHHNGSP') val = 2.8 + Math.sin(i / 10) * 0.6 + (Math.random() * 0.2 - 0.1);
+    else if (seriesId === 'GDP') val = 2.8 + Math.random() * 0.5;
+    else if (seriesId === 'RSAFS') val = 0.3 + Math.random() * 0.6;
+    else if (seriesId === 'WALCL') val = 7100000 - (i * 10000) + (Math.random() * 5000 - 2500);
+    else if (seriesId.includes('DGS') || seriesId === 'FEDFUNDS') val = 3.9 + Math.random() * 0.5;
+    else if (seriesId === 'M2SL') val = 21000 + (i * 50) + (Math.random() * 50);
+    else if (seriesId === 'UMCSENT') val = 70 + Math.random() * 8;
     else val = 100 + Math.random() * 50;
 
     observations.push({ date: dateStr, value: val.toFixed(2) });
