@@ -7,6 +7,7 @@ import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
+import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface SeriesItem {
@@ -72,6 +73,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<Record<string, FredSeriesData>>({});
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
 
@@ -84,9 +86,16 @@ export default function DashboardPage() {
       const res = await fetch(`/api/fred?t=${Date.now()}`, { cache: 'no-store' });
       const json = await res.json();
       if (json.success) {
-        // クライアント側でリアルタイム為替レートを最新日付に即時更新
-        const liveData = await updateRealtimeFxClientSide(json.data);
+        // 1. クライアント側でリアルタイム補完
+        let liveData = await updateRealtimeFxClientSide(json.data);
+        // 2. 差分同期（リアルタイムピンポイントフェッチ）
+        liveData = await syncLatestMacroDataClientSide(liveData);
         setData(liveData);
+
+        if (isManual) {
+          setJustUpdated(true);
+          setTimeout(() => setJustUpdated(false), 2000);
+        }
       } else {
         setError(json.error || 'データの取得に失敗しました');
       }
@@ -143,11 +152,15 @@ export default function DashboardPage() {
           <button
             onClick={() => fetchData(true)}
             disabled={loading || isRefreshing}
-            className="self-start sm:self-center flex items-center gap-2 px-3.5 py-2 bg-gray-900/90 hover:bg-gray-800 border border-gray-800 text-gray-300 hover:text-white rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-sm"
+            className={`self-start sm:self-center flex items-center gap-2 px-3.5 py-2 border rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-sm ${
+              justUpdated
+                ? 'bg-green-600/20 border-green-500/40 text-green-400'
+                : 'bg-gray-900/90 hover:bg-gray-800 border-gray-800 text-gray-300 hover:text-white'
+            }`}
             aria-label="データを再取得"
           >
-            <RefreshCw className={`w-4 h-4 text-blue-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? '更新中...' : '最新データを取得'}</span>
+            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-green-400' : 'text-blue-400'} ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新データを取得'}</span>
           </button>
         </div>
 
