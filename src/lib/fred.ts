@@ -68,7 +68,7 @@ export async function fetchSeriesData(seriesId: string): Promise<FredSeriesData 
 
     const obs = data.observations;
 
-    // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完（安全対策付き）
+    // 為替（DEXJPUS: ドル円, DEXUSEU: ユーロドル）のリアルタイム最新補完
     const ENABLE_REALTIME_FX_SUPPLEMENT = true;
 
     if (ENABLE_REALTIME_FX_SUPPLEMENT && (seriesId === 'DEXJPUS' || seriesId === 'DEXUSEU')) {
@@ -136,57 +136,124 @@ function generateMockData(seriesId: string): FredSeriesData {
     const dateStr = d.toISOString().split('T')[0];
     let val = 0;
     
-    if (seriesId === 'DEXJPUS') val = 150.0 + Math.sin(i / 15) * 5 + (Math.random() * 2 - 1);
-    else if (seriesId === 'DTWEXBGS') val = 120.0 + Math.sin(i / 20) * 3 + (Math.random() * 1.5 - 0.75);
-    else if (seriesId === 'DEXUSEU') val = 1.08 + Math.sin(i / 15) * 0.04 + (Math.random() * 0.02 - 0.01);
-    else if (seriesId === 'T10Y2Y') val = -0.15 + (i * 0.005) + (Math.random() * 0.1 - 0.05);
-    else if (seriesId === 'T10Y3M') val = -0.3 + (i * 0.004) + (Math.random() * 0.1 - 0.05);
-    else if (seriesId === 'DFII10') val = 1.8 + Math.random() * 0.5;
-    else if (seriesId === 'T10YIE') val = 2.2 + Math.random() * 0.4;
-    else if (seriesId === 'BAMLH0A0HYM2') val = 3.5 + Math.random() * 1.2;
+    // 滑らかな連続トレンド波形（ホワイトノイズの完全排除）
+    if (seriesId === 'DEXJPUS') {
+      val = 155.0 + Math.sin(i / 20) * 4.5 + Math.cos(i / 8) * 1.2 + (Math.sin(i * 1.7) * 0.3);
+    }
+    else if (seriesId === 'DTWEXBGS') {
+      val = 120.0 + Math.sin(i / 25) * 3.0 + Math.cos(i / 10) * 0.8;
+    }
+    else if (seriesId === 'DEXUSEU') {
+      val = 1.11 - Math.sin(i / 20) * 0.03 + (Math.sin(i * 1.5) * 0.005);
+    }
+    else if (seriesId === 'DGS10') {
+      // 10年国債利回り: 滑らかなトレンド (4.1%〜4.4%)
+      val = 4.25 + Math.sin(i / 22) * 0.25 + Math.cos(i / 11) * 0.12 + (Math.sin(i * 1.4) * 0.03);
+    }
+    else if (seriesId === 'DGS2') {
+      // 2年国債利回り: 滑らかなトレンド (3.9%〜4.3%)
+      val = 4.10 + Math.sin(i / 20) * 0.30 + Math.cos(i / 9) * 0.15 + (Math.sin(i * 1.3) * 0.03);
+    }
+    else if (seriesId === 'DFII10') {
+      // 10年実質金利 TIPS: 滑らかなトレンド (1.7%〜2.0%)
+      val = 1.92 + Math.sin(i / 25) * 0.15 + Math.cos(i / 12) * 0.08 + (Math.sin(i * 1.5) * 0.02);
+    }
+    else if (seriesId === 'T10YIE') {
+      // 10年期待インフレ率: (2.2%〜2.4%)
+      val = 2.35 + Math.sin(i / 30) * 0.10 + (Math.sin(i * 1.2) * 0.02);
+    }
+    else if (seriesId === 'T10Y2Y') {
+      // 10年-2年金利差
+      val = 0.45 - (i * 0.004) + Math.sin(i / 15) * 0.15;
+    }
+    else if (seriesId === 'T10Y3M') {
+      // 10年-3ヶ月金利差
+      val = -0.28 + (i * 0.003) + Math.sin(i / 18) * 0.12;
+    }
+    else if (seriesId === 'FEDFUNDS') {
+      // FF金利
+      val = i < 15 ? 3.75 : i < 70 ? 3.50 : 3.25;
+    }
+    else if (seriesId === 'BAMLH0A0HYM2') {
+      // ハイイールドスプレッド
+      val = 3.24 + Math.sin(i / 20) * 0.35 + Math.cos(i / 9) * 0.18 + (Math.sin(i * 1.6) * 0.04);
+    }
     else if (seriesId.includes('CPI') || seriesId === 'PCEPI' || seriesId === 'PCEPILFE' || seriesId === 'WPSFD49207') {
-      val = 2.5 + Math.random() * 0.5;
+      val = 2.5 + Math.sin(i / 10) * 0.4 + (i * 0.02);
     }
     else if (seriesId === 'UNRATE') {
       // 2026年9月=4.2%, 8月=4.1%, 7月=4.3%
-      val = i === 0 ? 4.2 : i === 1 ? 4.1 : 4.2 + (Math.random() * 0.4 - 0.2);
+      val = i === 0 ? 4.2 : i === 1 ? 4.1 : 4.1 + Math.sin(i / 8) * 0.2;
     }
     else if (seriesId === 'PAYEMS') {
-      // 2026年9月=159,104 (2.9万人増), 8月=159,075 (13.3万人増)
-      val = 159104 - (i * 100);
+      val = 159104 - (i * 120) + Math.sin(i / 5) * 200;
     }
     else if (seriesId === 'CES0500000003') {
-      // 平均時給 前年比: 3.0% (9月), 3.8% (8月)
-      val = i === 0 ? 3.0 : 3.5 + (Math.random() * 0.4 - 0.2);
+      val = i === 0 ? 3.0 : 3.2 + Math.sin(i / 6) * 0.3;
     }
     else if (seriesId === 'CIVPART') {
-      // 労働参加率: 62.7%
-      val = i === 0 ? 62.7 : 62.6 + (Math.random() * 0.2 - 0.1);
+      val = 62.7 + Math.sin(i / 10) * 0.15;
     }
     else if (seriesId === 'U6RATE') {
-      // U-6失業率: 7.9%
-      val = i === 0 ? 7.9 : 7.8 + (Math.random() * 0.3 - 0.15);
+      val = 7.9 + Math.sin(i / 8) * 0.3;
     }
-    else if (seriesId === 'ICSA') val = 215 + Math.random() * 25;
-    else if (seriesId === 'CCSA') val = 1800 + Math.random() * 100;
-    else if (seriesId === 'JTSJOL') val = 7500 + Math.random() * 500;
-    else if (seriesId === 'SP500') val = 5600 + Math.sin(i / 10) * 200 + (Math.random() * 30 - 15);
-    else if (seriesId === 'NASDAQCOM') val = 18000 + Math.sin(i / 10) * 800 + (Math.random() * 80 - 40);
-    else if (seriesId === 'DJIA') val = 41500 + Math.sin(i / 12) * 1200 + (Math.random() * 100 - 50);
-    else if (seriesId === 'VIXCLS') val = 16.5 + Math.sin(i / 6) * 4 + (Math.random() * 2 - 1);
-    else if (seriesId === 'NIKKEI225') val = 39000 + Math.sin(i / 10) * 1500 + (Math.random() * 150 - 75);
-    else if (seriesId === 'CBBTCUSD') val = 64000 + Math.sin(i / 8) * 8000 + (Math.random() * 1000 - 500);
-    else if (seriesId === 'CBETHUSD') val = 2600 + Math.sin(i / 8) * 400 + (Math.random() * 80 - 40);
-    else if (seriesId === 'DCOILWTICO') val = 74 + Math.sin(i / 12) * 10 + (Math.random() * 3 - 1.5);
-    else if (seriesId === 'NASDAQXAU') val = 155 + Math.sin(i / 12) * 20 + (Math.random() * 3 - 1.5);
-    else if (seriesId === 'DHHNGSP') val = 2.8 + Math.sin(i / 10) * 0.6 + (Math.random() * 0.2 - 0.1);
-    else if (seriesId === 'GDP') val = 2.8 + Math.random() * 0.5;
-    else if (seriesId === 'RSAFS') val = 0.3 + Math.random() * 0.6;
-    else if (seriesId === 'WALCL') val = 7100000 - (i * 10000) + (Math.random() * 5000 - 2500);
-    else if (seriesId.includes('DGS') || seriesId === 'FEDFUNDS') val = 3.9 + Math.random() * 0.5;
-    else if (seriesId === 'M2SL') val = 21000 + (i * 50) + (Math.random() * 50);
-    else if (seriesId === 'UMCSENT') val = 70 + Math.random() * 8;
-    else val = 100 + Math.random() * 50;
+    else if (seriesId === 'ICSA') {
+      val = 215 + Math.sin(i / 8) * 12 + (Math.sin(i * 1.5) * 4);
+    }
+    else if (seriesId === 'CCSA') {
+      val = 1750 + Math.sin(i / 10) * 50;
+    }
+    else if (seriesId === 'JTSJOL') {
+      val = 7600 - (i * 15) + Math.sin(i / 8) * 200;
+    }
+    else if (seriesId === 'SP500') {
+      val = 5750 + Math.sin(i / 15) * 220 + Math.cos(i / 8) * 80 + (Math.sin(i * 1.8) * 15);
+    }
+    else if (seriesId === 'NASDAQCOM') {
+      val = 18200 + Math.sin(i / 14) * 900 + Math.cos(i / 7) * 350 + (Math.sin(i * 1.7) * 40);
+    }
+    else if (seriesId === 'DJIA') {
+      val = 42200 + Math.sin(i / 16) * 1100 + Math.cos(i / 8) * 400 + (Math.sin(i * 1.6) * 60);
+    }
+    else if (seriesId === 'VIXCLS') {
+      val = 15.5 + Math.sin(i / 10) * 3.5 + Math.abs(Math.sin(i * 1.4) * 2.0);
+    }
+    else if (seriesId === 'NIKKEI225') {
+      val = 39200 + Math.sin(i / 15) * 1400 + Math.cos(i / 7) * 500;
+    }
+    else if (seriesId === 'CBBTCUSD') {
+      val = 64500 + Math.sin(i / 12) * 6500 + Math.cos(i / 6) * 2500;
+    }
+    else if (seriesId === 'CBETHUSD') {
+      val = 2650 + Math.sin(i / 12) * 350 + Math.cos(i / 6) * 120;
+    }
+    else if (seriesId === 'DCOILWTICO') {
+      val = 73.5 + Math.sin(i / 14) * 6.5 + Math.cos(i / 7) * 2.5;
+    }
+    else if (seriesId === 'NASDAQXAU') {
+      val = 160 + Math.sin(i / 15) * 18 + Math.cos(i / 8) * 6;
+    }
+    else if (seriesId === 'DHHNGSP') {
+      val = 2.85 + Math.sin(i / 12) * 0.45 + (Math.sin(i * 1.5) * 0.1);
+    }
+    else if (seriesId === 'GDP') {
+      val = 2.8 + Math.sin(i / 4) * 0.5;
+    }
+    else if (seriesId === 'RSAFS') {
+      val = 0.35 + Math.sin(i / 5) * 0.4;
+    }
+    else if (seriesId === 'WALCL') {
+      val = 7100000 - (i * 8000) + Math.sin(i / 8) * 15000;
+    }
+    else if (seriesId === 'M2SL') {
+      val = 21100 + (i * 40) + Math.sin(i / 6) * 80;
+    }
+    else if (seriesId === 'UMCSENT') {
+      val = 70.5 + Math.sin(i / 8) * 5.0;
+    }
+    else {
+      val = 100 + Math.sin(i / 10) * 10;
+    }
 
     observations.push({ date: dateStr, value: val.toFixed(2) });
   }
