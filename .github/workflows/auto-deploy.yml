@@ -2,8 +2,9 @@ name: Daily Macro Data Auto Refresh & Deploy
 
 on:
   schedule:
-    # 毎日 日本時間 午前8:00 (UTC 23:00) に自動実行
+    # 毎日 日本時間 午前8:00 (UTC 23:00) および 日本時間 午後22:00 (UTC 13:00) の1日2回自動更新
     - cron: '0 23 * * *'
+    - cron: '0 13 * * *'
   # GitHub上のActionsタブからいつでも手動実行（ワンクリック即時更新）可能
   workflow_dispatch:
 
@@ -27,17 +28,17 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build Next.js & Refresh Static Data
-        env:
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: npm run build
+      - name: Fetch Official Macro Data
+        run: node scripts/fetch-macro-data.mjs
 
-      - name: Sync Capacitor
-        run: npx cap sync
+      - name: Build Next.js & Sync Capacitor
+        run: |
+          npm run build
+          npx cap sync
 
-      - name: Commit & Push if any changes / Trigger Vercel Auto-deploy
+      - name: Commit & Push if any changes (Triggers Vercel Deployment)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(auto): daily automated macro data refresh [skip ci]" && git push)
+          git add src/data/macroData.json android/ ios/
+          git diff --staged --quiet || (git commit -m "chore(data): auto-refresh official macro data" && git push origin main)

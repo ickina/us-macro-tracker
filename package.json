@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "fetch-data": "node scripts/fetch-macro-data.mjs",
+    "build": "node scripts/fetch-macro-data.mjs && next build",
     "start": "next start",
     "lint": "eslint"
   },

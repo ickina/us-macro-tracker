@@ -223,6 +223,22 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
   // 厳選キュレーション速報（最新の正確なマクロ事実）
   const LATEST_CURATED_INSIGHTS: MacroNewsItem[] = [
     {
+      id: 'cpi-oct-2026',
+      date: '2026-10-14',
+      title: '【米CPI速報】9月消費者物価指数：前年比+3.7%へ再加速！インフレ警戒感強まる',
+      summary: '10月14日に米労働統計局（BLS）より発表された9月CPIは前年比+3.72%となり、前月から上昇しました。原油・エネルギー価格の上昇と住居費の下げ渋りが寄与。コアCPIは前年比+2.57%となっています。',
+      points: [
+        '【総合インフレ】CPIは前年比+3.72%へ再加速。エネルギー価格高騰が主な押し上げ要因',
+        '【コアCPI】コア指標は前年比+2.57%と底堅い水準で推移',
+        '【政策判断への示唆】インフレ高止まりにより、FRBのタカ派スタンスおよび金利高止まり観測を補強'
+      ],
+      source: 'Bureau of Labor Statistics (BLS)',
+      category: 'inflation',
+      impact: 'High',
+      link: 'https://fred.stlouisfed.org/series/CPIAUCSL',
+      badge: '物価指標速報'
+    },
+    {
       id: 'nfp-oct-2026',
       date: '2026-10-02',
       title: '【米雇用統計速報】9月雇用者数+2.9万人へ急減速・失業率4.2%：労働市場の軟化が進行',
