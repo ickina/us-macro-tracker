@@ -191,7 +191,7 @@ async function supplementLiveFx(indicators) {
   }
 }
 
-// 1. FRB公式 Monetary Policy RSS
+// FRB公式 Monetary Policy RSS からの取得
 async function fetchFrbNews() {
   try {
     const res = await fetch('https://www.federalreserve.gov/feeds/press_monetary.xml');
@@ -244,6 +244,22 @@ async function fetchFrbNews() {
             '【経済予測】実質GDP成長率およびインフレ率（PCE）の最新改定見通し',
             '【中立金利】長期的な金利水準に対する連銀当局者の最新スタンス'
           ];
+        } else if (tLower.includes('minutes') && tLower.includes('open market committee')) {
+          title = '【FOMC議事要旨】連邦公開市場委員会 議事要旨の公表';
+          summary = '前回のFOMC会合における政策金利判断の議論詳細が公表されました。インフレ見通しや労働市場の評価、金融引き締めの継続期間に関する連銀幹部の議論が記録されています。';
+          points = [
+            '【議論内容】金融政策運営方針と参加者ごとの景気・物価認識の詳細',
+            '【インフレ警戒】エネルギー価格やサービスインフレに対する政策委員の評価',
+            '【先行きの舵取り】経済指標に応じた今後の金利調整スタンス'
+          ];
+        } else if (tLower.includes('discount rate')) {
+          title = '【FRB議事録】連銀公定歩合会合 議事録の公表';
+          summary = '各地区連銀総裁からの公定歩合（割引率）要請と理事会での審議結果が公表されました。地域経済の温度差や信用状況が反映されています。';
+          points = [
+            '【各地区連銀の要請】全米各地域の景況感と金利要請スタンス',
+            '【信用動向】金融機関の資金調達動向と流動性環境の確認',
+            '【政策波及】本会合に向けた地区ごとの経済見通しの差異'
+          ];
         }
 
         items.push({
@@ -268,184 +284,6 @@ async function fetchFrbNews() {
   }
 }
 
-// 2. FRED Blog RSS (セントルイス連銀)
-async function fetchFredBlog() {
-  try {
-    const res = await fetch('https://fredblog.stlouisfed.org/feed/');
-    if (!res.ok) return [];
-    const xml = await res.text();
-    const items = [];
-    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-    let match;
-    let count = 0;
-
-    while ((match = itemRegex.exec(xml)) !== null && count < 6) {
-      const content = match[1];
-      const titleMatch = content.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || content.match(/<title>(.*?)<\/title>/);
-      const linkMatch = content.match(/<link>(.*?)<\/link>/);
-      const pubDateMatch = content.match(/<pubDate>(.*?)<\/pubDate>/);
-      const descMatch = content.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || content.match(/<description>([\s\S]*?)<\/description>/);
-
-      const rawTitle = titleMatch ? decodeHtmlEntities(titleMatch[1].trim()) : '';
-      const link = linkMatch ? decodeHtmlEntities(linkMatch[1].trim()) : 'https://fredblog.stlouisfed.org';
-      const pubDateStr = pubDateMatch ? pubDateMatch[1].trim() : '';
-
-      let date = new Date().toISOString().split('T')[0];
-      if (pubDateStr) {
-        const d = new Date(pubDateStr);
-        if (!isNaN(d.getTime())) date = d.toISOString().split('T')[0];
-      }
-
-      const rawDesc = descMatch ? decodeHtmlEntities(descMatch[1]) : '';
-      const snippet = rawDesc.length > 10 ? rawDesc.slice(0, 130) + '…' : 'セントルイス連銀エコノミストによるマクロ経済データ分析コラムです。';
-
-      if (rawTitle) {
-        items.push({
-          id: `fred-blog-${count}`,
-          date,
-          title: `【連銀エコノミスト解説】${rawTitle}`,
-          summary: snippet,
-          points: [
-            `【分析対象】「${rawTitle}」に関する連銀エコノミストの独自分析`,
-            '【データ活用】FRED時系列データを活用した構造的変化の考察',
-            '【マクロへの影響】景気サイクル・金融市場への長期的な示唆'
-          ],
-          source: 'FRED Blog (セントルイス連銀)',
-          category: rawTitle.toLowerCase().includes('inflation') || rawTitle.toLowerCase().includes('price') ? 'inflation' : rawTitle.toLowerCase().includes('employment') || rawTitle.toLowerCase().includes('job') ? 'employment' : 'growth',
-          impact: 'Medium',
-          link,
-          badge: '連銀マクロコラム'
-        });
-        count++;
-      }
-    }
-    return items;
-  } catch (err) {
-    console.warn('FRED Blog fetch failed:', err.message);
-    return [];
-  }
-}
-
-// 3. ニューヨーク連銀公式 (Liberty Street Economics RSS)
-async function fetchNYFedBlog() {
-  try {
-    const res = await fetch('https://libertystreeteconomics.newyorkfed.org/feed/', {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    });
-    if (!res.ok) return [];
-    const xml = await res.text();
-    const items = [];
-    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-    let match;
-    let count = 0;
-
-    while ((match = itemRegex.exec(xml)) !== null && count < 5) {
-      const content = match[1];
-      const titleMatch = content.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || content.match(/<title>(.*?)<\/title>/);
-      const linkMatch = content.match(/<link>(.*?)<\/link>/);
-      const pubDateMatch = content.match(/<pubDate>(.*?)<\/pubDate>/);
-      const descMatch = content.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || content.match(/<description>([\s\S]*?)<\/description>/);
-
-      const rawTitle = titleMatch ? decodeHtmlEntities(titleMatch[1].trim()) : '';
-      const link = linkMatch ? decodeHtmlEntities(linkMatch[1].trim()) : 'https://www.newyorkfed.org';
-      const pubDateStr = pubDateMatch ? pubDateMatch[1].trim() : '';
-
-      let date = new Date().toISOString().split('T')[0];
-      if (pubDateStr) {
-        const d = new Date(pubDateStr);
-        if (!isNaN(d.getTime())) date = d.toISOString().split('T')[0];
-      }
-
-      const rawDesc = descMatch ? decodeHtmlEntities(descMatch[1]) : '';
-      const snippet = rawDesc.length > 10 ? rawDesc.slice(0, 130) + '…' : 'ニューヨーク連銀エコノミストによる金融・経済リサーチ分析です。';
-
-      if (rawTitle) {
-        items.push({
-          id: `nyfed-blog-${count}`,
-          date,
-          title: `【NY連銀エコノミスト分析】${rawTitle}`,
-          summary: snippet,
-          points: [
-            `【リサーチ焦点】ニューヨーク連銀による「${rawTitle}」の公式分析`,
-            '【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響',
-            '【マクロ政策】FRBの政策判断に影響を与える実証データの検証'
-          ],
-          source: 'Federal Reserve Bank of New York (NY連銀)',
-          category: rawTitle.toLowerCase().includes('inflation') ? 'inflation' : rawTitle.toLowerCase().includes('ai') || rawTitle.toLowerCase().includes('firm') ? 'growth' : 'market',
-          impact: 'High',
-          link,
-          badge: 'NY連銀マクロ分析'
-        });
-        count++;
-      }
-    }
-    return items;
-  } catch (err) {
-    console.warn('NY Fed RSS fetch failed:', err.message);
-    return [];
-  }
-}
-
-// 4. ウォール街・市場速報 (CNBC Finance RSS)
-async function fetchMarketNews() {
-  try {
-    const res = await fetch('https://www.cnbc.com/id/10000664/device/rss/rss.html', {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    });
-    if (!res.ok) return [];
-    const xml = await res.text();
-    const items = [];
-    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-    let match;
-    let count = 0;
-
-    while ((match = itemRegex.exec(xml)) !== null && count < 6) {
-      const content = match[1];
-      const titleMatch = content.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || content.match(/<title>(.*?)<\/title>/);
-      const linkMatch = content.match(/<link>(.*?)<\/link>/);
-      const pubDateMatch = content.match(/<pubDate>(.*?)<\/pubDate>/);
-      const descMatch = content.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || content.match(/<description>([\s\S]*?)<\/description>/);
-
-      const rawTitle = titleMatch ? decodeHtmlEntities(titleMatch[1].trim()) : '';
-      const link = linkMatch ? decodeHtmlEntities(linkMatch[1].trim()) : 'https://www.cnbc.com';
-      const pubDateStr = pubDateMatch ? pubDateMatch[1].trim() : '';
-
-      let date = new Date().toISOString().split('T')[0];
-      if (pubDateStr) {
-        const d = new Date(pubDateStr);
-        if (!isNaN(d.getTime())) date = d.toISOString().split('T')[0];
-      }
-
-      const rawDesc = descMatch ? decodeHtmlEntities(descMatch[1]) : '';
-      const snippet = rawDesc.length > 10 ? rawDesc.slice(0, 130) + '…' : 'ウォール街・米国株式・債券市場の最新動向ニュースです。';
-
-      if (rawTitle) {
-        items.push({
-          id: `cnbc-market-${count}`,
-          date,
-          title: `【NY金融市場動向】${rawTitle}`,
-          summary: snippet,
-          points: [
-            `【市場の焦点】「${rawTitle}」に関するウォール街の反応`,
-            '【株式・金利・原油】米国主要資産クラスのボラティリティ要因',
-            '【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み'
-          ],
-          source: 'CNBC Market News',
-          category: rawTitle.toLowerCase().includes('stock') || rawTitle.toLowerCase().includes('market') || rawTitle.toLowerCase().includes('ai') ? 'market' : 'growth',
-          impact: 'Medium',
-          link,
-          badge: 'ウォール街速報'
-        });
-        count++;
-      }
-    }
-    return items;
-  } catch (err) {
-    console.warn('CNBC RSS fetch failed:', err.message);
-    return [];
-  }
-}
-
 async function main() {
   console.log('🚀 Starting official macro data fetch from FRED public endpoints...');
   const indicators = {};
@@ -464,20 +302,9 @@ async function main() {
   // リアルタイム為替レート合成
   await supplementLiveFx(indicators);
 
-  // マクロニュース一括自動取得 (FRB公式 + セントルイス連銀 + ニューヨーク連銀 + CNBC市場速報)
-  console.log('📰 Fetching latest macroeconomic & NY market news...');
-  const [frbNews, blogNews, nyFedNews, cnbcNews] = await Promise.all([
-    fetchFrbNews(),
-    fetchFredBlog(),
-    fetchNYFedBlog(),
-    fetchMarketNews()
-  ]);
-
-  const allNews = [...frbNews, ...blogNews, ...nyFedNews, ...cnbcNews].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-
-  console.log(`✅ Collected ${allNews.length} latest news items from 4 official/market sources.`);
+  // マクロニュース取得 (厳選されたFRB公式速報のみ)
+  console.log('📰 Fetching latest macroeconomic news...');
+  const frbNews = await fetchFrbNews();
 
   // JSONファイルとして書き出し
   const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -488,12 +315,12 @@ async function main() {
   const payload = {
     updatedAt: new Date().toISOString(),
     indicators,
-    news: allNews
+    news: frbNews
   };
 
   const outPath = path.join(outDir, 'macroData.json');
   fs.writeFileSync(outPath, JSON.stringify(payload, null, 2), 'utf-8');
-  console.log(`🎉 Successfully saved official data to ${outPath}`);
+  console.log(`🎉 Successfully saved clean official data to ${outPath}`);
 }
 
 main().catch(err => {

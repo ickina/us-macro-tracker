@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T14:04:08.453Z",
+  "updatedAt": "2026-10-29T14:19:21.546Z",
   "indicators": {
     "DEXJPUS": {
       "seriesId": "DEXJPUS",
@@ -35977,22 +35977,6 @@
   },
   "news": [
     {
-      "id": "fred-blog-0",
-      "date": "2026-10-29",
-      "title": "【連銀エコノミスト解説】Updates to MSA maps in FRED",
-      "summary": "FRED updates its metropolitan statistical area (MSA) maps to reflect the U.S. Census Bureau's core-based statistical area delineat…",
-      "points": [
-        "【分析対象】「Updates to MSA maps in FRED」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/updates-to-MSA-maps-in-FRED",
-      "badge": "連銀マクロコラム"
-    },
-    {
       "id": "frb-press-0",
       "date": "2026-10-28",
       "title": "【FOMC速報】FRB政策金利発表＆パウエル議長記者会見",
@@ -36009,206 +35993,14 @@
       "badge": "金融政策速報"
     },
     {
-      "id": "fred-blog-1",
-      "date": "2026-10-26",
-      "title": "【連銀エコノミスト解説】Net domestic product",
-      "summary": "Gross domestic product measures all production. Net domestic product removes production that replaces depreciated goods.…",
-      "points": [
-        "【分析対象】「Net domestic product」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/net-domestic-product",
-      "badge": "連銀マクロコラム"
-    },
-    {
-      "id": "fred-blog-2",
-      "date": "2026-10-22",
-      "title": "【連銀エコノミスト解説】Early signs of AI-driven productivity growth in the information sector?",
-      "summary": "Since the advent of GenAI, productivity in the information sector has grown much faster than usual and much faster than the overal…",
-      "points": [
-        "【分析対象】「Early signs of AI-driven productivity growth in the information sector?」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/early-signs-of-ai-driven-productivity-growth-in-information-sector",
-      "badge": "連銀マクロコラム"
-    },
-    {
-      "id": "cnbc-market-0",
-      "date": "2026-10-21",
-      "title": "【NY金融市場動向】Goldman Sachs, JPMorgan and Morgan Stanley are dominating the AI stock boom. Here's their edge",
-      "summary": "Wall Street’s Big Three have generated $52 billion in equity trading revenue this year, capturing about 80% of the market on risin…",
-      "points": [
-        "【市場の焦点】「Goldman Sachs, JPMorgan and Morgan Stanley are dominating the AI stock boom. Here's their edge」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "market",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/21/goldman-sachs-jpmorgan-morgan-stanley-ai-trading.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "cnbc-market-1",
-      "date": "2026-10-20",
-      "title": "【NY金融市場動向】HSBC CEO warns the AI boom won’t make every data center a good bet",
-      "summary": "Data center campuses house the servers that power AI and cloud computing.…",
-      "points": [
-        "【市場の焦点】「HSBC CEO warns the AI boom won’t make every data center a good bet」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "market",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/20/data-center-financing-ai-debt-hsbc.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "cnbc-market-2",
-      "date": "2026-10-20",
-      "title": "【NY金融市場動向】The world’s finance chiefs see new risks — and less China angst",
-      "summary": "Debt, AI and Ukraine dominated the conversation at the IMF-World Bank meetings in Bangkok, while China, the focus in 2018, slipped…",
-      "points": [
-        "【市場の焦点】「The world’s finance chiefs see new risks — and less China angst」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/20/imf-debt-yields-russia-china-takeaway-.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "fred-blog-3",
-      "date": "2026-10-19",
-      "title": "【連銀エコノミスト解説】Which businesses are using AI technology?",
-      "summary": "More than half of all businesses paid for an artificial intelligence (AI) product or service. Adoption rates jumped after ChatGPT'…",
-      "points": [
-        "【分析対象】「Which businesses are using AI technology?」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/which-businesses-are-using-ai-technology",
-      "badge": "連銀マクロコラム"
-    },
-    {
-      "id": "cnbc-market-3",
-      "date": "2026-10-19",
-      "title": "【NY金融市場動向】Anthropic is AI trade's last big hope for a major IPO this year",
-      "summary": "On Kalshi, Anthropic is seen as the last major IPO in 2026 after OpenAI delayed its public market debut. Others have postponed too…",
-      "points": [
-        "【市場の焦点】「Anthropic is AI trade's last big hope for a major IPO this year」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "market",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/19/anthropic-ipo-ai-trade.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "cnbc-market-4",
-      "date": "2026-10-19",
-      "title": "【NY金融市場動向】Robot factories and hypersonic missiles: JPMorgan Chase's first $5 billion of defense investments",
-      "summary": "With $5 billion already deployed off its balance sheet, JPMorgan Chase is racing ahead on direct investments in defense tech, hard…",
-      "points": [
-        "【市場の焦点】「Robot factories and hypersonic missiles: JPMorgan Chase's first $5 billion of defense investments」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/19/jpmorgan-security-defense-investments.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "cnbc-market-5",
-      "date": "2026-10-17",
-      "title": "【NY金融市場動向】'Dead money’ for a decade: Why this hedge fund approach may deliver an advantage over bonds",
-      "summary": "Investors may want to rethink their bond allocation and opt for managed futures exposure.…",
-      "points": [
-        "【市場の焦点】「'Dead money’ for a decade: Why this hedge fund approach may deliver an advantage over bonds」に関するウォール街の反応",
-        "【株式・金利・原油】米国主要資産クラスのボラティリティ要因",
-        "【投資家の視点】メガテック決算・金利高止まり・地政学リスクの織り込み"
-      ],
-      "source": "CNBC Market News",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://www.cnbc.com/2026/10/17/dead-money-for-a-decade-hedge-fund-approach-that-may-trump-bonds.html",
-      "badge": "ウォール街速報"
-    },
-    {
-      "id": "fred-blog-4",
-      "date": "2026-10-15",
-      "title": "【連銀エコノミスト解説】Is the Treasury convenience yield rebounding?",
-      "summary": "The spread between AAA corporate bonds and Treasuries has widened since October 2025, suggesting a partial recovery in the Treasur…",
-      "points": [
-        "【分析対象】「Is the Treasury convenience yield rebounding?」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/Is-the-Treasury-convenience-yield-rebounding",
-      "badge": "連銀マクロコラム"
-    },
-    {
-      "id": "nyfed-blog-0",
-      "date": "2026-10-15",
-      "title": "【NY連銀エコノミスト分析】Revenue per Worker Is Up. Are Firms Getting a Larger Share?",
-      "summary": "From the Great Recession until 2019, U.S. labor productivity growth disappointed. Nonfarm-business output per hour grew about 1 pe…",
-      "points": [
-        "【リサーチ焦点】ニューヨーク連銀による「Revenue per Worker Is Up. Are Firms Getting a Larger Share?」の公式分析",
-        "【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響",
-        "【マクロ政策】FRBの政策判断に影響を与える実証データの検証"
-      ],
-      "source": "Federal Reserve Bank of New York (NY連銀)",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://libertystreeteconomics.newyorkfed.org/2026/10/revenue-per-worker-is-up-are-firms-getting-a-larger-share/",
-      "badge": "NY連銀マクロ分析"
-    },
-    {
-      "id": "nyfed-blog-1",
-      "date": "2026-10-14",
-      "title": "【NY連銀エコノミスト分析】Has the AI Boom Impacted the U.S. Current Account?",
-      "summary": "The AI boom is showing up in different corners of the U.S. economy, including international trade. Imports of semiconductors, serv…",
-      "points": [
-        "【リサーチ焦点】ニューヨーク連銀による「Has the AI Boom Impacted the U.S. Current Account?」の公式分析",
-        "【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響",
-        "【マクロ政策】FRBの政策判断に影響を与える実証データの検証"
-      ],
-      "source": "Federal Reserve Bank of New York (NY連銀)",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://libertystreeteconomics.newyorkfed.org/2026/10/has-the-ai-boom-impacted-the-u-s-current-account/",
-      "badge": "NY連銀マクロ分析"
-    },
-    {
       "id": "frb-press-1",
       "date": "2026-10-13",
-      "title": "【FRB発表】Minutes of the Board&#39;s discount rate meetings on August 17, September 9, and September 16, 2026",
-      "summary": "米連邦準備制度理事会（FRB）による金融政策・声明文の公式発表です。",
+      "title": "【FRB議事録】連銀公定歩合会合 議事録の公表",
+      "summary": "各地区連銀総裁からの公定歩合（割引率）要請と理事会での審議結果が公表されました。地域経済の温度差や信用状況が反映されています。",
       "points": [
-        "FRBによる公式な金融政策方針の決定と公表",
-        "景気・雇用およびインフレ見通しを踏まえた金利政策の指針",
-        "金融市場の流動性および金利動向への直接的な影響"
+        "【各地区連銀の要請】全米各地域の景況感と金利要請スタンス",
+        "【信用動向】金融機関の資金調達動向と流動性環境の確認",
+        "【政策波及】本会合に向けた地区ごとの経済見通しの差異"
       ],
       "source": "Federal Reserve Board (FRB)",
       "category": "policy",
@@ -36217,84 +36009,20 @@
       "badge": "金融政策速報"
     },
     {
-      "id": "nyfed-blog-2",
-      "date": "2026-10-09",
-      "title": "【NY連銀エコノミスト分析】Prices, Prices, Prices: Overall Inflation and the Costs You Care About",
-      "summary": "As fall starts to show itself in cooler weather, I want to discuss a topic that usually raises temperatures: inflation. Like a bud…",
-      "points": [
-        "【リサーチ焦点】ニューヨーク連銀による「Prices, Prices, Prices: Overall Inflation and the Costs You Care About」の公式分析",
-        "【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響",
-        "【マクロ政策】FRBの政策判断に影響を与える実証データの検証"
-      ],
-      "source": "Federal Reserve Bank of New York (NY連銀)",
-      "category": "inflation",
-      "impact": "High",
-      "link": "https://libertystreeteconomics.newyorkfed.org/2026/10/prices-prices-prices-overall-inflation-and-the-costs-you-care-about/",
-      "badge": "NY連銀マクロ分析"
-    },
-    {
-      "id": "fred-blog-5",
-      "date": "2026-10-08",
-      "title": "【連銀エコノミスト解説】Assets across pension types",
-      "summary": "Assets backing defined contribution pensions have grown far more than assets backing defined benefit pensions. But the former are …",
-      "points": [
-        "【分析対象】「Assets across pension types」に関する連銀エコノミストの独自分析",
-        "【データ活用】FRED時系列データを活用した構造的変化の考察",
-        "【マクロへの影響】景気サイクル・金融市場への長期的な示唆"
-      ],
-      "source": "FRED Blog (セントルイス連銀)",
-      "category": "growth",
-      "impact": "Medium",
-      "link": "https://fred.stlouisfed.org/blog/2026/10/assets-across-pension-types",
-      "badge": "連銀マクロコラム"
-    },
-    {
-      "id": "nyfed-blog-3",
-      "date": "2026-10-08",
-      "title": "【NY連銀エコノミスト分析】AI Adoption and Employment Expectations: Evidence from a Survey of Small Business Owners",
-      "summary": "There is little consensus on the effect of AI adoption on employment. Economy-wide measures of pay and headcount have moved little…",
-      "points": [
-        "【リサーチ焦点】ニューヨーク連銀による「AI Adoption and Employment Expectations: Evidence from a Survey of Small Business Owners」の公式分析",
-        "【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響",
-        "【マクロ政策】FRBの政策判断に影響を与える実証データの検証"
-      ],
-      "source": "Federal Reserve Bank of New York (NY連銀)",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://libertystreeteconomics.newyorkfed.org/2026/10/ai-adoption-and-employment-expectations-evidence-from-a-survey-of-small-business-owners/",
-      "badge": "NY連銀マクロ分析"
-    },
-    {
       "id": "frb-press-2",
       "date": "2026-10-07",
-      "title": "【FRB発表】Minutes of the Federal Open Market Committee, September 15-16, 2026",
-      "summary": "米連邦準備制度理事会（FRB）による金融政策・声明文の公式発表です。",
+      "title": "【FOMC議事要旨】連邦公開市場委員会 議事要旨の公表",
+      "summary": "前回のFOMC会合における政策金利判断の議論詳細が公表されました。インフレ見通しや労働市場の評価、金融引き締めの継続期間に関する連銀幹部の議論が記録されています。",
       "points": [
-        "FRBによる公式な金融政策方針の決定と公表",
-        "景気・雇用およびインフレ見通しを踏まえた金利政策の指針",
-        "金融市場の流動性および金利動向への直接的な影響"
+        "【議論内容】金融政策運営方針と参加者ごとの景気・物価認識の詳細",
+        "【インフレ警戒】エネルギー価格やサービスインフレに対する政策委員の評価",
+        "【先行きの舵取り】経済指標に応じた今後の金利調整スタンス"
       ],
       "source": "Federal Reserve Board (FRB)",
       "category": "policy",
       "impact": "High",
       "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm",
       "badge": "金融政策速報"
-    },
-    {
-      "id": "nyfed-blog-4",
-      "date": "2026-10-07",
-      "title": "【NY連銀エコノミスト分析】Firm Heterogeneity and the Response of Investment to Monetary Policy",
-      "summary": "It is well known that monetary policy affects firms’ investment decisions. But which firms are the most responsive to changes in i…",
-      "points": [
-        "【リサーチ焦点】ニューヨーク連銀による「Firm Heterogeneity and the Response of Investment to Monetary Policy」の公式分析",
-        "【ウォール街・金融への示唆】金融市場・銀行システム・金利環境への影響",
-        "【マクロ政策】FRBの政策判断に影響を与える実証データの検証"
-      ],
-      "source": "Federal Reserve Bank of New York (NY連銀)",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://libertystreeteconomics.newyorkfed.org/2026/10/firm-heterogeneity-and-the-response-of-investment-to-monetary-policy/",
-      "badge": "NY連銀マクロ分析"
     },
     {
       "id": "frb-press-3",
@@ -36331,12 +36059,12 @@
     {
       "id": "frb-press-5",
       "date": "2026-08-25",
-      "title": "【FRB発表】Minutes of the Board&#39;s discount rate meetings on July 20 and July 29, 2026",
-      "summary": "米連邦準備制度理事会（FRB）による金融政策・声明文の公式発表です。",
+      "title": "【FRB議事録】連銀公定歩合会合 議事録の公表",
+      "summary": "各地区連銀総裁からの公定歩合（割引率）要請と理事会での審議結果が公表されました。地域経済の温度差や信用状況が反映されています。",
       "points": [
-        "FRBによる公式な金融政策方針の決定と公表",
-        "景気・雇用およびインフレ見通しを踏まえた金利政策の指針",
-        "金融市場の流動性および金利動向への直接的な影響"
+        "【各地区連銀の要請】全米各地域の景況感と金利要請スタンス",
+        "【信用動向】金融機関の資金調達動向と流動性環境の確認",
+        "【政策波及】本会合に向けた地区ごとの経済見通しの差異"
       ],
       "source": "Federal Reserve Board (FRB)",
       "category": "policy",
