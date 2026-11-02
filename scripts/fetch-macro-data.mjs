@@ -284,6 +284,112 @@ async function fetchFrbNews() {
   }
 }
 
+// CNBC公式公開マーケットRSSからの市場速報取得（二重安全ネット付き）
+async function fetchCnbcMarketNews() {
+  try {
+    const rssUrl = 'https://www.cnbc.com/id/100003114/device/rss/rss.html';
+    const res = await fetch(rssUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+      signal: AbortSignal.timeout(5000)
+    });
+    if (!res.ok) return [];
+
+    const xml = await res.text();
+    const items = [];
+    const regex = /<item>[\s\S]*?<title>(.*?)<\/title>[\s\S]*?<description>(.*?)<\/description>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<pubDate>(.*?)<\/pubDate>/g;
+    let m;
+    const marketRegex = /\b(oil|crude|gas|energy|yield|treasury|bond|stock|dow|s&p|nasdaq|market|inflation|cpi|pce|fed|rate|hike|cut|interest|ai|tech|semiconductor|chip|nvidia|alphabet|google|apple|amazon|microsoft|earnings|capex|job|payroll|unemployment|gdp|economy|dollar)\b/i;
+
+    async function translateText(text) {
+      if (!text) return '';
+      try {
+        const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ja&dt=t&q=' + encodeURIComponent(text);
+        const r = await fetch(url, { signal: AbortSignal.timeout(3000) });
+        if (!r.ok) return '';
+        const d = await r.json();
+        return d[0][0][0] || '';
+      } catch {
+        return '';
+      }
+    }
+
+    let count = 0;
+    while ((m = regex.exec(xml)) !== null && count < 3) {
+      const rawTitle = m[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim();
+      const rawDesc = m[2].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim();
+      const link = m[3].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim();
+      const pubDateStr = m[4].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim();
+
+      const combinedText = `${rawTitle} ${rawDesc}`.toLowerCase();
+      if (!marketRegex.test(combinedText)) {
+        continue;
+      }
+
+      let date = new Date().toISOString().split('T')[0];
+      if (pubDateStr) {
+        const d = new Date(pubDateStr);
+        if (!isNaN(d.getTime())) date = d.toISOString().split('T')[0];
+      }
+
+      const jaTitle = await translateText(rawTitle);
+      const jaDesc = (await translateText(rawDesc)) || jaTitle;
+      if (!jaTitle) continue;
+
+      let category = 'market';
+      let points = [
+        '【市場動向】ウォール街における最新の市場センチメントと価格変動',
+        '【背景要因】マクロ経済動向および主要セクターの需給バランス',
+        '【市場への影響】投資家のリスク姿勢や今後の資産価格への波及'
+      ];
+      let badge = 'NY市場速報';
+
+      if (combinedText.includes('oil') || combinedText.includes('crude') || combinedText.includes('gas') || combinedText.includes('energy')) {
+        category = 'growth';
+        badge = '原油・エネルギー';
+        points = [
+          '【原油価格動向】地政学リスクや需給バランスの変化を受けたエネルギー価格の急変動',
+          '【インフレへの影響】ガソリン・物流コスト上昇に伴う物価粘着性と金融引き締め懸念',
+          '【株式市場への波及】エネルギー株と一般消費財・ハイテク株の間での資金シフト'
+        ];
+      } else if (combinedText.includes('ai') || combinedText.includes('chip') || combinedText.includes('semiconductor') || combinedText.includes('tech') || combinedText.includes('nvidia')) {
+        category = 'growth';
+        badge = 'AIテック動向';
+        points = [
+          '【テクノロジー動向】AIインフラ投資・データセンター需要と技術開発の進展状況',
+          '【巨額CapEx負担】メガテック各社の大規模AI設備投資と短期的な投資回収効率への視線',
+          '【市場の反応】半導体・ハイテク大手銘柄ごとの株価ボラティリティと業績選別'
+        ];
+      } else if (combinedText.includes('yield') || combinedText.includes('treasury') || combinedText.includes('bond') || combinedText.includes('fed') || combinedText.includes('rate') || combinedText.includes('inflation')) {
+        category = 'inflation';
+        badge = '金利・インフレ';
+        points = [
+          '【長期金利の反応】米国債利回りの高止まりと為替相場（ドル高・ドル安）への直接的影響',
+          '【FRB政策見通し】経済指標を受けた金融政策（利下げ・利上げ）の市場織り込み',
+          '【バリュエーション】借入コストの上昇が株式市場全体の株価収益率（PER）に与える下押し圧力'
+        ];
+      }
+
+      items.push({
+        id: `cnbc-market-${count}`,
+        date,
+        title: `【NY市場速報】${jaTitle}`,
+        summary: jaDesc,
+        points,
+        source: 'CNBC US Market',
+        category,
+        impact: 'High',
+        link,
+        badge
+      });
+      count++;
+    }
+    return items;
+  } catch (err) {
+    console.warn('CNBC market news fetch safely skipped:', err.message);
+    return [];
+  }
+}
+
 async function main() {
   console.log('🚀 Starting official macro data fetch from FRED public endpoints...');
   const indicators = {};
@@ -302,9 +408,11 @@ async function main() {
   // リアルタイム為替レート合成
   await supplementLiveFx(indicators);
 
-  // マクロニュース取得 (厳選されたFRB公式速報のみ)
+  // マクロニュース取得 (FRB公式速報 + CNBCマーケット速報)
   console.log('📰 Fetching latest macroeconomic news...');
   const frbNews = await fetchFrbNews();
+  const marketNews = await fetchCnbcMarketNews();
+  const allNews = [...marketNews, ...frbNews];
 
   // JSONファイルとして書き出し
   const outDir = path.join(__dirname, '..', 'src', 'data');
@@ -315,7 +423,7 @@ async function main() {
   const payload = {
     updatedAt: new Date().toISOString(),
     indicators,
-    news: frbNews
+    news: allNews
   };
 
   const outPath = path.join(outDir, 'macroData.json');

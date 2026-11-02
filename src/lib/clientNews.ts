@@ -436,9 +436,15 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
       }
     }
 
-    // CNBCなどの市場記事の場合、英語の生タイトルは除外（華やかな日本語サマリーのみに厳選）
+    // CNBC市場速報の場合：日本語化された良質な記事のみ掲載（英語の生ヘッドラインは除外）
     if (itemCopy.source.includes('CNBC') || itemCopy.id.startsWith('cnbc-')) {
-      return; // 英語の生ヘッドラインは除外
+      const hasJapanese = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(itemCopy.title);
+      if (!hasJapanese) {
+        return; // 未翻訳の英語生タイトルは除外
+      }
+      if (!itemCopy.title.startsWith('【NY市場速報】') && !itemCopy.title.startsWith('【')) {
+        itemCopy.title = `【NY市場速報】${itemCopy.title}`;
+      }
     }
 
     processedNewsList.push(itemCopy);
