@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { MacroNewsItem } from '../api/news/route';
 import { enrichNewsWithLatestInsights } from '@/lib/clientNews';
+import macroData from '@/data/macroData.json';
 import { 
   Calendar, 
   ExternalLink, 
@@ -31,8 +32,10 @@ const CATEGORIES: { key: NewsCategory; label: string; icon: React.ElementType }[
 ];
 
 export default function MacroNewsPage() {
-  const [news, setNews] = useState<MacroNewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState<MacroNewsItem[]>(() => {
+    return enrichNewsWithLatestInsights((macroData as any).news || []);
+  });
+  const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
