@@ -15,9 +15,19 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
   const [filter, setFilter] = useState<ScheduleFilter>('upcoming');
   const [events, setEvents] = useState<EconomicEvent[]>([]);
 
+  const [todayStr, setTodayStr] = useState<string>(() => {
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  });
+
   useEffect(() => {
     if (isOpen) {
-      const allEvents = generateUpcomingEvents(new Date());
+      const now = new Date();
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const currentToday = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+      setTodayStr(currentToday);
+      const allEvents = generateUpcomingEvents(now);
       setEvents(allEvents);
     }
   }, [isOpen]);
@@ -35,37 +45,33 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
     };
   }, [isOpen, onClose]);
 
-  const todayStr = useMemo(() => {
-    const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  }, []);
-
-  // カウントダウン計算関数
+  // カウントダウン計算関数 (ローカル年月日単位で正確に計算)
   const getCountdownLabel = (eventDateStr: string) => {
-    const today = new Date(todayStr);
-    const eventDate = new Date(eventDateStr);
-    const diffTime = eventDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const [tY, tM, tD] = todayStr.split('-').map(Number);
+    const [eY, eM, eD] = eventDateStr.split('-').map(Number);
+    const dToday = new Date(tY, tM - 1, tD);
+    const dEvent = new Date(eY, eM - 1, eD);
+    const diffDays = Math.round((dEvent.getTime() - dToday.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return { text: '本日発表！', color: 'bg-red-500 text-white font-bold animate-pulse' };
-    if (diffDays === 1) return { text: '明日発表', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/30' };
+    if (diffDays === 0) return { text: '本日発表！', color: 'bg-red-500 text-white font-bold animate-pulse shadow-lg shadow-red-500/20' };
+    if (diffDays === 1) return { text: '明日発表', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold' };
     if (diffDays > 1 && diffDays <= 7) return { text: `あと ${diffDays} 日`, color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30' };
     if (diffDays > 7) return { text: `あと ${diffDays} 日`, color: 'bg-gray-800 text-gray-400' };
-    return { text: '発表済み', color: 'bg-gray-800/40 text-gray-600' };
+    return { text: '発表済み', color: 'bg-gray-800/40 text-gray-500' };
   };
 
   // フィルタリング処理
   const filteredEvents = useMemo(() => {
-    const today = new Date(todayStr);
+    const [tY, tM, tD] = todayStr.split('-').map(Number);
+    const dToday = new Date(tY, tM - 1, tD);
 
     return events.filter(e => {
-      const eventDate = new Date(e.date);
-      const isPast = eventDate < today;
+      const [eY, eM, eD] = e.date.split('-').map(Number);
+      const dEvent = new Date(eY, eM - 1, eD);
+      const diffDays = Math.round((dEvent.getTime() - dToday.getTime()) / (1000 * 60 * 60 * 24));
 
       if (filter === 'upcoming') {
-        // 今日から14日以内の未来イベント
-        const diffDays = Math.ceil((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        // 今日から21日以内の未来イベント（今日を含む、過去は除外）
         return diffDays >= 0 && diffDays <= 21;
       }
       if (filter === 'policy') return e.category === 'policy';
