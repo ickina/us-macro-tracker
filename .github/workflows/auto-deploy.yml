@@ -34,14 +34,9 @@ jobs:
       - name: Fetch Official Macro Data
         run: node scripts/fetch-macro-data.mjs
 
-      - name: Build Next.js & Sync Capacitor
-        run: |
-          npm run build
-          npx cap sync
-
       - name: Commit & Push if any changes (Triggers Vercel Deployment)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/macroData.json android/ ios/
+          git add src/data/macroData.json
           git diff --staged --quiet || (git commit -m "chore(data): auto-refresh official macro data" && git push origin main)
