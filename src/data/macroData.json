@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-05T23:41:14.382Z",
+  "updatedAt": "2026-11-06T02:57:15.598Z",
   "indicators": {
     "DEXJPUS": {
       "seriesId": "DEXJPUS",
@@ -1206,7 +1206,7 @@
         },
         {
           "date": "2026-11-06",
-          "value": "158.38"
+          "value": "157.84"
         }
       ]
     },
@@ -3620,7 +3620,7 @@
         },
         {
           "date": "2026-11-06",
-          "value": "1.1237"
+          "value": "1.1230"
         }
       ]
     },
@@ -25998,10 +25998,6 @@
       "seriesId": "CBBTCUSD",
       "observations": [
         {
-          "date": "2026-01-09",
-          "value": "90476.01"
-        },
-        {
           "date": "2026-01-10",
           "value": "90509.91"
         },
@@ -27196,16 +27192,16 @@
         {
           "date": "2026-11-04",
           "value": "80420.06"
+        },
+        {
+          "date": "2026-11-05",
+          "value": "76152.52"
         }
       ]
     },
     "CBETHUSD": {
       "seriesId": "CBETHUSD",
       "observations": [
-        {
-          "date": "2026-01-09",
-          "value": "3079.86"
-        },
         {
           "date": "2026-01-10",
           "value": "3087.83"
@@ -28401,6 +28397,10 @@
         {
           "date": "2026-11-04",
           "value": "2416.13"
+        },
+        {
+          "date": "2026-11-05",
+          "value": "2239.38"
         }
       ]
     },
@@ -35976,54 +35976,6 @@
     }
   },
   "news": [
-    {
-      "id": "cnbc-market-0",
-      "date": "2026-11-05",
-      "title": "【NY市場速報】Neocloud IRENは、顧客の要請により年間40億ドルの収益が遅れていると発表",
-      "summary": "株価の大幅な下落を受けて、ＩＲＥＮは一部の収益が２０２６年から来年初めまで延期されると発表した。",
-      "points": [
-        "【テクノロジー動向】AIインフラ投資・データセンター需要と技術開発の進展状況",
-        "【巨額CapEx負担】メガテック各社の大規模AI設備投資と短期的な投資回収効率への視線",
-        "【市場の反応】半導体・ハイテク大手銘柄ごとの株価ボラティリティと業績選別"
-      ],
-      "source": "CNBC US Market",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://www.cnbc.com/2026/11/05/2027-estate-and-gift-tax-exemption-irs-raises-limit.html",
-      "badge": "AIテック動向"
-    },
-    {
-      "id": "cnbc-market-1",
-      "date": "2026-11-05",
-      "title": "【NY市場速報】トランプ大統領のエネルギー協定は民主党による一連の調査に直面しようとしている",
-      "summary": "民主党は米国のベネズエラ介入や政権の鉱物取引、過去に資金提供されたエネルギープロジェクトの中止などを厳しく追及するのは確実だ。",
-      "points": [
-        "【原油価格動向】地政学リスクや需給バランスの変化を受けたエネルギー価格の急変動",
-        "【インフレへの影響】ガソリン・物流コスト上昇に伴う物価粘着性と金融引き締め懸念",
-        "【株式市場への波及】エネルギー株と一般消費財・ハイテク株の間での資金シフト"
-      ],
-      "source": "CNBC US Market",
-      "category": "growth",
-      "impact": "High",
-      "link": "https://www.cnbc.com/2026/11/05/wall-streets-fear-gauge-surges-the-most-since-april-why-traders-think-it-should-be-even-higher.html",
-      "badge": "原油・エネルギー"
-    },
-    {
-      "id": "cnbc-market-2",
-      "date": "2026-11-05",
-      "title": "【NY市場速報】民主党選挙の敗走が米国経済に何を意味するか",
-      "summary": "経済を形成する最大の力は、政権政党が変わったからといって変わるわけではない。",
-      "points": [
-        "【市場動向】ウォール街における最新の市場センチメントと価格変動",
-        "【背景要因】マクロ経済動向および主要セクターの需給バランス",
-        "【市場への影響】投資家のリスク姿勢や今後の資産価格への波及"
-      ],
-      "source": "CNBC US Market",
-      "category": "market",
-      "impact": "High",
-      "link": "https://www.cnbc.com/2026/11/05/jpmorgan-epstein-democrats-erdoes-midterm-election.html",
-      "badge": "NY市場速報"
-    },
     {
       "id": "frb-press-0",
       "date": "2026-10-28",
