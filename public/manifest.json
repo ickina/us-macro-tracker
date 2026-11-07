@@ -1,6 +1,6 @@
 {
-  "name": "US Macro Tracker",
-  "short_name": "Macro Tracker",
+  "name": "イチの米経済指標アプリ",
+  "short_name": "米経済指標",
   "description": "FRED APIを通じて米国の主要なマクロ経済指標を可視化します。",
   "start_url": "/",
   "display": "standalone",

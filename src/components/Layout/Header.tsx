@@ -11,15 +11,14 @@ export function Header() {
   return (
     <header className="border-b border-divider bg-canvas/90 backdrop-blur-md sticky top-0 z-20">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6">
-        <div className="h-16 flex items-center justify-between gap-4">
-          {/* スマホでは短い名称にし、文字サイズと切替ボタンの余白を保つ */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0 group cursor-pointer">
-            <div className="bg-blue-500/10 p-1.5 md:p-2 rounded-xl flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
+        <div className="h-16 flex items-center justify-between gap-2 sm:gap-4">
+          {/* 画面幅に合わせて文字を大きくし、切替ボタンとの余白を保つ */}
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-3 min-w-0 group cursor-pointer">
+            <div className="bg-blue-500/10 p-1 sm:p-1.5 md:p-2 rounded-xl flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
               <Activity className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent truncate tracking-tighter">
-              <span className="md:hidden">イチの米経済指標</span>
-              <span className="hidden md:inline">イチの米経済指標ダッシュボード</span>
+            <h1 className="text-xl min-[360px]:text-[21px] sm:text-2xl lg:text-[32px] xl:text-4xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent truncate tracking-tighter">
+              イチの米経済指標アプリ
             </h1>
           </Link>
 
