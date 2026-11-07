@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T02:26:44.217Z",
+  "updatedAt": "2026-11-07T11:13:35.451Z",
   "indicators": {
     "DEXJPUS": {
       "seriesId": "DEXJPUS",
@@ -21178,10 +21178,6 @@
       "seriesId": "NASDAQCOM",
       "observations": [
         {
-          "date": "2025-08-28",
-          "value": "21705.16"
-        },
-        {
           "date": "2025-08-29",
           "value": "21455.55"
         },
@@ -22376,6 +22372,10 @@
         {
           "date": "2026-11-05",
           "value": "24315"
+        },
+        {
+          "date": "2026-11-06",
+          "value": "24579.42"
         }
       ]
     },
@@ -28408,10 +28408,6 @@
       "seriesId": "NASDAQXAU",
       "observations": [
         {
-          "date": "2025-08-28",
-          "value": "242.22"
-        },
-        {
           "date": "2025-08-29",
           "value": "249.08"
         },
@@ -29606,6 +29602,10 @@
         {
           "date": "2026-11-05",
           "value": "344.48"
+        },
+        {
+          "date": "2026-11-06",
+          "value": "352.82"
         }
       ]
     },
@@ -35976,6 +35976,54 @@
     }
   },
   "news": [
+    {
+      "id": "cnbc-market-0",
+      "date": "2026-11-07",
+      "title": "【NY市場速報】投資家はアントロピックの評価額の低下に備え、1.5兆ドルは「無理」だと主張",
+      "summary": "ウォール街でAI取引が悪化する中、アンスロピックの評価額は以前の予想を下回り、1兆5000億ドルを下回る可能性がある。",
+      "points": [
+        "【テクノロジー動向】AIインフラ投資・データセンター需要と技術開発の進展状況",
+        "【巨額CapEx負担】メガテック各社の大規模AI設備投資と短期的な投資回収効率への視線",
+        "【市場の反応】半導体・ハイテク大手銘柄ごとの株価ボラティリティと業績選別"
+      ],
+      "source": "CNBC US Market",
+      "category": "growth",
+      "impact": "High",
+      "link": "https://www.cnbc.com/2026/11/06/card-pokemon-grading-psa-collectors-price.html",
+      "badge": "AIテック動向"
+    },
+    {
+      "id": "cnbc-market-1",
+      "date": "2026-11-06",
+      "title": "【NY市場速報】初の核融合発電所の建設競争が始まっており、欧州は日本に支援を求めている",
+      "summary": "核融合エネルギーは、豊富でクリーンな電力を供給する可能性を秘めています。",
+      "points": [
+        "【原油価格動向】地政学リスクや需給バランスの変化を受けたエネルギー価格の急変動",
+        "【インフレへの影響】ガソリン・物流コスト上昇に伴う物価粘着性と金融引き締め懸念",
+        "【株式市場への波及】エネルギー株と一般消費財・ハイテク株の間での資金シフト"
+      ],
+      "source": "CNBC US Market",
+      "category": "growth",
+      "impact": "High",
+      "link": "https://www.cnbc.com/2026/11/06/openai-bugging-alfozan-saudi.html",
+      "badge": "原油・エネルギー"
+    },
+    {
+      "id": "cnbc-market-2",
+      "date": "2026-11-06",
+      "title": "【NY市場速報】ドローンは戦争を変えています。",
+      "summary": "世界最大手の防衛企業は、ドローンやAIが戦争のやり方を変えているにもかかわらず、従来型の軍事装備に対する需要が依然として強いことに気づいている。",
+      "points": [
+        "【テクノロジー動向】AIインフラ投資・データセンター需要と技術開発の進展状況",
+        "【巨額CapEx負担】メガテック各社の大規模AI設備投資と短期的な投資回収効率への視線",
+        "【市場の反応】半導体・ハイテク大手銘柄ごとの株価ボラティリティと業績選別"
+      ],
+      "source": "CNBC US Market",
+      "category": "growth",
+      "impact": "High",
+      "link": "https://www.cnbc.com/2026/11/06/mississippi-senate-ty-pinkins-colom-hyde-smith.html",
+      "badge": "AIテック動向"
+    },
     {
       "id": "frb-press-0",
       "date": "2026-10-28",

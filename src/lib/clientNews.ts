@@ -337,6 +337,24 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
       badge: 'NY連銀指標'
     },
     // 10/14発表：CPI
+    // 11/06発表：10月雇用統計速報
+    {
+      id: 'nfp-nov-2026',
+      date: '2026-11-06',
+      title: '【米雇用統計速報】10月雇用者数+24.9万人へ急反発・失業率4.1%に改善！米景気の底堅さを確認',
+      summary: '米労働統計局（BLS）が11月6日に発表した10月の非農業部門雇用者数は前月比+24.9万人と、前月（+2.9万人）から大幅に急回復しました。失業率は4.1%に改善、平均時給は前年比+3.12%と安定推移。リセッション懸念を払拭する力強い内容となりました。',
+      points: [
+        '【雇用者数急増】非農業部門雇用者数は前月比+24.9万人増と、事前予想を大幅に上回る力強い伸び',
+        '【失業率の低下】失業率は4.1%へ改善し、労働参加率も61.9%と底堅い雇用環境を維持',
+        '【市場の反応】労働市場の強靭さを確認し、年内の大幅利下げ観測が後退。米金利・ドル相場の下支え要因に'
+      ],
+      source: 'Bureau of Labor Statistics (BLS)',
+      category: 'employment',
+      impact: 'High',
+      link: 'https://fred.stlouisfed.org/series/PAYEMS',
+      badge: '雇用統計速報'
+    },
+    // 10/14発表：CPI
     {
       id: 'cpi-oct-2026',
       date: '2026-10-14',
@@ -352,23 +370,6 @@ export function enrichNewsWithLatestInsights(newsList: MacroNewsItem[]): MacroNe
       impact: 'High',
       link: 'https://fred.stlouisfed.org/series/CPIAUCSL',
       badge: '物価指標速報'
-    },
-    // 10/02発表：雇用統計
-    {
-      id: 'nfp-oct-2026',
-      date: '2026-10-02',
-      title: '【米雇用統計速報】9月雇用者数+2.9万人へ急減速・失業率4.2%：労働市場の軟化が進行',
-      summary: '9月の米非農業部門雇用者数は前月比+2.9万人と急減速（前月分も+13.3万人へ下方修正）。失業率は4.2%へ小幅上昇しました。平均時給は前年比+3.0%へ落ち着き、労働参加率は62.7%で推移しています。',
-      points: [
-        '【雇用者数】非農業部門雇用者数は+2.9万人と大幅鈍化。採用ペースの明確な減速を示す',
-        '【失業率・賃金】失業率は4.2%へ小幅上昇。平均時給は前年比+3.0%へ鈍化し賃金インフレは沈静化',
-        '【市場への影響】労働市場の急速な冷え込みにより、次回FOMCでの政策金利判断に注目が集まる'
-      ],
-      source: 'Bureau of Labor Statistics (BLS)',
-      category: 'employment',
-      impact: 'High',
-      link: 'https://fred.stlouisfed.org/series/PAYEMS',
-      badge: '雇用統計速報'
     },
     // 9/16発表：FOMC利上げ
     {
