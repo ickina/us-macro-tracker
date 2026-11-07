@@ -18,7 +18,7 @@ export function Header() {
               <Activity className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             </div>
             <h1 className="text-xl min-[360px]:text-[21px] sm:text-2xl lg:text-[32px] xl:text-4xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent truncate tracking-tighter">
-              イチの米経済指標アプリ
+              ichiの米国経済ウォッチ
             </h1>
           </Link>
 

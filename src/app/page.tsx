@@ -142,7 +142,7 @@ export default function DashboardPage() {
         <div className="mb-4 md:mb-6 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tighter">
-              イチの米経済指標アプリ
+              ichiの米経済ダッシュボード
             </h2>
             <p className="text-muted mt-1 text-sm md:text-base">
               FRED APIを通じて米国の主要マクロ経済指標（全{SERIES_ITEMS.length}項目）を可視化します。
