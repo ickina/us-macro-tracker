@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Automatic data refresh safeguards
+
+GitHub Actions refreshes the dataset on the schedules in `.github/workflows/auto-deploy.yml`, on manual dispatch, and when the refresh script/tests or workflow change on `main`. Data-only commits do not retrigger this workflow.
+Run `node --test scripts/fetch-macro-data.test.mjs` to verify the refresh safeguards without network access or changes to the checked-in dataset.
+
+- All 41 FRED series must contain valid, finite observations in date order. HTTP errors, timeouts, empty responses, malformed CSV, and invalid values fail the refresh.
+- If a required series fails, the entire existing `src/data/macroData.json` (including `updatedAt`) is left unchanged. The script exits nonzero, so Actions skips committing and builds stop rather than publishing an incomplete snapshot. Healthy indicators are also held until a complete refresh succeeds.
+- News failures keep the previous items from the affected source and emit warnings, including GitHub Actions warning annotations. FX supplementation is optional; failure keeps the FRED values and emits a warning. A successful run means the required indicators refreshed; warnings may still indicate older news or unavailable FX supplementation.
+- A completed dataset is written to a temporary file and renamed to avoid truncating the existing file if writing fails. Each network request has a timeout. Actions runs refreshes sequentially and enforces a job timeout.
+- Inspect the Actions run's logs and warnings after a failure. GitHub notification delivery depends on each user's notification settings; this change does not configure email or other external notifications.

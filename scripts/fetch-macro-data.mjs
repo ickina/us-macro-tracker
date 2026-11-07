@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 全41指標の定義
-const SERIES_CONFIG = [
+export const SERIES_CONFIG = [
   // 為替・金利・市場スプレッド
   { id: 'DEXJPUS', category: 'rates_fx', freq: 'daily' },
   { id: 'DTWEXBGS', category: 'rates_fx', freq: 'daily' },
@@ -59,6 +59,33 @@ const SERIES_CONFIG = [
   { id: 'UMCSENT', category: 'growth_liquidity', freq: 'monthly' }
 ];
 
+// Bound stalled remote requests; preserve TLS verification and the inherited network setup.
+async function request(url, options = {}) {
+  return fetch(url, { ...options, signal: options.signal ?? AbortSignal.timeout(15000) });
+}
+
+export function validateSeries(data, id) {
+  if (data?.seriesId !== id || !Array.isArray(data.observations) || data.observations.length === 0) {
+    throw new Error(`${id}: no usable observations`);
+  }
+  let previousDate = '';
+  for (const { date, value } of data.observations) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) ||
+        new Date(date).toISOString().slice(0, 10) !== date || date <= previousDate ||
+        typeof value !== 'string' || value.trim() === '' || !Number.isFinite(Number(value))) {
+      throw new Error(`${id}: invalid or unordered observation`);
+    }
+    previousDate = date;
+  }
+}
+
+function warning(message) {
+  console.warn(`Warning: ${message}`);
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    console.warn(`::warning::${message.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A')}`);
+  }
+}
+
 function decodeHtmlEntities(str) {
   if (!str) return '';
   return str
@@ -80,26 +107,34 @@ function decodeHtmlEntities(str) {
     .trim();
 }
 
-async function fetchFredSeries(conf) {
+export async function fetchFredSeries(conf) {
   const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${conf.id}`;
-  const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
+  const res = await request(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
   if (!res.ok) {
     throw new Error(`Failed to fetch ${conf.id}: HTTP ${res.status}`);
   }
   const text = await res.text();
   const lines = text.trim().split('\n');
+  const header = lines[0].replace(/^\uFEFF/, '').trim().split(',');
+  if (!['DATE', 'observation_date'].includes(header[0]) || header[1] !== conf.id) {
+    throw new Error(`${conf.id}: unexpected CSV response`);
+  }
   const rawObs = [];
 
   for (let i = 1; i < lines.length; i++) {
     const parts = lines[i].split(',');
-    if (parts.length >= 2) {
+    if (parts.length !== 2) throw new Error(`${conf.id}: malformed CSV row`);
+    if (parts.length === 2) {
       const date = parts[0].trim();
       const val = parts[1].trim();
       if (val && val !== '.') {
-        rawObs.push({ date, value: parseFloat(val) });
+        if (!Number.isFinite(Number(val))) throw new Error(`${conf.id}: non-numeric CSV value`);
+        rawObs.push({ date, value: Number(val) });
       }
     }
   }
+
+  validateSeries({ seriesId: conf.id, observations: rawObs.map(o => ({ ...o, value: String(o.value) })) }, conf.id);
 
   let finalObs = [];
 
@@ -147,18 +182,19 @@ async function fetchFredSeries(conf) {
     finalObs = finalObs.slice(-limit);
   }
 
-  return {
-    seriesId: conf.id,
-    observations: finalObs
-  };
+  const result = { seriesId: conf.id, observations: finalObs };
+  validateSeries(result, conf.id);
+  return result;
 }
 
 // 為替レートの最新補完
 async function supplementLiveFx(indicators) {
   try {
-    const fxRes = await fetch('https://open.er-api.com/v6/latest/USD');
+    const fxRes = await request('https://open.er-api.com/v6/latest/USD');
+    if (!fxRes.ok) throw new Error(`HTTP ${fxRes.status}`);
     if (fxRes.ok) {
       const fxData = await fxRes.json();
+      if (![fxData.rates?.JPY, fxData.rates?.EUR].every(v => typeof v === 'number' && Number.isFinite(v) && v > 0)) throw new Error('Invalid FX response');
       const now = new Date();
       const day = now.getDay();
       if (day === 0) now.setDate(now.getDate() - 2);
@@ -187,15 +223,15 @@ async function supplementLiveFx(indicators) {
       }
     }
   } catch (err) {
-    console.warn('Live FX supplement skipped:', err.message);
+    warning(`Live FX supplement skipped; FRED values retained: ${err.message}`);
   }
 }
 
 // FRB公式 Monetary Policy RSS からの取得
 async function fetchFrbNews() {
   try {
-    const res = await fetch('https://www.federalreserve.gov/feeds/press_monetary.xml');
-    if (!res.ok) return [];
+    const res = await request('https://www.federalreserve.gov/feeds/press_monetary.xml');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const xml = await res.text();
     const items = [];
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
@@ -277,10 +313,10 @@ async function fetchFrbNews() {
         count++;
       }
     }
+    if (items.length === 0) throw new Error('No usable news items');
     return items;
   } catch (err) {
-    console.warn('FRB RSS fetch failed:', err.message);
-    return [];
+    throw new Error(`FRB RSS fetch failed: ${err.message}`);
   }
 }
 
@@ -288,11 +324,11 @@ async function fetchFrbNews() {
 async function fetchCnbcMarketNews() {
   try {
     const rssUrl = 'https://www.cnbc.com/id/100003114/device/rss/rss.html';
-    const res = await fetch(rssUrl, {
+    const res = await request(rssUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
       signal: AbortSignal.timeout(5000)
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const xml = await res.text();
     const items = [];
@@ -304,7 +340,7 @@ async function fetchCnbcMarketNews() {
       if (!text) return '';
       try {
         const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ja&dt=t&q=' + encodeURIComponent(text);
-        const r = await fetch(url, { signal: AbortSignal.timeout(3000) });
+        const r = await request(url, { signal: AbortSignal.timeout(3000) });
         if (!r.ok) return '';
         const d = await r.json();
         return d[0][0][0] || '';
@@ -383,55 +419,67 @@ async function fetchCnbcMarketNews() {
       });
       count++;
     }
+    if (items.length === 0) throw new Error('No usable news items');
     return items;
   } catch (err) {
-    console.warn('CNBC market news fetch safely skipped:', err.message);
-    return [];
+    throw new Error(`CNBC market news fetch failed: ${err.message}`);
   }
 }
 
-async function main() {
-  console.log('🚀 Starting official macro data fetch from FRED public endpoints...');
+export async function main({ outPath = path.join(__dirname, '..', 'src', 'data', 'macroData.json') } = {}) {
+  // Load before fetching: an unreadable existing snapshot must never be silently replaced.
+  const previous = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, 'utf8')) : null;
   const indicators = {};
-
+  const failures = [];
+  console.log('Starting macro data refresh (41 required indicators)...');
   for (const conf of SERIES_CONFIG) {
     try {
-      const data = await fetchFredSeries(conf);
-      indicators[conf.id] = data;
-      const lastObs = data.observations[data.observations.length - 1];
-      console.log(`✅ ${conf.id.padEnd(14)}: ${lastObs?.date} -> ${lastObs?.value}`);
+      indicators[conf.id] = await fetchFredSeries(conf);
+      console.log(`OK ${conf.id}`);
     } catch (err) {
-      console.error(`❌ ${conf.id}:`, err.message);
+      failures.push(`${conf.id}: ${err.message}`);
+      console.error(`FAILED ${conf.id}: ${err.message}`);
+    }
+  }
+  if (failures.length > 0) {
+    throw new Error(`Refresh cancelled; existing data and updatedAt unchanged. ${failures.length} indicator(s) failed: ${failures.join('; ')}`);
+  }
+
+  await supplementLiveFx(indicators);
+  for (const conf of SERIES_CONFIG) validateSeries(indicators[conf.id], conf.id);
+
+  const news = [];
+  const newsSources = [
+    { source: 'CNBC US Market', fetchNews: fetchCnbcMarketNews },
+    { source: 'Federal Reserve Board (FRB)', fetchNews: fetchFrbNews }
+  ];
+  for (const { source, fetchNews } of newsSources) {
+    try {
+      news.push(...await fetchNews());
+    } catch (err) {
+      const retained = (previous?.news ?? []).filter(item => item.source === source);
+      news.push(...retained);
+      warning(`${source}: ${err.message}; retained ${retained.length} previous news item(s).`);
     }
   }
 
-  // リアルタイム為替レート合成
-  await supplementLiveFx(indicators);
-
-  // マクロニュース取得 (FRB公式速報 + CNBCマーケット速報)
-  console.log('📰 Fetching latest macroeconomic news...');
-  const frbNews = await fetchFrbNews();
-  const marketNews = await fetchCnbcMarketNews();
-  const allNews = [...marketNews, ...frbNews];
-
-  // JSONファイルとして書き出し
-  const outDir = path.join(__dirname, '..', 'src', 'data');
-  if (!fs.existsSync(outDir)) {
-    fs.mkdirSync(outDir, { recursive: true });
+  const payload = { updatedAt: new Date().toISOString(), indicators, news };
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  // Rename on the same filesystem so an interrupted write cannot truncate the live snapshot.
+  const temporaryPath = `${outPath}.${process.pid}.tmp`;
+  try {
+    fs.writeFileSync(temporaryPath, JSON.stringify(payload, null, 2), { encoding: 'utf8', flag: 'wx' });
+    fs.renameSync(temporaryPath, outPath);
+  } finally {
+    if (fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
   }
-
-  const payload = {
-    updatedAt: new Date().toISOString(),
-    indicators,
-    news: allNews
-  };
-
-  const outPath = path.join(outDir, 'macroData.json');
-  fs.writeFileSync(outPath, JSON.stringify(payload, null, 2), 'utf-8');
-  console.log(`🎉 Successfully saved clean official data to ${outPath}`);
+  console.log(`Saved ${SERIES_CONFIG.length} indicators and ${news.length} news items to ${outPath}`);
+  return payload;
 }
 
-main().catch(err => {
-  console.error('Fatal error during macro data fetch:', err);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+  main().catch(err => {
+    console.error('Fatal refresh error:', err.message);
+    process.exitCode = 1;
+  });
+}
