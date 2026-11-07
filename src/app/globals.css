@@ -1,23 +1,80 @@
 @import "tailwindcss";
 
-@theme {
+@theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--ink);
+  --color-canvas: var(--background);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-raised-hover: var(--raised-hover);
+  --color-divider: var(--divider);
+  --color-strong: var(--strong);
+  --color-emphasis: var(--emphasis);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-purple-ink: var(--purple-ink);
 }
 
 :root {
-  --background: #030712; /* gray-950 */
-  --foreground: #f3f4f6; /* gray-100 */
+  color-scheme: dark;
+  --background: #030712;
+  --surface: #111827;
+  --raised: #1f2937;
+  --raised-hover: #374151;
+  --divider: #1f2937;
+  --strong: #374151;
+  --emphasis: #4b5563;
+  --ink: #f3f4f6;
+  --body: #d1d5db;
+  --muted: #9ca3af;
+  --accent: #60a5fa;
+  --positive: #22c55e;
+  --negative: #ef4444;
+  --warning: #fbbf24;
+  --purple-ink: #c084fc;
+  --chart-positive: #22c55e;
+  --chart-negative: #ef4444;
+  --chart-accent: #60a5fa;
+  --chart-grid: #374151;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #f1f5f9;
+  --surface: #ffffff;
+  --raised: #e8eef5;
+  --raised-hover: #dce5ef;
+  --divider: #d5dee9;
+  --strong: #c0cddd;
+  --emphasis: #94a3b8;
+  --ink: #15243b;
+  --body: #334155;
+  --muted: #526176;
+  --accent: #1d4ed8;
+  --positive: #15803d;
+  --negative: #b91c1c;
+  --warning: #92400e;
+  --purple-ink: #7e22ce;
+  --chart-positive: #15803d;
+  --chart-negative: #b91c1c;
+  --chart-accent: #1d4ed8;
+  --chart-grid: #d5dee9;
 }
 
 body {
-  color: var(--foreground);
+  color: var(--ink);
   background: var(--background);
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", Meiryo, sans-serif;
 }
+.theme-moon { display: none; }
+[data-theme="light"] .theme-sun { display: none; }
+[data-theme="light"] .theme-moon { display: block; }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance { text-wrap: balance; }
 }

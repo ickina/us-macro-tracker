@@ -134,17 +134,17 @@ export default function DashboardPage() {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#030712]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Header />
       <main className="flex-1 max-w-[1400px] w-full mx-auto py-4 md:py-8 px-2 md:px-6">
         
         {/* タイトル＆リフレッシュボタン */}
         <div className="mb-4 md:mb-6 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-100 tracking-tighter">
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tighter">
               イチの米経済指標ダッシュボード
             </h2>
-            <p className="text-gray-400 mt-1 text-sm md:text-base">
+            <p className="text-muted mt-1 text-sm md:text-base">
               FRED APIを通じて米国の主要マクロ経済指標（全{SERIES_ITEMS.length}項目）を可視化します。
             </p>
           </div>
@@ -154,12 +154,12 @@ export default function DashboardPage() {
             disabled={loading || isRefreshing}
             className={`self-start sm:self-center flex items-center gap-2 px-3.5 py-2 border rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-sm ${
               justUpdated
-                ? 'bg-green-600/20 border-green-500/40 text-green-400'
-                : 'bg-gray-900/90 hover:bg-gray-800 border-gray-800 text-gray-300 hover:text-white'
+                ? 'bg-green-600/20 border-green-500/40 text-positive'
+                : 'bg-surface/90 hover:bg-raised border-divider text-body hover:text-ink'
             }`}
             aria-label="データを再取得"
           >
-            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-green-400' : 'text-blue-400'} ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-positive' : 'text-accent'} ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新データを取得'}</span>
           </button>
         </div>
@@ -175,15 +175,15 @@ export default function DashboardPage() {
 
         {/* ローディング表示 */}
         {loading && (
-          <div className="flex flex-col items-center justify-center h-64 gap-4 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted">
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
             <p className="text-sm">マクロ経済データを読み込み中...</p>
           </div>
         )}
 
         {/* エラー表示 */}
         {error && (
-          <div className="m-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center gap-3">
+          <div className="m-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-negative flex items-center gap-3">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>

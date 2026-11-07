@@ -23,8 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      <body className="antialiased bg-[#030712] text-[#f3f4f6] selection:bg-blue-500/30 font-sans">
+    <html lang="ja" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `try { document.documentElement.dataset.theme = localStorage.getItem('macro-theme') === 'light' ? 'light' : 'dark'; } catch { document.documentElement.dataset.theme = 'dark'; }` }} />
+      </head>
+      <body className="antialiased bg-canvas text-ink selection:bg-blue-500/30 font-sans">
         {children}
         <CalendarFAB />
       </body>

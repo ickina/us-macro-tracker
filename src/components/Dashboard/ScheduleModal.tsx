@@ -53,11 +53,11 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
     const dEvent = new Date(eY, eM - 1, eD);
     const diffDays = Math.round((dEvent.getTime() - dToday.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return { text: '本日発表！', color: 'bg-red-500 text-white font-bold animate-pulse shadow-lg shadow-red-500/20' };
-    if (diffDays === 1) return { text: '明日発表', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold' };
-    if (diffDays > 1 && diffDays <= 7) return { text: `あと ${diffDays} 日`, color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30' };
-    if (diffDays > 7) return { text: `あと ${diffDays} 日`, color: 'bg-gray-800 text-gray-400' };
-    return { text: '発表済み', color: 'bg-gray-800/40 text-gray-500' };
+    if (diffDays === 0) return { text: '本日発表！', color: 'bg-red-700 text-white font-bold animate-pulse shadow-lg shadow-red-500/20' };
+    if (diffDays === 1) return { text: '明日発表', color: 'bg-amber-500/20 text-warning border border-amber-500/30 font-semibold' };
+    if (diffDays > 1 && diffDays <= 7) return { text: `あと ${diffDays} 日`, color: 'bg-blue-500/20 text-accent border border-blue-500/30' };
+    if (diffDays > 7) return { text: `あと ${diffDays} 日`, color: 'bg-raised text-muted' };
+    return { text: '発表済み', color: 'bg-raised/40 text-muted' };
   };
 
   // フィルタリング処理
@@ -89,13 +89,13 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
       onClick={onClose}
     >
       <div 
-        className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[88vh] flex flex-col p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
+        className="bg-surface border border-strong rounded-2xl w-full max-w-2xl max-h-[88vh] flex flex-col p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 閉じるボタン */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full transition-colors z-10 cursor-pointer"
+          className="absolute top-4 right-4 p-2 text-muted hover:text-ink bg-raised hover:bg-raised-hover rounded-full transition-colors z-10 cursor-pointer"
           aria-label="閉じる"
         >
           <X className="w-5 h-5" />
@@ -104,12 +104,12 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
         {/* ヘッダー */}
         <div className="pr-10 mb-3">
           <div className="flex items-center gap-2">
-            <div className="bg-blue-500/10 p-2 rounded-xl text-blue-400">
+            <div className="bg-blue-500/10 p-2 rounded-xl text-accent">
               <CalIcon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-100">米国重要指標スケジュール</h3>
-              <p className="text-xs sm:text-sm text-gray-400 mt-0.5">
+              <h3 className="text-xl sm:text-2xl font-bold text-ink">米国重要指標スケジュール</h3>
+              <p className="text-xs sm:text-sm text-muted mt-0.5">
                 米マクロ経済指標・FOMC金利発表の最新日程 ＆ 日本時間
               </p>
             </div>
@@ -123,10 +123,10 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
             className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'upcoming'
                 ? 'bg-blue-600 text-white shadow-sm font-bold'
-                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                : 'bg-raised/90 text-muted hover:text-ink hover:bg-raised'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <Sparkles className="w-3.5 h-3.5 text-warning" />
             <span>⚡ 直近</span>
           </button>
 
@@ -135,7 +135,7 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
             className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'all'
                 ? 'bg-blue-600 text-white shadow-sm font-bold'
-                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                : 'bg-raised/90 text-muted hover:text-ink hover:bg-raised'
             }`}
           >
             <span>📅 全予定</span>
@@ -146,7 +146,7 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
             className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'policy'
                 ? 'bg-blue-600 text-white shadow-sm font-bold'
-                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                : 'bg-raised/90 text-muted hover:text-ink hover:bg-raised'
             }`}
           >
             <Building2 className="w-3.5 h-3.5" />
@@ -158,10 +158,10 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
             className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'inflation'
                 ? 'bg-blue-600 text-white shadow-sm font-bold'
-                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                : 'bg-raised/90 text-muted hover:text-ink hover:bg-raised'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-red-400" />
+            <Flame className="w-3.5 h-3.5 text-negative" />
             <span>🔥 物価</span>
           </button>
 
@@ -170,10 +170,10 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
             className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               filter === 'employment'
                 ? 'bg-blue-600 text-white shadow-sm font-bold'
-                : 'bg-gray-800/90 text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                : 'bg-raised/90 text-muted hover:text-ink hover:bg-raised'
             }`}
           >
-            <Users className="w-3.5 h-3.5 text-blue-400" />
+            <Users className="w-3.5 h-3.5 text-accent" />
             <span>👥 雇用</span>
           </button>
         </div>
@@ -181,7 +181,7 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
         {/* イベントリスト（スクロール領域） */}
         <div className="flex-1 overflow-y-auto pr-1 space-y-3">
           {filteredEvents.length === 0 ? (
-            <div className="text-center py-12 text-gray-500 text-sm">
+            <div className="text-center py-12 text-muted text-sm">
               該当するスケジュールはありません。
             </div>
           ) : (
@@ -192,12 +192,12 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
               return (
                 <div 
                   key={ev.id} 
-                  className={`bg-gray-950/70 border rounded-xl p-3.5 sm:p-4 transition-all hover:border-gray-700 ${
+                  className={`bg-canvas/70 border rounded-xl p-3.5 sm:p-4 transition-all hover:border-strong ${
                     countdown.text === '本日発表！'
                       ? 'border-red-500/50 bg-red-950/20'
                       : isCritical
-                      ? 'border-gray-800 shadow-sm'
-                      : 'border-gray-800/60'
+                      ? 'border-divider shadow-sm'
+                      : 'border-divider/60'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -205,18 +205,18 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
                       <span className={`text-xs px-2.5 py-0.5 rounded-md font-bold ${countdown.color}`}>
                         {countdown.text}
                       </span>
-                      <span className="text-xs text-gray-400 font-medium bg-gray-800/60 px-2 py-0.5 rounded">
+                      <span className="text-xs text-muted font-medium bg-raised/60 px-2 py-0.5 rounded">
                         {ev.period}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       {isCritical ? (
-                        <span className="text-[11px] font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-bold text-negative bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded">
                           ★★★ 最重要
                         </span>
                       ) : (
-                        <span className="text-[11px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-semibold text-warning bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
                           ★★ 重要
                         </span>
                       )}
@@ -224,22 +224,22 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
                   </div>
 
                   {/* タイトル */}
-                  <h4 className="text-base sm:text-lg font-bold text-gray-100 leading-snug">
+                  <h4 className="text-base sm:text-lg font-bold text-ink leading-snug">
                     {ev.title}
                   </h4>
 
                   {/* 説明 */}
-                  <p className="text-xs sm:text-sm text-gray-400 mt-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
                     {ev.description}
                   </p>
 
                   {/* 日時 ＆ 日本時間 */}
-                  <div className="flex flex-wrap items-center gap-3 mt-3 pt-2.5 border-t border-gray-800/60 text-xs text-gray-300">
-                    <span className="flex items-center gap-1.5 font-semibold text-blue-400">
+                  <div className="flex flex-wrap items-center gap-3 mt-3 pt-2.5 border-t border-divider/60 text-xs text-body">
+                    <span className="flex items-center gap-1.5 font-semibold text-accent">
                       <CalIcon className="w-3.5 h-3.5" />
                       {ev.date}
                     </span>
-                    <span className="flex items-center gap-1.5 font-semibold text-amber-300">
+                    <span className="flex items-center gap-1.5 font-semibold text-warning">
                       <Clock className="w-3.5 h-3.5" />
                       日本時間 {ev.timeJST}
                     </span>
@@ -251,7 +251,7 @@ export function ScheduleModal({ isOpen, onClose }: Props) {
         </div>
         
         {/* フッター注意書き */}
-        <div className="mt-3 pt-2 border-t border-gray-800 text-[11px] text-gray-500 text-center">
+        <div className="mt-3 pt-2 border-t border-divider text-[11px] text-muted text-center">
           ※ 発表日・時刻は日本時間(JST)基準です。米当局の都合等により一部前後する場合があります。
         </div>
       </div>

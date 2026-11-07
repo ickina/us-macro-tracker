@@ -88,14 +88,15 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm transition-opacity" 
       onClick={onClose}
     >
-      <div 
-        className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-4xl p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+      <div
+        role="dialog" aria-modal="true" aria-label={title}
+        className="bg-surface border border-strong rounded-2xl w-full max-w-4xl p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 閉じるボタン */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full transition-colors z-10 cursor-pointer"
+          className="absolute top-4 right-4 p-2 text-muted hover:text-ink bg-raised hover:bg-raised-hover rounded-full transition-colors z-10 cursor-pointer"
           aria-label="閉じる"
         >
           <X className="w-5 h-5" />
@@ -103,21 +104,21 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
         
         {/* ヘッダー情報 */}
         <div className="pr-10 mb-4">
-          <h3 className="text-lg sm:text-2xl font-bold text-gray-100 leading-snug">{title}</h3>
+          <h3 className="text-lg sm:text-2xl font-bold text-ink leading-snug">{title}</h3>
           
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs sm:text-sm text-gray-400">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs sm:text-sm text-muted">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-blue-400" />
+              <Calendar className="w-3.5 h-3.5 text-accent" />
               {stats.start} 〜 {stats.end} ({filteredData.length}件)
             </span>
-            <span className="text-gray-500 hidden sm:inline">|</span>
-            <span>高値: <strong className="text-gray-200">{stats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong></span>
-            <span>安値: <strong className="text-gray-200">{stats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong></span>
+            <span className="text-muted hidden sm:inline">|</span>
+            <span>高値: <strong className="text-ink">{stats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong></span>
+            <span>安値: <strong className="text-ink">{stats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong></span>
           </div>
         </div>
 
         {/* 期間切り替えボタン */}
-        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 self-start sm:self-end bg-gray-950/60 p-1 rounded-xl border border-gray-800">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 self-start sm:self-end bg-canvas/60 p-1 rounded-xl border border-divider">
           {timeframes.map((tf) => (
             <button
               key={tf}
@@ -125,7 +126,7 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
               className={`px-3 py-1 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
                 timeframe === tf
                   ? 'bg-blue-600 text-white shadow-sm font-bold'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                  : 'text-muted hover:text-ink hover:bg-raised'
               }`}
             >
               {tf}
@@ -134,7 +135,7 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
         </div>
         
         {/* チャート描画領域 */}
-        <div className="h-[45vh] sm:h-[55vh] w-full -ml-2 sm:-ml-4 mt-2 flex-1">
+        <div className="h-[40vh] min-h-48 shrink-0 sm:h-[50vh] w-full mt-2">
           <LineChartComponent data={filteredData} color={activeColor} showXAxis={true} />
         </div>
       </div>

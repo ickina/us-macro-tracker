@@ -85,7 +85,7 @@ export default function MacroNewsPage() {
   }, [news, selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#030712]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Header />
       
       <main className="flex-1 max-w-[1200px] w-full mx-auto py-4 md:py-8 px-3 md:px-6">
@@ -93,10 +93,10 @@ export default function MacroNewsPage() {
         {/* タイトル ＆ アクション */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-100 tracking-tighter">
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tighter">
               米国マクロ経済ニュース ＆ リリース情報
             </h2>
-            <p className="text-gray-400 mt-1 text-sm md:text-base">
+            <p className="text-muted mt-1 text-sm md:text-base">
               FRED公式リリース・FRB発表・主要経済指標の最新ファンダメンタルズ動向
             </p>
           </div>
@@ -106,12 +106,12 @@ export default function MacroNewsPage() {
             disabled={loading || isRefreshing}
             className={`self-start sm:self-center flex items-center gap-2 px-3.5 py-2 border rounded-xl text-sm font-medium transition-all cursor-pointer disabled:opacity-50 ${
               justUpdated
-                ? 'bg-green-600/20 border-green-500/40 text-green-400'
-                : 'bg-gray-900 hover:bg-gray-800 border-gray-800 text-gray-300 hover:text-white'
+                ? 'bg-green-600/20 border-green-500/40 text-positive'
+                : 'bg-surface hover:bg-raised border-divider text-body hover:text-ink'
             }`}
             aria-label="ニュースを再取得"
           >
-            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-green-400' : 'text-blue-400'} ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-positive' : 'text-accent'} ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新ニュースを取得'}</span>
           </button>
         </div>
@@ -120,13 +120,13 @@ export default function MacroNewsPage() {
         <div className="space-y-3 mb-6">
           {/* 検索入力 */}
           <div className="relative max-w-md">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="キーワードでニュースを検索 (例: CPI, FRB, 金利...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-900 border border-gray-800 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-surface border border-divider rounded-xl pl-10 pr-4 py-2 text-sm text-ink placeholder-muted focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
@@ -143,7 +143,7 @@ export default function MacroNewsPage() {
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] border border-blue-500 scale-[1.02]'
-                        : 'bg-gray-900 text-gray-400 hover:text-gray-200 hover:bg-gray-800 border border-gray-800'
+                        : 'bg-surface text-muted hover:text-ink hover:bg-raised border border-divider'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -157,15 +157,15 @@ export default function MacroNewsPage() {
 
         {/* ローディング表示 */}
         {loading && (
-          <div className="flex flex-col items-center justify-center h-64 gap-4 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted">
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
             <p className="text-sm">最新マクロ経済ニュースを読み込み中...</p>
           </div>
         )}
 
         {/* エラー表示 */}
         {error && (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center gap-3">
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-negative flex items-center gap-3">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>
@@ -175,56 +175,56 @@ export default function MacroNewsPage() {
         {!loading && !error && (
           <div className="space-y-4">
             {filteredNews.length === 0 ? (
-              <div className="text-center py-16 bg-gray-900/50 border border-gray-800 rounded-2xl">
-                <p className="text-gray-400">該当するニュースが見つかりませんでした。</p>
+              <div className="text-center py-16 bg-surface/50 border border-divider rounded-2xl">
+                <p className="text-muted">該当するニュースが見つかりませんでした。</p>
               </div>
             ) : (
               filteredNews.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-4 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg"
+                  className="bg-surface border border-divider hover:border-strong rounded-2xl p-4 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-lg"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="flex items-center gap-1.5 text-xs text-blue-400 font-semibold bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg">
+                      <span className="flex items-center gap-1.5 text-xs text-accent font-semibold bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg">
                         <Calendar className="w-3.5 h-3.5" />
                         {item.date}
                       </span>
-                      <span className="text-xs text-gray-400 bg-gray-800 px-2 py-0.5 rounded-md font-medium">
+                      <span className="text-xs text-muted bg-raised px-2 py-0.5 rounded-md font-medium">
                         {item.source}
                       </span>
                       {item.badge && (
-                        <span className="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-md font-semibold">
+                        <span className="text-xs text-purple-ink bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-md font-semibold">
                           {item.badge}
                         </span>
                       )}
                     </div>
 
                     {item.impact === 'High' && (
-                      <span className="text-xs font-bold text-red-400 bg-red-400/10 border border-red-400/20 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-negative bg-red-400/10 border border-red-400/20 px-2 py-0.5 rounded-md">
                         重要指標
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-bold text-gray-100 leading-snug mb-2">
+                  <h3 className="text-base sm:text-lg font-bold text-ink leading-snug mb-2">
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                  <p className="text-body text-sm leading-relaxed mb-3">
                     {item.summary}
                   </p>
 
                   {/* 要点・市場への影響（箇条書きボックス） */}
                   {item.points && item.points.length > 0 && (
-                    <div className="bg-gray-950/70 border border-gray-800/80 rounded-xl p-3 sm:p-4 mb-4">
-                      <div className="text-xs font-semibold text-blue-400 mb-2 flex items-center gap-1.5">
+                    <div className="bg-canvas/70 border border-divider/80 rounded-xl p-3 sm:p-4 mb-4">
+                      <div className="text-xs font-semibold text-accent mb-2 flex items-center gap-1.5">
                         <span>📌 要点と市場への影響</span>
                       </div>
                       <ul className="space-y-1.5">
                         {item.points.map((pt, idx) => (
-                          <li key={idx} className="text-xs sm:text-sm text-gray-300 flex items-start gap-2 leading-relaxed">
-                            <span className="text-blue-500 font-bold select-none">•</span>
+                          <li key={idx} className="text-xs sm:text-sm text-body flex items-start gap-2 leading-relaxed">
+                            <span className="text-accent font-bold select-none">•</span>
                             <span>{pt}</span>
                           </li>
                         ))}
@@ -233,12 +233,12 @@ export default function MacroNewsPage() {
                   )}
 
                   {item.link && (
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-800/60">
+                    <div className="flex items-center justify-between pt-3 border-t border-divider/60">
                       <a
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-medium transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-raised hover:bg-raised-hover text-body hover:text-ink rounded-lg text-xs font-medium transition-all hover:-translate-y-0.5 shadow-sm cursor-pointer"
                       >
                         <span>📊 公式元データ・記事を開く</span>
                         <ExternalLink className="w-3.5 h-3.5 opacity-70" />

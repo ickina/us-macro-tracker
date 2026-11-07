@@ -1,5 +1,5 @@
 'use client';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { CartesianGrid, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Observation } from '@/lib/fred';
 
 interface Props {
@@ -19,25 +19,28 @@ export function LineChartComponent({ data, color = '#3b82f6', showXAxis = false 
   const max = Math.max(...values);
   const padding = (max - min) * 0.1;
 
+  const strokeColor = color === '#22c55e' ? 'var(--chart-positive)' : color === '#ef4444' ? 'var(--chart-negative)' : 'var(--chart-accent)';
+
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" minWidth={0} className="overflow-hidden">
       <LineChart data={chartData} margin={showXAxis ? { bottom: 20, left: 10, right: 10 } : {}}>
+        {showXAxis && <CartesianGrid vertical={false} stroke="var(--chart-grid)" strokeDasharray="3 3" />}
         <XAxis 
           dataKey="date" 
           hide={!showXAxis} 
-          stroke="#4b5563" 
+          stroke="var(--muted)"
           fontSize={12} 
           tickMargin={10} 
           minTickGap={30}
         />
         <YAxis domain={[min - padding, max + padding]} hide />
         <Tooltip 
-          contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', color: '#f3f4f6', fontSize: '12px' }}
-          itemStyle={{ color: '#f3f4f6' }}
-          labelStyle={{ color: '#9ca3af', marginBottom: '4px' }}
-          formatter={(value: any) => [Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 }), '値']}
+          contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--ink)', fontSize: '12px' }}
+          itemStyle={{ color: 'var(--ink)' }}
+          labelStyle={{ color: 'var(--muted)', marginBottom: '4px' }}
+          formatter={(value) => [Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 }), '値']}
         />
-        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={false} isAnimationActive={false} />
+        <Line type="monotone" dataKey="value" stroke={strokeColor} strokeWidth={2} dot={false} isAnimationActive={false} />
       </LineChart>
     </ResponsiveContainer>
   );
