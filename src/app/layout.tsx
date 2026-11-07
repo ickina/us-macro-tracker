@@ -7,13 +7,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'ichiの米国経済指標ウォッチ',
+  title: 'ichiの米国経済指標',
   description: 'FRED APIを通じて米国のマクロ経済指標を可視化します',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'ichiの米国経済指標ウォッチ',
+    title: 'ichiの米国経済指標',
   },
 };
 

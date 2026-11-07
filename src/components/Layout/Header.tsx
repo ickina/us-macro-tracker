@@ -17,8 +17,8 @@ export function Header() {
             <div className="bg-blue-500/10 p-1 sm:p-1.5 md:p-2 rounded-xl flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
               <Activity className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             </div>
-            <h1 className="text-xl min-[360px]:text-[21px] sm:text-2xl lg:text-[32px] xl:text-4xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent min-w-0 leading-tight tracking-tight min-[360px]:tracking-normal lg:tracking-[0.025em]">
-              <span className="inline-block">ichiの米国経済指標</span><span className="inline-block">ウォッチ</span>
+            <h1 className="text-[22px] min-[360px]:text-2xl sm:text-[28px] lg:text-[32px] xl:text-4xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent min-w-0 truncate leading-tight tracking-tight min-[360px]:tracking-normal lg:tracking-[0.025em]">
+              ichiの米国経済指標
             </h1>
           </Link>
 
