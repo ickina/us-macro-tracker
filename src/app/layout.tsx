@@ -3,7 +3,7 @@ import './globals.css';
 import { CalendarFAB } from '@/components/Dashboard/CalendarFAB';
 
 export const viewport: Viewport = {
-  themeColor: '#030712',
+  themeColor: '#f1f5f9',
 };
 
 export const metadata: Metadata = {
@@ -23,9 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" suppressHydrationWarning>
+    <html lang="ja" data-theme="light" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try { document.documentElement.dataset.theme = localStorage.getItem('macro-theme') === 'light' ? 'light' : 'dark'; } catch { document.documentElement.dataset.theme = 'dark'; }` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try { document.documentElement.dataset.theme = localStorage.getItem('macro-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }` }} />
       </head>
       <body className="antialiased bg-canvas text-ink selection:bg-blue-500/30 font-sans">
         {children}
