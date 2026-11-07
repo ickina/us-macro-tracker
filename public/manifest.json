@@ -1,5 +1,5 @@
 {
-  "name": "ichiの米国経済ウォッチ",
+  "name": "ichiの米国経済指標ウォッチ",
   "short_name": "米経済指標",
   "description": "FRED APIを通じて米国の主要なマクロ経済指標を可視化します。",
   "start_url": "/",
