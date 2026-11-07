@@ -1,5 +1,5 @@
 import { FredSeriesData } from '@/lib/fred';
-import { ArrowDownIcon, ArrowUpIcon, MinusIcon } from 'lucide-react';
+import { ArrowDownIcon, ArrowUpIcon, MinusIcon, ArrowUpRight } from 'lucide-react';
 import { LineChartComponent } from '../Charts/LineChart';
 import { useState } from 'react';
 import { ChartModal } from './ChartModal';
@@ -61,39 +61,54 @@ export function IndicatorCard({ title, data }: Props) {
 
   return (
     <>
-      <div 
-        className="bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg flex flex-col gap-4 transition-all hover:-translate-y-1 cursor-pointer duration-300"
-        onClick={() => setIsModalOpen(true)}
-      >
-      <div className="flex justify-between items-start gap-2">
-        <h3 className="text-gray-400 font-medium text-base sm:text-sm w-3/4 leading-snug">{title}</h3>
-        <span className="text-xs text-gray-500 whitespace-nowrap">{latest?.date}</span>
-      </div>
-      
-      <div className="flex flex-wrap items-baseline gap-2 mt-1">
-        <span className="text-3xl sm:text-2xl font-bold tracking-tight text-gray-100">
-          {latest ? parseFloat(latest.value).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 'N/A'}
-        </span>
-        {isInverted && (
-          <span className="text-xs px-2 py-0.5 bg-red-500/20 border border-red-500/40 text-red-400 font-semibold rounded-md animate-pulse">
-            逆イールド
-          </span>
-        )}
-        
-        {latest && previous && (
-          <div className={`flex items-center text-sm font-medium ${isPositive ? positiveColor : isNegative ? negativeColor : 'text-gray-500'}`}>
-            <span className="text-[10px] mr-1.5 px-1.5 py-0.5 border border-current rounded opacity-60 leading-none">{freqLabel}</span>
-            {isPositive ? <ArrowUpIcon className="w-4 h-4" /> : isNegative ? <ArrowDownIcon className="w-4 h-4" /> : <MinusIcon className="w-4 h-4" />}
-            <span>{Math.abs(change).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
-            <span className="ml-1 opacity-80">({Math.abs(changePct).toFixed(2)}%)</span>
-          </div>
-        )}
-      </div>
+      <article className="group relative flex min-w-0 flex-col rounded-2xl border border-gray-800 bg-gray-900 p-4 shadow-sm transition-colors hover:border-gray-600 sm:p-5">
+        <div className="min-h-12">
+          <h3 className="break-words text-sm font-medium leading-6 text-gray-300 sm:text-base">{title}</h3>
+        </div>
 
-      <div className="h-28 w-full mt-2 -ml-2">
-        <LineChartComponent data={obs} color={chartColor} />
-      </div>
-      </div>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium tracking-wide text-gray-400">最新値</span>
+          {isInverted && (
+            <span className="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-semibold text-red-400">
+              逆イールド
+            </span>
+          )}
+        </div>
+        <div className="mt-1 break-all text-3xl font-bold leading-tight tracking-tight text-gray-100 tabular-nums sm:text-4xl">
+          {latest ? parseFloat(latest.value).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 'N/A'}
+        </div>
+
+        <div className="mt-3 min-h-12">
+          {latest && previous ? (
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <span className="text-xs text-gray-400">{freqLabel}</span>
+              <span className={`inline-flex items-center gap-1 font-semibold tabular-nums ${isPositive ? positiveColor : isNegative ? negativeColor : 'text-gray-400'}`}>
+                {isPositive ? <ArrowUpIcon aria-label="上昇" className="h-4 w-4 shrink-0" /> : isNegative ? <ArrowDownIcon aria-label="低下" className="h-4 w-4 shrink-0" /> : <MinusIcon aria-label="変化なし" className="h-4 w-4 shrink-0" />}
+                {Math.abs(change).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </span>
+              <span className="text-xs text-gray-400 tabular-nums">({Math.abs(changePct).toFixed(2)}%)</span>
+            </div>
+          ) : (
+            <span className="text-xs text-gray-400">比較データなし</span>
+          )}
+          <p className="mt-1 text-xs text-gray-400">データ日：{latest?.date ?? '—'}</p>
+        </div>
+
+        <div className="mt-4 h-28 w-full min-w-0" aria-hidden="true">
+          <LineChartComponent data={obs} color={chartColor} />
+        </div>
+        <div className="mt-4 flex justify-end border-t border-gray-800 pt-3">
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-blue-400 transition-colors before:absolute before:inset-0 before:rounded-2xl hover:text-blue-300 focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-blue-400"
+            onClick={() => setIsModalOpen(true)}
+            aria-label={`${title}のグラフを見る`}
+            aria-haspopup="dialog"
+          >
+            グラフを見る <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+          </button>
+        </div>
+      </article>
       <ChartModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
