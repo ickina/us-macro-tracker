@@ -8,7 +8,8 @@ import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
+import { Loader2, AlertCircle, RefreshCw, Star } from 'lucide-react';
 
 interface SeriesItem {
   id: string;
@@ -69,7 +70,10 @@ const SERIES_ITEMS: SeriesItem[] = [
   { id: 'UMCSENT', title: 'ミシガン大学消費者態度指数', category: 'growth_liquidity' }
 ];
 
+const VALID_SERIES_IDS = new Set(SERIES_ITEMS.map(item => item.id));
+
 export default function DashboardPage() {
+  const { favorites, toggleFavorite, sessionOnly } = useFavoriteIndicators(VALID_SERIES_IDS);
   const [data, setData] = useState<Record<string, FredSeriesData>>({});
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -114,6 +118,7 @@ export default function DashboardPage() {
   const counts = useMemo(() => {
     const res: Record<CategoryKey, number> = {
       all: SERIES_ITEMS.length,
+      favorites: favorites.size,
       rates_fx: 0,
       inflation: 0,
       employment: 0,
@@ -126,12 +131,13 @@ export default function DashboardPage() {
       }
     });
     return res;
-  }, []);
+  }, [favorites.size]);
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'all') return SERIES_ITEMS;
+    if (selectedCategory === 'favorites') return SERIES_ITEMS.filter(item => favorites.has(item.id));
     return SERIES_ITEMS.filter(item => item.category === selectedCategory);
-  }, [selectedCategory]);
+  }, [selectedCategory, favorites]);
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
@@ -173,6 +179,12 @@ export default function DashboardPage() {
           />
         </div>
 
+        {sessionOnly && (
+          <p role="status" className="mx-2 mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-warning">
+            このブラウザーではお気に入りを保存できません。今は使えますが、再読み込みすると解除されます。
+          </p>
+        )}
+
         {/* ローディング表示 */}
         {loading && (
           <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted">
@@ -189,6 +201,21 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {!loading && !error && selectedCategory === 'favorites' && favorites.size === 0 && (
+          <div className="mx-2 rounded-2xl border border-divider bg-surface px-5 py-10 text-center sm:px-8">
+            <Star aria-hidden="true" className="mx-auto mb-3 h-8 w-8 text-warning" />
+            <h3 className="text-base font-semibold text-ink sm:text-lg">まだお気に入りがありません</h3>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted">
+              カード右上の☆を押すと、気になる指標をここにまとめられます。
+            </p>
+            <p className="mt-1 text-xs text-muted">このブラウザーに保存されます。他の端末には引き継がれません。</p>
+            <button type="button" onClick={() => setSelectedCategory('all')}
+              className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+              すべての指標から選ぶ
+            </button>
+          </div>
+        )}
+
         {/* メイン指標グリッド */}
         {!loading && !error && (
           <SummaryGrid>
@@ -199,7 +226,9 @@ export default function DashboardPage() {
                 <IndicatorCard 
                   key={item.id} 
                   title={item.title} 
-                  data={seriesData} 
+                  data={seriesData}
+                  isFavorite={favorites.has(item.id)}
+                  onToggleFavorite={toggleFavorite}
                 />
               );
             })}

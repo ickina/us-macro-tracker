@@ -1,15 +1,17 @@
 import { FredSeriesData } from '@/lib/fred';
-import { ArrowDownIcon, ArrowUpIcon, MinusIcon, ArrowUpRight } from 'lucide-react';
+import { ArrowDownIcon, ArrowUpIcon, MinusIcon, ArrowUpRight, Star } from 'lucide-react';
 import { LineChartComponent } from '../Charts/LineChart';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { ChartModal } from './ChartModal';
 
 interface Props {
   title: string;
   data: FredSeriesData;
+  isFavorite: boolean;
+  onToggleFavorite: (id: string) => void;
 }
 
-export function IndicatorCard({ title, data }: Props) {
+export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, onToggleFavorite }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
@@ -62,8 +64,18 @@ export function IndicatorCard({ title, data }: Props) {
   return (
     <>
       <article className="group relative flex min-w-0 flex-col rounded-2xl border border-divider bg-surface p-4 shadow-sm transition-colors hover:border-emphasis sm:p-5">
-        <div className="min-h-12">
-          <h3 className="break-words text-sm font-medium leading-6 text-body sm:text-base">{title}</h3>
+        <div className="flex min-h-12 items-start justify-between gap-2">
+          <h3 className="break-words text-sm font-medium leading-6 text-body sm:text-base min-w-0 flex-1">{title}</h3>
+          <button
+            type="button"
+            aria-label={`${title}をお気に入り${isFavorite ? 'から削除' : 'に追加'}`}
+            aria-pressed={isFavorite}
+            title={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
+            onClick={() => onToggleFavorite(data.seriesId)}
+            className={`relative z-10 -mr-2 -mt-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${isFavorite ? 'bg-amber-500/10 text-warning' : 'text-muted hover:bg-raised hover:text-warning'}`}
+          >
+            <Star aria-hidden="true" className="h-5 w-5" fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -118,4 +130,4 @@ export function IndicatorCard({ title, data }: Props) {
       />
     </>
   );
-}
+});

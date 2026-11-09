@@ -7,10 +7,11 @@ import {
   Flame, 
   Users, 
   BarChart3, 
-  Activity 
+  Activity,
+  Star
 } from 'lucide-react';
 
-export type CategoryKey = 'all' | 'rates_fx' | 'inflation' | 'employment' | 'markets' | 'growth_liquidity';
+export type CategoryKey = 'all' | 'favorites' | 'rates_fx' | 'inflation' | 'employment' | 'markets' | 'growth_liquidity';
 
 export interface CategoryInfo {
   key: CategoryKey;
@@ -20,6 +21,7 @@ export interface CategoryInfo {
 
 export const CATEGORIES: CategoryInfo[] = [
   { key: 'all', label: 'すべて', icon: LayoutGrid },
+  { key: 'favorites', label: 'お気に入り', icon: Star },
   { key: 'rates_fx', label: '為替・金利', icon: TrendingUp },
   { key: 'inflation', label: 'インフレ', icon: Flame },
   { key: 'employment', label: '雇用', icon: Users },
@@ -45,6 +47,8 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts }: Pro
           return (
             <button
               key={cat.key}
+              type="button"
+              aria-pressed={isActive}
               onClick={() => onSelectCategory(cat.key)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
                 isActive
