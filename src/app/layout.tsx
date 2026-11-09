@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: 'ichiの米国経済指標',
     description: '米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。',
     images: [{
-      url: '/share/ichi-us-economy-v1.png',
+      url: '/share/ichi-us-economy-v2.png',
       width: 1200,
       height: 630,
       alt: 'ichiの米国経済指標：経済指標・マクロニュース・スケジュールをひとつに',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ichiの米国経済指標',
     description: '米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。',
-    images: ['/share/ichi-us-economy-v1.png'],
+    images: ['/share/ichi-us-economy-v2.png'],
   },
   manifest: '/manifest.json',
   appleWebApp: {

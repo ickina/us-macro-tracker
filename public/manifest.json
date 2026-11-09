@@ -1,35 +1,23 @@
 {
   "name": "ichiの米国経済指標",
   "short_name": "ichiの米国経済指標",
-  "description": "FRED APIを通じて米国の主要なマクロ経済指標を可視化します。",
+  "description": "米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#f1f5f9",
   "icons": [
     {
-      "src": "/icons/icon-48.webp",
-      "type": "image/webp",
-      "sizes": "48x48",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-72.webp",
-      "type": "image/webp",
-      "sizes": "72x72",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-192.webp",
-      "type": "image/webp",
+      "src": "/icons/ichi-blue-v2-192.png",
+      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.webp",
-      "type": "image/webp",
+      "src": "/icons/ichi-blue-v2-512.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ]
 }
