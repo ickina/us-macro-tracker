@@ -8,6 +8,7 @@ import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
+import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { Loader2, AlertCircle, RefreshCw, Star } from 'lucide-react';
 
@@ -75,6 +76,7 @@ const VALID_SERIES_IDS = new Set(SERIES_ITEMS.map(item => item.id));
 export default function DashboardPage() {
   const { favorites, toggleFavorite, sessionOnly } = useFavoriteIndicators(VALID_SERIES_IDS);
   const [data, setData] = useState<Record<string, FredSeriesData>>({});
+  const updatedIndicators = useIndicatorUpdates(data);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [justUpdated, setJustUpdated] = useState(false);
@@ -228,6 +230,7 @@ export default function DashboardPage() {
                   title={item.title} 
                   data={seriesData}
                   isFavorite={favorites.has(item.id)}
+                  isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
                 />
               );

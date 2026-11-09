@@ -8,10 +8,11 @@ interface Props {
   title: string;
   data: FredSeriesData;
   isFavorite: boolean;
+  isUpdated: boolean;
   onToggleFavorite: (id: string) => void;
 }
 
-export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, onToggleFavorite }: Props) {
+export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
@@ -80,6 +81,12 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium tracking-wide text-muted">最新値</span>
+          {isUpdated && (
+            <span aria-label="前回表示から更新あり" title="このブラウザーで前回表示した値から更新されています"
+              className="rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold leading-4 tracking-wide text-accent">
+              NEW
+            </span>
+          )}
           {isInverted && (
             <span className="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-semibold text-negative">
               逆イールド
