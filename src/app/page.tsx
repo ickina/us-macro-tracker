@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
-import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
@@ -170,8 +169,6 @@ export default function DashboardPage() {
             <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新データを取得'}</span>
           </button>
         </div>
-
-        <TodayHighlights />
 
         {/* カテゴリ別タブフィルター */}
         <div className="mb-4 md:mb-6 px-2">

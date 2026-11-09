@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
+import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { MacroNewsItem } from '../api/news/route';
 import { enrichNewsWithLatestInsights } from '@/lib/clientNews';
 import macroData from '@/data/macroData.json';
@@ -115,6 +116,8 @@ export default function MacroNewsPage() {
             <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新ニュースを取得'}</span>
           </button>
         </div>
+
+        <TodayHighlights />
 
         {/* 検索バー ＆ カテゴリタブ */}
         <div className="space-y-3 mb-6">
