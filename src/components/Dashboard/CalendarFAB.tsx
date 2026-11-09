@@ -1,11 +1,17 @@
 "use client";
 
 import { Calendar } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScheduleModal } from './ScheduleModal';
 
 export function CalendarFAB() {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const open = () => setIsOpen(true);
+    window.addEventListener('ichi-open-schedule', open);
+    return () => window.removeEventListener('ichi-open-schedule', open);
+  }, []);
 
   return (
     <>
