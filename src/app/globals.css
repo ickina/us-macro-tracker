@@ -79,3 +79,40 @@ body {
 @layer utilities {
   .text-balance { text-wrap: balance; }
 }
+
+/* Full-width schedule ticker. Only transforms animate; the page never scrolls sideways. */
+.schedule-ticker {
+  --ticker-fill: #e2edff;
+  --ticker-text: #1e40af;
+  --ticker-rule: #bfd4fb;
+  --ticker-heading-fill: #d3e3ff;
+  color: var(--ticker-text);
+  background: var(--ticker-fill);
+  border-block: 1px solid var(--ticker-rule);
+  overflow: hidden;
+}
+[data-theme="dark"] .schedule-ticker {
+  --ticker-fill: #102447;
+  --ticker-text: #bfdbfe;
+  --ticker-rule: #254875;
+  --ticker-heading-fill: #17345e;
+}
+.ticker-heading { background: var(--ticker-heading-fill); border-right: 1px solid var(--ticker-rule); }
+.ticker-pause { border-left: 1px solid var(--ticker-rule); }
+.ticker-track { animation: schedule-scroll var(--ticker-duration, 30s) linear infinite; }
+.ticker-copy { width: var(--ticker-segment-width, max-content); padding-right: 48px; }
+.schedule-ticker[data-paused="true"] .ticker-track,
+.ticker-open:focus-visible .ticker-track { animation-play-state: paused; }
+.schedule-ticker[data-static="true"] .ticker-track { animation: none; }
+.schedule-ticker[data-static="true"] .ticker-duplicate { display: none; }
+@media (hover: hover) { .ticker-open:hover .ticker-track { animation-play-state: paused; } }
+@keyframes schedule-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-1 * var(--ticker-segment-width, 100%))); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .schedule-ticker .ticker-track { animation: none; }
+  .schedule-ticker .ticker-duplicate, .schedule-ticker .ticker-pause { display: none; }
+  .schedule-ticker .ticker-window { overflow-x: auto; scrollbar-width: none; }
+  .schedule-ticker .ticker-copy { width: max-content; padding-right: 16px; }
+}

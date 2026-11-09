@@ -145,7 +145,8 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
       <Header />
-      <main className="flex-1 max-w-[1400px] w-full mx-auto py-4 md:py-8 px-2 md:px-6">
+      <main className="flex-1 w-full py-4 md:py-8">
+        <div className="mx-auto w-full max-w-[1400px] px-2 md:px-6">
         
         {/* タイトル＆リフレッシュボタン */}
         <div className="mb-4 md:mb-6 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -173,7 +174,11 @@ export default function DashboardPage() {
           </button>
         </div>
 
+        </div>
+
         <TodayHighlights />
+
+        <div className="mx-auto w-full max-w-[1400px] px-2 md:px-6">
 
         {/* カテゴリ別タブフィルター */}
         <div className="mb-4 md:mb-6 px-2">
@@ -240,6 +245,7 @@ export default function DashboardPage() {
             })}
           </SummaryGrid>
         )}
+        </div>
       </main>
     </div>
   );

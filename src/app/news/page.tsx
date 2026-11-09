@@ -89,7 +89,8 @@ export default function MacroNewsPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Header />
       
-      <main className="flex-1 max-w-[1200px] w-full mx-auto py-4 md:py-8 px-3 md:px-6">
+      <main className="flex-1 w-full py-4 md:py-8">
+        <div className="mx-auto w-full max-w-[1200px] px-3 md:px-6">
         
         {/* タイトル ＆ アクション */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -117,7 +118,11 @@ export default function MacroNewsPage() {
           </button>
         </div>
 
+        </div>
+
         <TodayHighlights />
+
+        <div className="mx-auto w-full max-w-[1200px] px-3 md:px-6">
 
         {/* 検索バー ＆ カテゴリタブ */}
         <div className="space-y-3 mb-6">
@@ -253,6 +258,7 @@ export default function MacroNewsPage() {
             )}
           </div>
         )}
+        </div>
       </main>
     </div>
   );
