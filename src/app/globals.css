@@ -116,3 +116,7 @@ body {
   .schedule-ticker .ticker-window { overflow-x: auto; scrollbar-width: none; }
   .schedule-ticker .ticker-copy { width: max-content; padding-right: 16px; }
 }
+
+.market-sheet[open] { animation: market-sheet-rise 220ms ease-out; }
+@keyframes market-sheet-rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .market-sheet[open] { animation: none; } }

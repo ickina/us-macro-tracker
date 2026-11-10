@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { MarketDrawer } from '@/components/Dashboard/MarketDrawer';
 import { CalendarFAB } from '@/components/Dashboard/CalendarFAB';
 
 export const viewport: Viewport = {
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className="antialiased bg-canvas text-ink selection:bg-blue-500/30 font-sans">
         {children}
         <CalendarFAB />
+        <MarketDrawer />
       </body>
     </html>
   );
