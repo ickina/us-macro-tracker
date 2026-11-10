@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { MacroNewsItem } from '../api/news/route';
@@ -16,6 +16,7 @@ import {
   Activity, 
   LayoutGrid,
   Search,
+  X,
   Loader2,
   AlertCircle,
   RefreshCw
@@ -42,6 +43,19 @@ export default function MacroNewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<NewsCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen) searchInputRef.current?.focus();
+  }, [isSearchOpen]);
+
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery('');
+    searchButtonRef.current?.focus();
+  };
 
   const fetchNews = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
@@ -98,9 +112,6 @@ export default function MacroNewsPage() {
             <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tighter">
               米国マクロ経済ニュース ＆ リリース情報
             </h2>
-            <p className="text-muted mt-1 text-sm md:text-base">
-              FRED公式リリース・FRB発表・主要経済指標の最新ファンダメンタルズ動向
-            </p>
           </div>
 
           <button
@@ -126,20 +137,9 @@ export default function MacroNewsPage() {
 
         {/* 検索バー ＆ カテゴリタブ */}
         <div className="space-y-3 mb-6">
-          {/* 検索入力 */}
-          <div className="relative max-w-md">
-            <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="キーワードでニュースを検索 (例: CPI, FRB, 金利...)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface border border-divider rounded-xl pl-10 pr-4 py-2 text-sm text-ink placeholder-muted focus:outline-none focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          {/* カテゴリタブ */}
-          <div className="w-full overflow-x-auto pb-1 scrollbar-none">
+          {/* 検索ボタンは固定し、カテゴリだけ横にスクロール */}
+          <div className="flex min-w-0 items-center gap-2">
+          <div className="min-w-0 flex-1 overflow-x-auto pb-1 scrollbar-none">
             <div className="flex items-center gap-2 min-w-max">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
@@ -161,6 +161,27 @@ export default function MacroNewsPage() {
               })}
             </div>
           </div>
+          <button ref={searchButtonRef} type="button"
+            onClick={() => isSearchOpen ? closeSearch() : setIsSearchOpen(true)}
+            aria-label={isSearchOpen ? 'ニュース検索を閉じる' : 'ニュース検索を開く'}
+            aria-expanded={isSearchOpen} aria-controls="news-search-panel"
+            title={isSearchOpen ? '検索を閉じて全件に戻す' : 'ニュースを検索'}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-divider bg-surface text-accent hover:bg-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+            {isSearchOpen ? <X aria-hidden="true" className="h-4 w-4" /> : <Search aria-hidden="true" className="h-4 w-4" />}
+          </button>
+          </div>
+          {isSearchOpen && (
+            <div id="news-search-panel" className="relative max-w-md">
+              <label htmlFor="news-search-input" className="sr-only">ニュースのキーワード検索</label>
+              <Search aria-hidden="true" className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <input ref={searchInputRef} id="news-search-input" type="search"
+                placeholder="ニュースを検索（CPI・FRB・金利など）"
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); closeSearch(); } }}
+                className="min-h-11 w-full rounded-xl border border-divider bg-surface py-2 pl-10 pr-4 text-sm text-ink placeholder-muted focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+          )}
         </div>
 
         {/* ローディング表示 */}

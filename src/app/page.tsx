@@ -154,9 +154,6 @@ export default function DashboardPage() {
             <h2 className="flex flex-wrap gap-x-1.5 text-2xl sm:text-3xl font-bold leading-snug text-ink tracking-tight lg:tracking-normal">
               <span className="inline-block">米経済指標</span><span className="inline-block">ダッシュボード</span>
             </h2>
-            <p className="text-muted mt-1 text-sm md:text-base">
-              FRED APIを通じて米国の主要マクロ経済指標（全{SERIES_ITEMS.length}項目）を可視化します。
-            </p>
           </div>
 
           <button
