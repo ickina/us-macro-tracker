@@ -45,3 +45,7 @@ Run `node --test scripts/fetch-macro-data.test.mjs` to verify the refresh safegu
 - News failures keep the previous items from the affected source and emit warnings, including GitHub Actions warning annotations. FX supplementation is optional; failure keeps the FRED values and emits a warning. A successful run means the required indicators refreshed; warnings may still indicate older news or unavailable FX supplementation.
 - A completed dataset is written to a temporary file and renamed to avoid truncating the existing file if writing fails. Each network request has a timeout. Actions runs refreshes sequentially and enforces a job timeout.
 - Inspect the Actions run's logs and warnings after a failure. GitHub notification delivery depends on each user's notification settings; this change does not configure email or other external notifications.
+
+## Detailed chart history
+
+Daily refresh also writes compact per-series full history to `public/history/`. Dashboard data remains capped at its previous size; a history file is requested only when its detail chart opens. Current dashboard/FX observations override matching history dates. Periods without sufficient coverage are disabled. ALL means all observations available from the source, not an assurance that every market has unlimited history. Long charts retain endpoint/bucket extrema while limiting rendered points to 800; displayed statistics use every observation in the selected period.

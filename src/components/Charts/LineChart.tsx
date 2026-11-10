@@ -1,6 +1,7 @@
 'use client';
 import { CartesianGrid, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Observation } from '@/lib/fred';
+import { sampleChartHistory } from '@/lib/chartHistory';
 
 interface Props {
   data: Observation[];
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export function LineChartComponent({ data, color = '#3b82f6', showXAxis = false }: Props) {
-  const chartData = data.map(d => ({
+  const chartData = sampleChartHistory(data).map(d => ({
     date: d.date,
     value: parseFloat(d.value)
   }));

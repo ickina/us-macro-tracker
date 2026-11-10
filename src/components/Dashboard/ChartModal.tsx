@@ -2,18 +2,45 @@ import { X, Calendar } from 'lucide-react';
 import { Observation } from '@/lib/fred';
 import { LineChartComponent } from '../Charts/LineChart';
 import { useEffect, useState, useMemo } from 'react';
+import { isValidHistory, mergeChartHistory, timeframeStart } from '@/lib/chartHistory';
 
 type Timeframe = '1Y' | '3Y' | '5Y' | '10Y' | 'ALL';
 
 interface Props {
   isOpen: boolean;
+  seriesId: string;
   onClose: () => void;
   title: string;
   data: Observation[];
   color: string;
 }
 
-export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
+export function ChartModal(props: Props) {
+  if (!props.isOpen) return null;
+  return <OpenChartModal key={props.seriesId} {...props} />;
+}
+
+function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
+  const [history, setHistory] = useState<Observation[]>([]);
+  const [historyStatus, setHistoryStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    let active = true;
+    fetch(`/history/${encodeURIComponent(seriesId)}.json`, { signal: controller.signal, cache: 'no-store' })
+      .then(async response => {
+        if (!response.ok) throw new Error('History unavailable');
+        const result: unknown = await response.json();
+        if (!isValidHistory(result, seriesId)) throw new Error('Invalid history');
+        if (active) { setHistory(result.observations); setHistoryStatus('ready'); }
+      })
+      .catch(() => { if (active) setHistoryStatus('error'); })
+      .finally(() => clearTimeout(timeout));
+    return () => { active = false; clearTimeout(timeout); controller.abort(); };
+  }, [seriesId]);
+
+  const fullData = useMemo(() => mergeChartHistory(history, data), [history, data]);
   const [timeframe, setTimeframe] = useState<Timeframe>('ALL');
 
   // ESCキーで閉じる処理、背景スクロール防止
@@ -33,29 +60,20 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
     };
   }, [isOpen, onClose]);
 
-  // モーダルが開かれたらデフォルトはALLにリセット
-  useEffect(() => {
-    if (isOpen) {
-      setTimeframe('ALL');
-    }
-  }, [isOpen]);
-
-  // 選択されたタイムフレームでデータをフィルタリング
   const filteredData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    if (timeframe === 'ALL') return data;
+    if (fullData.length === 0 || timeframe === 'ALL') return fullData;
+    const start = timeframeStart(fullData[fullData.length - 1].date, Number(timeframe.slice(0, -1)));
+    return fullData.filter(item => item.date >= start);
+  }, [fullData, timeframe]);
 
-    const latestDate = new Date(data[data.length - 1].date);
-    const targetDate = new Date(latestDate);
-
-    if (timeframe === '1Y') targetDate.setFullYear(targetDate.getFullYear() - 1);
-    else if (timeframe === '3Y') targetDate.setFullYear(targetDate.getFullYear() - 3);
-    else if (timeframe === '5Y') targetDate.setFullYear(targetDate.getFullYear() - 5);
-    else if (timeframe === '10Y') targetDate.setFullYear(targetDate.getFullYear() - 10);
-
-    const filtered = data.filter(d => new Date(d.date) >= targetDate);
-    return filtered.length > 0 ? filtered : data;
-  }, [data, timeframe]);
+  const isAvailable = (tf: Timeframe) => {
+    if (tf === 'ALL') return true;
+    if (fullData.length < 2) return false;
+    const start = new Date(`${timeframeStart(fullData[fullData.length - 1].date, Number(tf.slice(0, -1)))}T00:00:00Z`);
+    // Allow a trading-week gap at the left edge for weekends and market holidays.
+    start.setUTCDate(start.getUTCDate() + 7);
+    return fullData[0].date <= start.toISOString().slice(0, 10);
+  };
 
   // 統計情報 (最高値、最安値、最新値、日付範囲)
   const stats = useMemo(() => {
@@ -118,15 +136,19 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
         </div>
 
         {/* 期間切り替えボタン */}
-        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 self-start sm:self-end bg-canvas/60 p-1 rounded-xl border border-divider">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 self-start sm:self-end bg-canvas/60 p-1 rounded-xl border border-divider">
           {timeframes.map((tf) => (
             <button
               key={tf}
+              type="button"
+              disabled={!isAvailable(tf)}
+              aria-pressed={timeframe === tf}
+              title={!isAvailable(tf) ? 'この期間のデータがありません' : tf === 'ALL' ? '取得済みの全期間' : `${tf.slice(0, -1)}年間`}
               onClick={() => setTimeframe(tf)}
               className={`px-3 py-1 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
                 timeframe === tf
                   ? 'bg-blue-600 text-white shadow-sm font-bold'
-                  : 'text-muted hover:text-ink hover:bg-raised'
+                  : 'text-muted hover:text-ink hover:bg-raised disabled:cursor-not-allowed disabled:opacity-35'
               }`}
             >
               {tf}
@@ -134,6 +156,13 @@ export function ChartModal({ isOpen, onClose, title, data, color }: Props) {
           ))}
         </div>
         
+        <p role="status" className="mb-1 text-xs leading-relaxed text-muted">
+          {historyStatus === 'loading' ? '長期データを読み込み中…' : historyStatus === 'error'
+            ? '長期データを読み込めませんでした。保存済みの範囲を表示しています。開き直すと再試行できます。'
+            : 'ALLは取得済みの全期間です。履歴が足りない期間は選択できません。'}
+          {filteredData.length > 800 && ' グラフは高値・安値を残して間引き表示しています。'}
+        </p>
+
         {/* チャート描画領域 */}
         <div className="h-[40vh] min-h-48 shrink-0 sm:h-[50vh] w-full mt-2">
           <LineChartComponent data={filteredData} color={activeColor} showXAxis={true} />

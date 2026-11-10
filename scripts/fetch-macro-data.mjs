@@ -107,7 +107,7 @@ function decodeHtmlEntities(str) {
     .trim();
 }
 
-export async function fetchFredSeries(conf) {
+export async function fetchFredSeries(conf, { fullHistory = false } = {}) {
   const url = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${conf.id}`;
   const res = await request(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
   if (!res.ok) {
@@ -178,7 +178,7 @@ export async function fetchFredSeries(conf) {
   }
 
   const limit = conf.freq === 'daily' ? 300 : conf.freq === 'weekly' ? 260 : 120;
-  if (finalObs.length > limit) {
+  if (!fullHistory && finalObs.length > limit) {
     finalObs = finalObs.slice(-limit);
   }
 
@@ -426,15 +426,31 @@ async function fetchCnbcMarketNews() {
   }
 }
 
-export async function main({ outPath = path.join(__dirname, '..', 'src', 'data', 'macroData.json') } = {}) {
+const DEFAULT_OUT_PATH = path.join(__dirname, '..', 'src', 'data', 'macroData.json');
+
+function writeJsonAtomic(outPath, payload, pretty = false) {
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  const temporaryPath = `${outPath}.${process.pid}.tmp`;
+  try {
+    fs.writeFileSync(temporaryPath, JSON.stringify(payload, null, pretty ? 2 : undefined), { encoding: 'utf8', flag: 'wx' });
+    fs.renameSync(temporaryPath, outPath);
+  } finally {
+    if (fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
+  }
+}
+
+export async function main({ outPath = DEFAULT_OUT_PATH,
+  historyDir = outPath === DEFAULT_OUT_PATH ? path.join(__dirname, '..', 'public', 'history') : path.join(path.dirname(outPath), 'history'),
+} = {}) {
   // Load before fetching: an unreadable existing snapshot must never be silently replaced.
   const previous = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, 'utf8')) : null;
   const indicators = {};
+  const histories = {};
   const failures = [];
   console.log('Starting macro data refresh (41 required indicators)...');
   for (const conf of SERIES_CONFIG) {
     try {
-      indicators[conf.id] = await fetchFredSeries(conf);
+      histories[conf.id] = await fetchFredSeries(conf, { fullHistory: true });
       console.log(`OK ${conf.id}`);
     } catch (err) {
       failures.push(`${conf.id}: ${err.message}`);
@@ -445,8 +461,12 @@ export async function main({ outPath = path.join(__dirname, '..', 'src', 'data',
     throw new Error(`Refresh cancelled; existing data and updatedAt unchanged. ${failures.length} indicator(s) failed: ${failures.join('; ')}`);
   }
 
-  await supplementLiveFx(indicators);
-  for (const conf of SERIES_CONFIG) validateSeries(indicators[conf.id], conf.id);
+  await supplementLiveFx(histories);
+  for (const conf of SERIES_CONFIG) {
+    validateSeries(histories[conf.id], conf.id);
+    const limit = conf.freq === 'daily' ? 300 : conf.freq === 'weekly' ? 260 : 120;
+    indicators[conf.id] = { seriesId: conf.id, observations: histories[conf.id].observations.slice(-limit) };
+  }
 
   const news = [];
   const newsSources = [
@@ -464,15 +484,10 @@ export async function main({ outPath = path.join(__dirname, '..', 'src', 'data',
   }
 
   const payload = { updatedAt: new Date().toISOString(), indicators, news };
-  fs.mkdirSync(path.dirname(outPath), { recursive: true });
-  // Rename on the same filesystem so an interrupted write cannot truncate the live snapshot.
-  const temporaryPath = `${outPath}.${process.pid}.tmp`;
-  try {
-    fs.writeFileSync(temporaryPath, JSON.stringify(payload, null, 2), { encoding: 'utf8', flag: 'wx' });
-    fs.renameSync(temporaryPath, outPath);
-  } finally {
-    if (fs.existsSync(temporaryPath)) fs.unlinkSync(temporaryPath);
-  }
+  // Long history is lazy-loaded by the detail view, never imported into the dashboard bundle.
+  // Nothing is written unless every required series fetched and validated successfully.
+  for (const conf of SERIES_CONFIG) writeJsonAtomic(path.join(historyDir, `${conf.id}.json`), histories[conf.id]);
+  writeJsonAtomic(outPath, payload, true);
   console.log(`Saved ${SERIES_CONFIG.length} indicators and ${news.length} news items to ${outPath}`);
   return payload;
 }

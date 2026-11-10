@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { main, SERIES_CONFIG, validateSeries } from './fetch-macro-data.mjs';
+import { main, SERIES_CONFIG, validateSeries, fetchFredSeries } from './fetch-macro-data.mjs';
 
 const oldSnapshot = {
   updatedAt: '2025-01-01T00:00:00.000Z',
@@ -69,7 +69,7 @@ test('successful refresh writes all 41 finite series and fresh news without chan
   assert(!result.news.some(n => n.id.startsWith('old-')));
   assert.notEqual(result.updatedAt, oldSnapshot.updatedAt);
   assert.deepEqual(JSON.parse(fs.readFileSync(outPath, 'utf8')), result);
-  assert.deepEqual(fs.readdirSync(path.dirname(outPath)), ['macroData.json']);
+  assert.deepEqual(fs.readdirSync(path.dirname(outPath)).sort(), ['history', 'macroData.json']);
 });
 
 for (const [name, response] of [
@@ -147,7 +147,7 @@ test('interrupted atomic save preserves original and cleans temporary file', asy
   t.mock.method(fs, 'renameSync', () => { throw new Error('disk failure'); });
   await assert.rejects(main({ outPath }), /disk failure/);
   assert.equal(fs.readFileSync(outPath, 'utf8'), original);
-  assert.deepEqual(fs.readdirSync(path.dirname(outPath)), ['macroData.json']);
+  assert.deepEqual(fs.readdirSync(path.dirname(outPath)).sort(), ['history', 'macroData.json']);
 });
 
 test('actual CLI exits nonzero on failure so Actions and builds cannot claim success', t => {
@@ -164,4 +164,28 @@ test('actual CLI exits nonzero on failure so Actions and builds cannot claim suc
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Refresh cancelled/);
   assert.deepEqual(JSON.parse(fs.readFileSync(snapshot, 'utf8')), oldSnapshot);
+});
+
+
+test('daily dashboard stays at 300 observations while detailed history keeps older years', async t => {
+  const { outPath } = fixture(t);
+  const lines = Array.from({ length: 2200 }, (_, i) => `${new Date(Date.UTC(2020, 0, i + 1)).toISOString().slice(0, 10)},${100 + i}`);
+  mockSources(t, { fred: id => new Response(`observation_date,${id}\n${lines.join('\n')}\n`) });
+  const result = await main({ outPath });
+  assert.equal(result.indicators.SP500.observations.length, 300);
+  const history = JSON.parse(fs.readFileSync(path.join(path.dirname(outPath), 'history', 'SP500.json'), 'utf8'));
+  assert.equal(history.observations.length, 2200);
+  assert.equal(history.observations[0].date, '2020-01-01');
+  const limited = await fetchFredSeries({ id: 'SP500', freq: 'daily' });
+  assert.equal(limited.observations.length, 300);
+});
+
+test('required fetch failure also preserves previously published long history', async t => {
+  const { outPath } = fixture(t);
+  const dir = path.join(path.dirname(outPath), 'history');
+  fs.mkdirSync(dir);
+  fs.writeFileSync(path.join(dir, 'SP500.json'), 'previous history');
+  mockSources(t, { fred: () => new Response('', { status: 503 }) });
+  await assert.rejects(main({ outPath }), /Refresh cancelled/);
+  assert.equal(fs.readFileSync(path.join(dir, 'SP500.json'), 'utf8'), 'previous history');
 });

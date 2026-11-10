@@ -129,7 +129,8 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
         </div>
       </article>
       <ChartModal 
-        isOpen={isModalOpen} 
+        isOpen={isModalOpen}
+        seriesId={data.seriesId}
         onClose={() => setIsModalOpen(false)} 
         title={title} 
         data={obs} 
