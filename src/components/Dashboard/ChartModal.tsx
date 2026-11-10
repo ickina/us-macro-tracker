@@ -41,7 +41,7 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
   }, [seriesId]);
 
   const fullData = useMemo(() => mergeChartHistory(history, data), [history, data]);
-  const [timeframe, setTimeframe] = useState<Timeframe>('ALL');
+  const [preferredTimeframe, setTimeframe] = useState<Timeframe>('1Y');
 
   // ESCキーで閉じる処理、背景スクロール防止
   useEffect(() => {
@@ -60,12 +60,6 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
     };
   }, [isOpen, onClose]);
 
-  const filteredData = useMemo(() => {
-    if (fullData.length === 0 || timeframe === 'ALL') return fullData;
-    const start = timeframeStart(fullData[fullData.length - 1].date, Number(timeframe.slice(0, -1)));
-    return fullData.filter(item => item.date >= start);
-  }, [fullData, timeframe]);
-
   const isAvailable = (tf: Timeframe) => {
     if (tf === 'ALL') return true;
     if (fullData.length < 2) return false;
@@ -74,6 +68,14 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
     start.setUTCDate(start.getUTCDate() + 7);
     return fullData[0].date <= start.toISOString().slice(0, 10);
   };
+
+  const timeframe = isAvailable(preferredTimeframe) ? preferredTimeframe : 'ALL';
+
+  const filteredData = useMemo(() => {
+    if (fullData.length === 0 || timeframe === 'ALL') return fullData;
+    const start = timeframeStart(fullData[fullData.length - 1].date, Number(timeframe.slice(0, -1)));
+    return fullData.filter(item => item.date >= start);
+  }, [fullData, timeframe]);
 
   // 統計情報 (最高値、最安値、最新値、日付範囲)
   const stats = useMemo(() => {
