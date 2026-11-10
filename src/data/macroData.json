@@ -1,13 +1,9 @@
 {
-  "updatedAt": "2026-11-10T04:25:01.990Z",
+  "updatedAt": "2026-11-10T11:07:00.900Z",
   "indicators": {
     "DEXJPUS": {
       "seriesId": "DEXJPUS",
       "observations": [
-        {
-          "date": "2025-08-27",
-          "value": "147.75"
-        },
         {
           "date": "2025-08-28",
           "value": "146.98"
@@ -2418,10 +2414,6 @@
     "DEXUSEU": {
       "seriesId": "DEXUSEU",
       "observations": [
-        {
-          "date": "2025-08-27",
-          "value": "1.1611"
-        },
         {
           "date": "2025-08-28",
           "value": "1.1672"
@@ -21178,10 +21170,6 @@
       "seriesId": "NASDAQCOM",
       "observations": [
         {
-          "date": "2025-08-29",
-          "value": "21455.55"
-        },
-        {
           "date": "2025-09-02",
           "value": "21279.63"
         },
@@ -22376,6 +22364,10 @@
         {
           "date": "2026-11-06",
           "value": "24579.42"
+        },
+        {
+          "date": "2026-11-09",
+          "value": "25253.14"
         }
       ]
     },
@@ -28408,10 +28400,6 @@
       "seriesId": "NASDAQXAU",
       "observations": [
         {
-          "date": "2025-08-29",
-          "value": "249.08"
-        },
-        {
           "date": "2025-09-02",
           "value": "255.05"
         },
@@ -29606,6 +29594,10 @@
         {
           "date": "2026-11-06",
           "value": "352.82"
+        },
+        {
+          "date": "2026-11-09",
+          "value": "369.23"
         }
       ]
     },
