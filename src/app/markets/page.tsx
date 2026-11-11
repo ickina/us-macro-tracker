@@ -64,7 +64,7 @@ export default function MarketsPage() {
               {snapshot?.[item.id] && <button type="button" onClick={() => setHistoryOpen(true)} className="min-h-8 rounded-lg border border-divider px-2 text-[11px] text-accent">保存履歴</button>}
             </div>
             <TradingViewWidget fill key={item.symbol} item={{ id: item.symbol, title: item.title, subtitle: item.subtitle }} />
-            <p className="mt-1 shrink-0 text-[10px] leading-relaxed text-muted" data-market-freshness>{item.symbol} · {item.freshness}。データ時点は公式表示に準拠。騰落＝選択期間（初期1Y）、帯＝日次。</p>
+            <p className="mt-1 shrink-0 text-[10px] leading-relaxed text-muted" data-market-freshness>{item.symbol} · {item.freshness}。時点は公式表示に準拠。騰落＝選択期間（初期1Y）、帯＝日次。{MARKET_IDS.has(item.id) && ' ダッシュボード・保存履歴とは取得元／更新時点が異なり、価格が一致しない場合があります。'}</p>
           </> : snapshot?.[item.id] ? <>
             <ChartModal key={item.id} embedded isOpen seriesId={item.id} title={item.title} source={MARKET_ITEMS.find(market => market.id === item.id)?.source} unit={MARKET_ITEMS.find(market => market.id === item.id)?.unit} data={snapshot[item.id].observations} color="#3b82f6" onClose={() => {}} />
           </> : <div role="status" className="flex min-h-[160px] flex-col items-center justify-center gap-4 text-sm text-muted">
