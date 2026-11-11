@@ -128,7 +128,7 @@ body {
 }
 
 /* One compact reserved row keeps schedule controls clear of all page content. */
-.schedule-space { height: calc(48px + env(safe-area-inset-bottom, 0px)); }
+.schedule-space { height: calc(56px + env(safe-area-inset-bottom, 0px)); }
 .schedule-button { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
 
 /* Only our symbol label animates; the cross-origin chart stays unobstructed. */

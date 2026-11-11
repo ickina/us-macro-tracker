@@ -26,11 +26,11 @@ export function CalendarFAB() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="schedule-button fixed right-3 sm:right-6 flex h-10 items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all z-40 group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
+        className="schedule-button fixed right-3 sm:right-6 flex h-12 items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all z-40 group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500"
         aria-label="経済指標スケジュールを開く"
       >
-        <Calendar aria-hidden="true" className="h-5 w-5 group-hover:scale-110 transition-transform" />
-        <span className="whitespace-nowrap text-[11px] font-semibold leading-4">スケジュール</span>
+        <Calendar aria-hidden="true" className="h-6 w-6 group-hover:scale-110 transition-transform" />
+        <span className="whitespace-nowrap text-[13px] font-semibold leading-5">スケジュール</span>
       </button>
       
       <ScheduleModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
