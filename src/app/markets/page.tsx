@@ -57,9 +57,9 @@ export default function MarketsPage() {
           </button>)}
         </div>
         {onlyFavorites && visibleMarkets.length === 0 && <p className="py-3 text-xs text-muted">マーケットのお気に入りはまだありません。ダッシュボードの☆から登録できます。</p>}
-        <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-3 shadow-sm">
+        <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
           {item.symbol ? <>
-            <div className="mb-1 flex shrink-0 items-center justify-between gap-2">
+            <div className="flex shrink-0 items-center justify-between gap-2">
               <h3 className="text-sm font-bold">{item.title}</h3>
               {snapshot?.[item.id] && <button type="button" onClick={() => setHistoryOpen(true)} className="min-h-8 rounded-lg border border-divider px-2 text-[11px] text-accent">保存履歴</button>}
             </div>
