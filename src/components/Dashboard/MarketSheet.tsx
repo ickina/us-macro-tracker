@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { RefreshCw, Star, X } from 'lucide-react';
+import { TRADING_VIEW_MARKETS, type TradingViewMarket } from '@/lib/tradingViewMarkets';
+import { TradingViewWidget } from './TradingViewWidget';
 import { MARKET_IDS, MARKET_ITEMS } from '@/lib/marketCatalog';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { LineChartComponent } from '@/components/Charts/LineChart';
 import type { Snapshot, Detail } from './MarketDrawer';
 
-export default function MarketSheet({ snapshot, status, onRefresh, onClose, onDetail }: {
-  snapshot: Snapshot | null; status: string; onRefresh: () => void; onClose: () => void; onDetail: (detail: Detail) => void;
+export default function MarketSheet({ snapshot, status, onRefresh, onClose, onDetail, onTradingViewDetail }: {
+  snapshot: Snapshot | null; status: string; onRefresh: () => void; onClose: () => void; onDetail: (detail: Detail) => void; onTradingViewDetail: (item: TradingViewMarket) => void;
 }) {
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const { favorites } = useFavoriteIndicators(MARKET_IDS);
@@ -36,7 +38,7 @@ export default function MarketSheet({ snapshot, status, onRefresh, onClose, onDe
         <div aria-hidden="true" className="mx-auto mt-2 h-1 w-10 rounded-full bg-divider" />
         <div className="flex items-center justify-between gap-3 px-4 py-2 sm:px-6">
           <div><h2 id="market-sheet-title" className="text-base font-bold sm:text-lg">マーケット</h2>
-            <p className="mt-0.5 text-xs text-muted">日次の保存データです。リアルタイム価格ではありません。</p></div>
+            <p className="mt-0.5 text-xs text-muted">既存銘柄は日次の保存データ。NVDA・金はTradingViewの試験表示です。</p></div>
           <button type="button" onClick={onClose} aria-label="マーケット一覧を閉じる" className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-raised text-muted hover:text-ink"><X aria-hidden="true" className="h-5 w-5" /></button>
         </div>
         <div className="flex items-center gap-2 px-4 pb-3 sm:px-6">
@@ -69,6 +71,15 @@ export default function MarketSheet({ snapshot, status, onRefresh, onClose, onDe
               </button>;
             })}
           </div>}
+        {!onlyFavorites && <div aria-label="TradingView試験銘柄" className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:px-6">
+          {TRADING_VIEW_MARKETS.map(item => <section key={item.id} className="w-[min(88vw,360px)] shrink-0 snap-start rounded-2xl border border-divider bg-surface p-4">
+            <div className="mb-2 flex items-center justify-between gap-2"><h3 className="text-sm font-semibold">{item.title}</h3><span className="rounded-full bg-raised px-2 py-1 text-[10px] text-muted">試験追加</span></div>
+            <p className="mb-2 text-[11px] text-muted">{item.subtitle}</p>
+            <TradingViewWidget item={item} compact />
+            <button type="button" onClick={() => onTradingViewDetail(item)} aria-label={`${item.title}の詳細グラフを見る`} className="mt-2 min-h-11 w-full rounded-xl border border-divider bg-raised text-xs font-semibold text-accent hover:bg-raised-hover">詳細グラフを見る · 1Y</button>
+          </section>)}
+        </div>}
+        {!onlyFavorites && <p className="px-4 pb-3 text-[11px] leading-relaxed text-muted sm:px-6">TradingView銘柄の価格・遅延は提供元の仕様によります。金（GOLD）は金・銀鉱山株指数とは別の銘柄です。</p>}
         <p className="px-4 pb-4 text-[11px] text-muted sm:px-6">左右にスワイプして比較できます。カードを押すと詳細グラフへ。</p>
       </div>
     </dialog>

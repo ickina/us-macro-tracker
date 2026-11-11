@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BarChart3, ChevronUp } from 'lucide-react';
 import type { FredSeriesData } from '@/lib/fred';
+import type { TradingViewMarket } from '@/lib/tradingViewMarkets';
 import type { MarketItem } from '@/lib/marketCatalog';
 import { MARKET_ITEMS } from '@/lib/marketCatalog';
 import { isValidHistory } from '@/lib/chartHistory';
@@ -10,6 +11,8 @@ import dynamic from 'next/dynamic';
 
 const MarketSheet = dynamic(() => import('./MarketSheet'), { ssr: false });
 const ChartModal = dynamic(() => import('./ChartModal').then(module => module.ChartModal), { ssr: false });
+
+const TradingViewDetail = dynamic(() => import('./TradingViewDetail'), { ssr: false });
 
 export interface Snapshot { data: Record<string, FredSeriesData>; updatedAt: string }
 export type Detail = { item: MarketItem; series: FredSeriesData };
@@ -20,6 +23,7 @@ export function MarketDrawer() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [retry, setRetry] = useState(0);
   const [detail, setDetail] = useState<Detail | null>(null);
+  const [tvDetail, setTvDetail] = useState<TradingViewMarket | null>(null);
   const lastFetched = useRef(0);
   const fetchedRetry = useRef(0);
 
@@ -54,7 +58,9 @@ export function MarketDrawer() {
         <BarChart3 aria-hidden="true" className="h-4 w-4" />マーケット<ChevronUp aria-hidden="true" className="h-4 w-4" />
       </button>
       {open && <MarketSheet snapshot={snapshot} status={status} onRefresh={refresh} onClose={() => setOpen(false)}
+        onTradingViewDetail={item => { setOpen(false); setTvDetail(item); }}
         onDetail={value => { setOpen(false); setDetail(value); }} />}
+      {tvDetail && <TradingViewDetail item={tvDetail} onClose={() => { setTvDetail(null); start(); }} />}
       {detail && <ChartModal isOpen seriesId={detail.item.id} title={`${detail.item.title}（${detail.item.unit}）`}
         data={detail.series.observations} color="#3b82f6" onClose={() => { setDetail(null); start(); }} />}
     </>
