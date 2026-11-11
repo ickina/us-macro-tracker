@@ -8,6 +8,8 @@ type Timeframe = '1Y' | '3Y' | '5Y' | '10Y' | 'ALL';
 
 interface Props {
   isOpen: boolean;
+  embedded?: boolean;
+  unit?: string;
   seriesId: string;
   onClose: () => void;
   title: string;
@@ -20,7 +22,7 @@ export function ChartModal(props: Props) {
   return <OpenChartModal key={props.seriesId} {...props} />;
 }
 
-function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
+function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = false, unit }: Props) {
   const [history, setHistory] = useState<Observation[]>([]);
   const [historyStatus, setHistoryStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -45,20 +47,20 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
 
   // ESCキーで閉じる処理、背景スクロール防止
   useEffect(() => {
-    if (!isOpen) return;
-    
+    if (!isOpen || embedded) return;
+
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    
+
     document.addEventListener('keydown', handleEsc);
     document.body.style.overflow = 'hidden';
-    
+
     return () => {
       document.removeEventListener('keydown', handleEsc);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, embedded]);
 
   const isAvailable = (tf: Timeframe) => {
     if (tf === 'ALL') return true;
@@ -97,35 +99,43 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
   const isInverse = title.includes('Unemployment') || title.includes('Claims') || title.includes('失業') || title.includes('ハイイールド') || title.includes('VIX');
   const startVal = filteredData.length > 0 ? parseFloat(filteredData[0].value) : 0;
   const isPeriodPositive = stats.latest >= startVal;
-  const activeColor = isInverse 
+  const activeColor = isInverse
     ? (isPeriodPositive ? '#ef4444' : '#22c55e')
     : (isPeriodPositive ? '#22c55e' : '#ef4444');
+
+  const previous = fullData.at(-2);
+  const latestChange = previous ? stats.latest - Number(previous.value) : null;
 
   const timeframes: Timeframe[] = ['1Y', '3Y', '5Y', '10Y', 'ALL'];
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm transition-opacity" 
-      onClick={onClose}
+    <div
+      className={embedded ? "w-full min-w-0" : "fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm transition-opacity"}
+      onClick={embedded ? undefined : onClose}
     >
       <div
-        role="dialog" aria-modal="true" aria-label={title}
-        className="bg-surface border border-strong rounded-2xl w-full max-w-4xl p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-y-auto"
+        role={embedded ? undefined : "dialog"} aria-modal={embedded ? undefined : true} aria-label={title}
+        className={embedded ? "flex w-full min-w-0 flex-col" : "bg-surface border border-strong rounded-2xl w-full max-w-4xl p-4 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-y-auto"}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 閉じるボタン */}
-        <button 
+        {!embedded && <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-muted hover:text-ink bg-raised hover:bg-raised-hover rounded-full transition-colors z-10 cursor-pointer"
           aria-label="閉じる"
         >
           <X className="w-5 h-5" />
-        </button>
-        
+        </button>}
+
         {/* ヘッダー情報 */}
-        <div className="pr-10 mb-4">
+        <div className={embedded ? "mb-2" : "pr-10 mb-4"}>
           <h3 className="text-lg sm:text-2xl font-bold text-ink leading-snug">{title}</h3>
-          
+
+          {embedded && <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <strong className="text-2xl tabular-nums sm:text-3xl">{stats.latest.toLocaleString('ja-JP', { maximumFractionDigits: 2 })}</strong>
+            {unit && <span className="text-xs text-muted">{unit}</span>}
+            {latestChange !== null && <span className="text-xs text-muted">前回比 {latestChange > 0 ? '+' : ''}{latestChange.toLocaleString('ja-JP', { maximumFractionDigits: 2 })}</span>}
+          </div>}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs sm:text-sm text-muted">
             <span className="flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 text-accent" />
@@ -157,16 +167,16 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId }: Props) {
             </button>
           ))}
         </div>
-        
+
         <p role="status" className="mb-1 text-xs leading-relaxed text-muted">
           {historyStatus === 'loading' ? '長期データを読み込み中…' : historyStatus === 'error'
             ? '長期データを読み込めませんでした。保存済みの範囲を表示しています。開き直すと再試行できます。'
-            : 'ALLは取得済みの全期間です。履歴が足りない期間は選択できません。'}
+            : embedded ? 'ALL＝取得済みの全期間' : 'ALLは取得済みの全期間です。履歴が足りない期間は選択できません。'}
           {filteredData.length > 800 && ' グラフは高値・安値を残して間引き表示しています。'}
         </p>
 
         {/* チャート描画領域 */}
-        <div className="h-[40vh] min-h-48 shrink-0 sm:h-[50vh] w-full mt-2">
+        <div className={embedded ? "h-[34dvh] min-h-48 w-full shrink-0 mt-2 sm:h-[38dvh]" : "h-[40vh] min-h-48 shrink-0 sm:h-[50vh] w-full mt-2"}>
           <LineChartComponent data={filteredData} color={activeColor} showXAxis={true} />
         </div>
       </div>

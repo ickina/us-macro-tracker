@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { TradingViewMarket } from '@/lib/tradingViewMarkets';
+type WidgetMarket = { id: string; title: string; subtitle: string };
 
-export function TradingViewWidget({ item, compact = false }: { item: TradingViewMarket; compact?: boolean }) {
+export function TradingViewWidget({ item, compact = false }: { item: WidgetMarket; compact?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {

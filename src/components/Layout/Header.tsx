@@ -1,12 +1,12 @@
 'use client';
 
-import { Activity, LayoutDashboard, Newspaper } from 'lucide-react';
+import { Activity, LayoutDashboard, Newspaper, ChartNoAxesCombined } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
 import { usePathname } from 'next/navigation';
 
 export function Header() {
-  const pathname = usePathname();
+  const pathname = usePathname().replace(/\/+$/, '') || '/';
 
   return (
     <header className="border-b border-divider bg-canvas/90 backdrop-blur-md sticky top-0 z-20">
@@ -25,7 +25,7 @@ export function Header() {
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
             {/* PC・タブレット用ナビゲーション */}
-            <nav className="hidden md:flex items-center gap-2 bg-surface/90 p-1 rounded-xl border border-divider flex-shrink-0">
+            <nav className="hidden lg:flex items-center gap-2 bg-surface/90 p-1 rounded-xl border border-divider flex-shrink-0">
               <Link
                 href="/"
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
@@ -36,6 +36,11 @@ export function Header() {
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>ダッシュボード</span>
+              </Link>
+
+<Link href="/markets" aria-current={pathname === '/markets' ? 'page' : undefined}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
+                <ChartNoAxesCombined className="h-3.5 w-3.5 shrink-0" /><span>マーケット</span>
               </Link>
 
               <Link
@@ -54,10 +59,10 @@ export function Header() {
         </div>
 
         {/* スマホ用サブナビゲーションバー（タイトルを邪魔せず押しやすい位置に配置） */}
-        <div className="flex md:hidden items-center justify-around pb-2.5 pt-0.5 gap-2 border-t border-divider/40">
+        <div className="flex lg:hidden items-center justify-around pb-2.5 pt-0.5 gap-1 border-t border-divider/40">
           <Link
             href="/"
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-all ${
               pathname === '/'
                 ? 'bg-blue-600/20 border border-blue-500/40 text-accent font-bold'
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
@@ -67,9 +72,14 @@ export function Header() {
             <span>ダッシュボード</span>
           </Link>
 
+<Link href="/markets" aria-current={pathname === '/markets' ? 'page' : undefined}
+                className={`flex-1 flex min-w-0 items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold border ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
+                <ChartNoAxesCombined className="h-3.5 w-3.5 shrink-0" /><span>マーケット</span>
+              </Link>
+
           <Link
             href="/news"
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-all ${
               pathname === '/news'
                 ? 'bg-blue-600/20 border border-blue-500/40 text-accent font-bold'
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
