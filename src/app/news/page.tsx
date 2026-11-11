@@ -100,10 +100,10 @@ export default function MacroNewsPage() {
   }, [news, selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-canvas">
+    <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
       <Header />
       
-      <main className="flex-1 w-full py-4 md:py-8">
+      <main className="min-h-0 flex-1 w-full overflow-y-auto py-4 md:py-8">
         <div className="mx-auto w-full max-w-[1200px] px-3 md:px-6">
         
         {/* タイトル ＆ アクション */}
@@ -281,6 +281,7 @@ export default function MacroNewsPage() {
         )}
         </div>
       </main>
+      <div aria-hidden="true" className="schedule-space shrink-0 border-t border-divider bg-canvas" />
     </div>
   );
 }

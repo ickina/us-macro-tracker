@@ -10,6 +10,7 @@ interface Props {
   isOpen: boolean;
   embedded?: boolean;
   unit?: string;
+  source?: string;
   seriesId: string;
   onClose: () => void;
   title: string;
@@ -22,7 +23,7 @@ export function ChartModal(props: Props) {
   return <OpenChartModal key={props.seriesId} {...props} />;
 }
 
-function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = false, unit }: Props) {
+function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = false, unit, source }: Props) {
   const [history, setHistory] = useState<Observation[]>([]);
   const [historyStatus, setHistoryStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -43,6 +44,7 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = fal
   }, [seriesId]);
 
   const fullData = useMemo(() => mergeChartHistory(history, data), [history, data]);
+
   const [preferredTimeframe, setTimeframe] = useState<Timeframe>('1Y');
 
   // ESCキーで閉じる処理、背景スクロール防止
@@ -54,11 +56,16 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = fal
     };
 
     document.addEventListener('keydown', handleEsc);
+    const main = document.querySelector('main');
+    const previousMainOverflow = main?.style.overflow ?? '';
+    const previousBodyOverflow = document.body.style.overflow;
+    if (main) main.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousBodyOverflow;
+      if (main) main.style.overflow = previousMainOverflow;
     };
   }, [isOpen, onClose, embedded]);
 
@@ -107,6 +114,24 @@ function OpenChartModal({ isOpen, onClose, title, data, seriesId, embedded = fal
   const latestChange = previous ? stats.latest - Number(previous.value) : null;
 
   const timeframes: Timeframe[] = ['1Y', '3Y', '5Y', '10Y', 'ALL'];
+
+  if (embedded) return <div className="flex min-h-0 flex-1 flex-col" aria-label={title}>
+    <div className="flex shrink-0 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      <h3 className="text-base font-bold text-ink sm:text-lg">{title}</h3>
+      <div className="flex flex-wrap items-baseline gap-x-2"><strong className="text-2xl tabular-nums">{stats.latest.toLocaleString('ja-JP', { maximumFractionDigits: 2 })}</strong><span className="text-[10px] text-muted">{unit}</span>
+        {latestChange !== null && <span className="text-[10px] text-muted">前回比 {latestChange > 0 ? '+' : ''}{latestChange.toLocaleString('ja-JP', { maximumFractionDigits: 2 })}</span>}
+      </div>
+    </div>
+    <div className="my-1 flex shrink-0 gap-1 self-start rounded-lg border border-divider bg-canvas/60 p-1">
+      {timeframes.map(tf => <button key={tf} type="button" disabled={!isAvailable(tf)} aria-pressed={timeframe === tf} title={!isAvailable(tf) ? 'この期間のデータがありません' : tf === 'ALL' ? '取得済みの全期間' : `${tf.slice(0, -1)}年間`} onClick={() => setTimeframe(tf)} className={`rounded-md px-2.5 py-1 text-xs disabled:opacity-35 ${timeframe === tf ? 'bg-blue-600 font-bold text-white' : 'text-muted hover:bg-raised'}`}>{tf}</button>)}
+    </div>
+    {historyStatus !== 'ready' && <p role="status" className="shrink-0 text-[10px] text-muted">{historyStatus === 'loading' ? '長期データを読み込み中…' : '長期データを読み込めませんでした。保存済みの範囲を表示しています。開き直すと再試行できます。'}</p>}
+    <div className="min-h-[160px] flex-1" data-market-plot><LineChartComponent data={filteredData} color={activeColor} showXAxis /></div>
+    <details className="shrink-0 text-[10px] leading-relaxed text-muted">
+      <summary className="cursor-pointer py-0.5">日次 · データ日 {stats.end} · 詳細</summary>
+      <div className="flex flex-wrap gap-x-3"><span>{stats.start} 〜 {stats.end} ({filteredData.length}件)</span><span>高値 {stats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })} ／ 安値 {stats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span><span>ALL＝取得済みの全期間{filteredData.length > 800 && ' ／ 高値・安値を残して間引き表示'}</span><span>取得元：{source} ／ {unit}。日次の保存データです。</span></div>
+    </details>
+  </div>;
 
   return (
     <div

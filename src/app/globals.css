@@ -120,3 +120,13 @@ body {
 .market-sheet[open] { animation: market-sheet-rise 220ms ease-out; }
 @keyframes market-sheet-rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .market-sheet[open] { animation: none; } }
+
+/* Compact screens keep the entire chart inside the reserved content area. */
+@media (max-width: 640px) and (max-height: 740px) {
+  .market-page [data-market-plot] { min-height: 100px; }
+  .market-page .market-source { display: none; }
+}
+
+/* One compact reserved row keeps schedule controls clear of all page content. */
+.schedule-space { height: calc(48px + env(safe-area-inset-bottom, 0px)); }
+.schedule-button { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }

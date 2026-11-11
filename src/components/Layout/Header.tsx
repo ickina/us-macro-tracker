@@ -9,7 +9,7 @@ export function Header() {
   const pathname = usePathname().replace(/\/+$/, '') || '/';
 
   return (
-    <header className="border-b border-divider bg-canvas/90 backdrop-blur-md sticky top-0 z-20">
+    <header className="border-b border-divider bg-canvas/90 backdrop-blur-md sticky top-0 z-20 shrink-0">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6">
         <div className="h-16 flex items-center justify-between gap-2 sm:gap-4">
           {/* 画面幅に合わせて文字を大きくし、切替ボタンとの余白を保つ */}
@@ -68,13 +68,13 @@ export function Header() {
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
             }`}
           >
-            <LayoutDashboard className="w-3.5 h-3.5" />
+            <LayoutDashboard className="hidden h-3.5 w-3.5 min-[360px]:block" />
             <span>ダッシュボード</span>
           </Link>
 
 <Link href="/markets" aria-current={pathname === '/markets' ? 'page' : undefined}
                 className={`flex-1 flex min-w-0 items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold border ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
-                <ChartNoAxesCombined className="h-3.5 w-3.5 shrink-0" /><span>マーケット</span>
+                <ChartNoAxesCombined className="hidden h-3.5 w-3.5 shrink-0 min-[360px]:block" /><span>マーケット</span>
               </Link>
 
           <Link
@@ -85,7 +85,7 @@ export function Header() {
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
             }`}
           >
-            <Newspaper className="w-3.5 h-3.5" />
+            <Newspaper className="hidden h-3.5 w-3.5 min-[360px]:block" />
             <span>マクロニュース</span>
           </Link>
         </div>

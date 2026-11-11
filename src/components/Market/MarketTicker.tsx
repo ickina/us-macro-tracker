@@ -27,6 +27,6 @@ export function MarketTicker() {
   return <section aria-label="TradingViewのマーケット価格帯" className="border-y border-divider bg-surface">
     <div ref={host} className="tradingview-widget-container min-h-[46px]" />
     {failed && <p role="status" className="px-4 py-2 text-xs text-negative">価格帯を読み込めませんでした。下の銘柄選択は利用できます。</p>}
-    <div className="flex justify-between gap-2 px-4 py-1 text-[10px] text-muted sm:px-6"><span>騰落は帯内の基準に従います · 遅延あり</span><a href="https://www.tradingview.com/markets/" target="_blank" rel="noopener noreferrer nofollow" className="shrink-0 text-accent">by TradingView ↗</a></div>
+    <div className="flex justify-between gap-2 px-4 py-0.5 text-[9px] text-muted sm:px-6"><span>帯＝日次騰落 · NVDAは15分遅延</span><a href="https://www.tradingview.com/markets/" target="_blank" rel="noopener noreferrer nofollow" className="shrink-0 text-accent">by TradingView ↗</a></div>
   </section>;
 }

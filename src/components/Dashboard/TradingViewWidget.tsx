@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 type WidgetMarket = { id: string; title: string; subtitle: string };
 
-export function TradingViewWidget({ item, compact = false }: { item: WidgetMarket; compact?: boolean }) {
+export function TradingViewWidget({ item, compact = false, fill = false }: { item: WidgetMarket; compact?: boolean; fill?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -45,7 +45,7 @@ export function TradingViewWidget({ item, compact = false }: { item: WidgetMarke
     return () => { observer.disconnect(); container?.replaceChildren(); };
   }, [item.id, compact]);
   return <>
-    <div className={`w-full ${compact ? 'h-[220px]' : 'h-[min(52dvh,480px)] min-h-[280px]'}`}><div ref={host} className="tradingview-widget-container h-full w-full" /></div>
+    <div className={`w-full ${fill ? 'min-h-[280px] flex-1' : compact ? 'h-[220px]' : 'h-[min(52dvh,480px)] min-h-[280px]'}`}><div ref={host} className="tradingview-widget-container h-full w-full" /></div>
     {failed && <p role="status" className="text-xs text-negative">グラフを読み込めませんでした。開き直すかTradingViewでご確認ください。</p>}
     <div className="tradingview-widget-copyright py-1 text-right text-[11px] text-muted">
       <a href={`https://www.tradingview.com/symbols/${item.id.replace(':', '-')}/`} target="_blank" rel="noopener noreferrer nofollow" className="text-accent hover:underline">{item.title}</a><span> by TradingView</span>

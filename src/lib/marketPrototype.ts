@@ -2,7 +2,7 @@ import { MARKET_ITEMS } from './marketCatalog';
 
 export type PrototypeMarket = {
   id: string; title: string; subtitle: string;
-  symbol?: string; tickerSymbol?: string;
+  symbol?: string; tickerSymbol?: string; freshness?: string;
 };
 // Only confirmed exact products. No index CFDs, ETFs, or futures substitutions.
 const tickerSymbols: Record<string, string> = {
@@ -12,8 +12,9 @@ const tickerSymbols: Record<string, string> = {
 export const PROTOTYPE_MARKETS: PrototypeMarket[] = [
   ...MARKET_ITEMS.map(item => ({
     id: item.id, title: item.title, subtitle: `${item.source} · ${item.unit}`,
-    tickerSymbol: tickerSymbols[item.id],
+    symbol: tickerSymbols[item.id], tickerSymbol: tickerSymbols[item.id],
+    freshness: tickerSymbols[item.id] ? '随時配信・提供元の表示に準拠' : undefined,
   })),
-  { id: 'NVDA', title: 'NVIDIA', subtitle: 'NASDAQ · NVDA', symbol: 'NASDAQ:NVDA', tickerSymbol: 'NASDAQ:NVDA' },
-  { id: 'GOLD', title: '金', subtitle: 'CMC Markets · GOLD', symbol: 'CMCMARKETS:GOLD', tickerSymbol: 'CMCMARKETS:GOLD' },
+  { id: 'NVDA', title: 'NVIDIA', subtitle: 'NASDAQ · NVDA', symbol: 'NASDAQ:NVDA', tickerSymbol: 'NASDAQ:NVDA', freshness: '15分遅延' },
+  { id: 'GOLD', title: '金', subtitle: 'CMC Markets · GOLD', symbol: 'CMCMARKETS:GOLD', tickerSymbol: 'CMCMARKETS:GOLD', freshness: '随時配信・提供元の表示に準拠' },
 ];
