@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ChartNoAxesCombined, List, RefreshCw, X } from 'lucide-react';
 import { Header } from '@/components/Layout/Header';
+import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { TradingViewWidget } from '@/components/Dashboard/TradingViewWidget';
 import { ChartModal } from '@/components/Dashboard/ChartModal';
@@ -57,10 +58,9 @@ export default function MarketsPage() {
   return <div className="market-page flex h-dvh flex-col overflow-hidden bg-canvas">
     <Header />
     <main className="flex min-h-0 flex-1 flex-col overflow-hidden" id="market-content">
-      <div className="mx-auto flex w-full max-w-[1400px] shrink-0 items-center justify-between gap-3 px-3 py-1.5 sm:px-6">
-        <h2 className="flex items-center gap-2 text-lg font-bold sm:text-xl"><ChartNoAxesCombined className="h-5 w-5 text-accent" />マーケット</h2>
+      <PageHeading title="マーケット" icon={ChartNoAxesCombined}>
         <button type="button" aria-haspopup="dialog" aria-expanded={pickerOpen} onClick={() => setPickerOpen(true)} className="flex min-h-9 items-center gap-1.5 rounded-lg border border-divider bg-surface px-2.5 text-sm font-semibold text-accent"><List className="h-4 w-4" />銘柄一覧<span className="rounded-full bg-blue-500/10 px-1.5 text-xs">{onlyFavorites ? `${visibleMarkets.length}/15` : '15'}</span></button>
-      </div>
+      </PageHeading>
       <div className="shrink-0 [&>section]:mb-0"><TodayHighlights /></div>
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col px-3 py-2 sm:px-6">
         <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">

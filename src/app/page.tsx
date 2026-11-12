@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
+import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
@@ -11,7 +12,7 @@ import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
-import { Loader2, AlertCircle, RefreshCw, Star } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
 
 interface SeriesItem {
   id: string;
@@ -145,17 +146,8 @@ export default function DashboardPage() {
   return (
     <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
       <Header />
-      <main className="min-h-0 flex-1 w-full overflow-y-auto py-4 md:py-8">
-        <div className="mx-auto w-full max-w-[1400px] px-2 md:px-6">
-        
-        {/* タイトル＆リフレッシュボタン */}
-        <div className="mb-4 md:mb-6 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="flex flex-wrap gap-x-1.5 text-2xl sm:text-3xl font-bold leading-snug text-ink tracking-tight lg:tracking-normal">
-              <span className="inline-block">米経済指標</span><span className="inline-block">ダッシュボード</span>
-            </h2>
-          </div>
-
+      <main className="min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
+        <PageHeading title="経済指標" icon={LayoutDashboard}>
           <button
             onClick={() => fetchData(true)}
             disabled={loading || isRefreshing}
@@ -167,11 +159,9 @@ export default function DashboardPage() {
             aria-label="データを再取得"
           >
             <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-positive' : 'text-accent'} ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新データを取得'}</span>
+            <span className="sm:hidden">{isRefreshing ? '更新中' : justUpdated ? '完了' : '更新'}</span><span className="hidden sm:inline">{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新データを取得'}</span>
           </button>
-        </div>
-
-        </div>
+        </PageHeading>
 
         <TodayHighlights />
 

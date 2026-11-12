@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { Header } from '@/components/Layout/Header';
+import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { MacroNewsItem } from '../api/news/route';
 import { enrichNewsWithLatestInsights } from '@/lib/clientNews';
@@ -19,7 +20,8 @@ import {
   X,
   Loader2,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Newspaper
 } from 'lucide-react';
 
 type NewsCategory = 'all' | 'inflation' | 'employment' | 'policy' | 'market' | 'growth';
@@ -103,17 +105,8 @@ export default function MacroNewsPage() {
     <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
       <Header />
       
-      <main className="min-h-0 flex-1 w-full overflow-y-auto py-4 md:py-8">
-        <div className="mx-auto w-full max-w-[1200px] px-3 md:px-6">
-        
-        {/* タイトル ＆ アクション */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tighter">
-              米国マクロ経済ニュース ＆ リリース情報
-            </h2>
-          </div>
-
+      <main className="min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
+        <PageHeading title="マクロニュース" icon={Newspaper}>
           <button
             onClick={() => fetchNews(true)}
             disabled={loading || isRefreshing}
@@ -125,11 +118,9 @@ export default function MacroNewsPage() {
             aria-label="ニュースを再取得"
           >
             <RefreshCw className={`w-4 h-4 ${justUpdated ? 'text-positive' : 'text-accent'} ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新ニュースを取得'}</span>
+            <span className="sm:hidden">{isRefreshing ? '更新中' : justUpdated ? '完了' : '更新'}</span><span className="hidden sm:inline">{isRefreshing ? '更新中...' : justUpdated ? '✅ 最新に更新完了' : '最新ニュースを取得'}</span>
           </button>
-        </div>
-
-        </div>
+        </PageHeading>
 
         <TodayHighlights />
 

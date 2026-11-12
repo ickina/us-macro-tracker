@@ -35,12 +35,12 @@ export function Header() {
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" />
-                <span>ダッシュボード</span>
+                <span>経済指標</span>
               </Link>
 
 <Link href="/markets" aria-current={pathname === '/markets' ? 'page' : undefined}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
-                <ChartNoAxesCombined className="h-3.5 w-3.5 shrink-0" /><span>マーケット</span>
+                <ChartNoAxesCombined className="h-4 w-4 shrink-0" /><span>マーケット</span>
               </Link>
 
               <Link
@@ -62,24 +62,24 @@ export function Header() {
         <div className="flex lg:hidden items-center justify-around pb-2.5 pt-0.5 gap-1 border-t border-divider/40">
           <Link
             href="/"
-            className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1 min-h-10 py-2 rounded-lg text-xs font-semibold transition-all ${
               pathname === '/'
                 ? 'bg-blue-600/20 border border-blue-500/40 text-accent font-bold'
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
             }`}
           >
             <LayoutDashboard className="hidden h-3.5 w-3.5 min-[360px]:block" />
-            <span>ダッシュボード</span>
+            <span>経済指標</span>
           </Link>
 
 <Link href="/markets" aria-current={pathname === '/markets' ? 'page' : undefined}
-                className={`flex-1 flex min-w-0 items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold border ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
+                className={`flex-1 flex min-w-0 items-center justify-center gap-1 min-h-10 py-2 rounded-lg text-xs font-semibold border ${pathname === '/markets' ? 'bg-blue-600 text-white border-blue-600' : 'text-muted bg-surface/60 border-divider hover:text-ink'}`}>
                 <ChartNoAxesCombined className="hidden h-3.5 w-3.5 shrink-0 min-[360px]:block" /><span>マーケット</span>
               </Link>
 
           <Link
             href="/news"
-            className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1 min-h-10 py-2 rounded-lg text-xs font-semibold transition-all ${
               pathname === '/news'
                 ? 'bg-blue-600/20 border border-blue-500/40 text-accent font-bold'
                 : 'text-muted hover:text-ink bg-surface/60 border border-divider'
