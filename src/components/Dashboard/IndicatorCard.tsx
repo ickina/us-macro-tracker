@@ -1,7 +1,9 @@
 import { FredSeriesData } from '@/lib/fred';
 import { ArrowDownIcon, ArrowUpIcon, MinusIcon, ArrowUpRight, Star } from 'lucide-react';
 import { LineChartComponent } from '../Charts/LineChart';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
+import { getIndicatorReading } from '@/lib/indicatorReading';
+import { IndicatorReading } from './IndicatorReading';
 import { ChartModal } from './ChartModal';
 
 interface Props {
@@ -16,6 +18,7 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
+  const reading = useMemo(() => getIndicatorReading(data.seriesId, obs), [data.seriesId, obs]);
   const latest = obs.length > 0 ? obs[obs.length - 1] : null;
   const previous = obs.length > 1 ? obs[obs.length - 2] : null;
 
@@ -66,7 +69,9 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
     <>
       <article className="group relative flex min-w-0 flex-col rounded-2xl border border-divider bg-surface p-4 shadow-sm transition-colors hover:border-emphasis sm:p-5">
         <div className="flex min-h-12 items-start justify-between gap-2">
-          <h3 className="break-words text-sm font-medium leading-6 text-body sm:text-base min-w-0 flex-1">{title}</h3>
+          <div className="min-w-0 flex-1"><h3 className="break-words text-sm font-medium leading-6 text-body sm:text-base">{title}</h3>
+            {reading && <p data-reading-direction className="mt-0.5 text-[13px] font-medium leading-5 text-accent"><span className="mr-1 text-xs font-normal text-muted">前回比</span>{reading.direction}</p>}
+          </div>
           <button
             type="button"
             aria-label={`${title}をお気に入り${isFavorite ? 'から削除' : 'に追加'}`}
@@ -116,6 +121,8 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
         <div className="mt-4 h-28 w-full min-w-0" aria-hidden="true">
           <LineChartComponent data={obs} color={chartColor} />
         </div>
+        {reading && <IndicatorReading reading={reading} />}
+        <div aria-hidden="true" className="flex-1" />
         <div className="mt-4 flex justify-end border-t border-divider pt-3">
           <button
             type="button"
