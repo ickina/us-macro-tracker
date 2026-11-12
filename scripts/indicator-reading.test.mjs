@@ -15,20 +15,20 @@ test('only the three approved indicators receive guidance', () => {
   assert.equal(getIndicatorReading('DGS2', []), null);
 });
 test('EUR/USD explains both directions and equal or missing comparisons', () => {
-  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.1), point('2026-01-02', 1.2)]).direction, 'ユーロ高・ドル安方向');
-  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.2), point('2026-01-02', 1.1)]).direction, 'ユーロ安・ドル高方向');
-  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.1), point('2026-01-02', 1.1)]).direction, '前回と同じ交換レート');
+  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.1), point('2026-01-02', 1.2)]).direction, 'ユーロが強く、ドルが弱く');
+  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.2), point('2026-01-02', 1.1)]).direction, 'ユーロが弱く、ドルが強く');
+  assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.1), point('2026-01-02', 1.1)]).direction, '前回と変わらず');
   assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-02', 1.1)]).range, null);
 });
 test('broad dollar index is not described as DXY, and interest is not bond price', () => {
   const data = [point('2026-01-01', 4), point('2026-01-02', 5)];
   const dollar = getIndicatorReading('DTWEXBGS', data);
-  assert.equal(dollar.direction, '幅広い通貨に対してドル高');
+  assert.equal(dollar.direction, 'ドルが強くなりました');
   assert.match(dollar.reading, /DXYとは別/);
   const yieldReading = getIndicatorReading('DGS10', data);
-  assert.equal(yieldReading.direction, '米国の長期金利が上昇');
+  assert.equal(yieldReading.direction, '米国の長期金利が上がりました');
   assert.equal(yieldReading.unit, '％');
-  assert.match(yieldReading.reading, /債券価格は下がる/);
+  assert.match(yieldReading.reading, /国債の価格は下がり/);
 });
 test('the window ends on the data date, ignores older extrema and includes the cutoff', () => {
   const result = getIndicatorReading('DGS10', [point('2022-05-31', 99), point('2022-06-01', 2), point('2022-12-01', 6), point('2023-06-01', 4)]).range;
@@ -44,19 +44,19 @@ test('the window ends on the data date, ignores older extrema and includes the c
 test('position is min-to-max distance, not observation percentile', () => {
   const result = getIndicatorReading('DGS10', [point('2025-01-01', 0), point('2025-02-01', 1), point('2025-03-01', 2), point('2025-04-01', 100), point('2026-01-01', 10)]).range;
   assert.equal(result.position, 0.1);
-  assert.equal(result.label, '低めの位置');
+  assert.equal(result.label, '低め');
 });
 test('flat data has no misleading numeric meter or division by zero', () => {
   const result = getIndicatorReading('DGS10', [point('2025-01-01', 4), point('2026-01-01', 4)]).range;
   assert.equal(result.position, null);
-  assert.equal(result.label, '期間中は同じ水準');
+  assert.equal(result.label, 'ずっと同じ値');
 });
 test('short history is explicitly distinguished from a full year', () => {
   const result = getIndicatorReading('DGS10', [point('2026-11-01', 4), point('2026-11-12', 5)]).range;
   assert.equal(result.fullYear, false);
   assert.equal(result.start, '2026-11-01');
   assert.equal(result.position, 1);
-  assert.equal(result.label, '期間内の最高値');
+  assert.equal(result.label, 'いちばん高い');
 });
 test('invalid values and invalid calendar days are excluded, input remains unchanged', () => {
   const input = Object.freeze([Object.freeze(point('2026-01-03', 5)), Object.freeze(point('2025-01-03', 4)), Object.freeze(point('2026-02-30', 500)), Object.freeze(point('2025-09-01', '.')), Object.freeze(point('2025-10-01', '')), Object.freeze(point('2025-11-01', 'Infinity'))]);

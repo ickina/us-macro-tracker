@@ -2,9 +2,9 @@ import type { Observation } from './fred';
 
 type Guide = { up: string; down: string; flat: string; definition: string; reading: string; digits: number; unit: string };
 const guides = new Map<string, Guide>([
-  ['DEXUSEU', { up: 'ユーロ高・ドル安方向', down: 'ユーロ安・ドル高方向', flat: '前回と同じ交換レート', definition: '1ユーロを何ドルに交換できるかを表します。', reading: '上がると1ユーロで受け取れるドルが増え、下がると減ります。ドル円とは、数字が上がったときのドルの方向が異なります。', digits: 4, unit: 'ドル／ユーロ' }],
-  ['DTWEXBGS', { up: '幅広い通貨に対してドル高', down: '幅広い通貨に対してドル安', flat: 'ドルの強さは前回と同じ', definition: '貿易で関わりの深い通貨をまとめて見た、ドルの強さの目安です。', reading: '上昇はドル高、低下はドル安方向です。この名目総合指数は、一般的なDXYとは別の指数です。', digits: 2, unit: '指数' }],
-  ['DGS10', { up: '米国の長期金利が上昇', down: '米国の長期金利が低下', flat: '長期金利は前回と同じ', definition: '米10年国債の利回りで、長期金利の目安として見ます。', reading: '一般に、金利が上がると既存の債券価格は下がる方向に動きます。金利の数字と債券の価格は別のものです。', digits: 2, unit: '％' }],
+  ['DEXUSEU', { up: 'ユーロが強く、ドルが弱く', down: 'ユーロが弱く、ドルが強く', flat: '前回と変わらず', definition: '1ユーロを何ドルに交換できるか、という数字です。', reading: '数字が上がるとユーロが強くなり、下がるとドルが強くなります。', digits: 4, unit: 'ドル／ユーロ' }],
+  ['DTWEXBGS', { up: 'ドルが強くなりました', down: 'ドルが弱くなりました', flat: '前回と変わらず', definition: 'いろいろな国の通貨と比べた、ドルの強さです。', reading: '数字が上がるとドルが強く、下がると弱くなります。よく使われるDXYとは別の指数です。', digits: 2, unit: '指数' }],
+  ['DGS10', { up: '米国の長期金利が上がりました', down: '米国の長期金利が下がりました', flat: '前回と変わらず', definition: '米国に10年間お金を貸すときの、年あたりの収益率です。', reading: '一般に、この金利が上がると、すでに売られている国債の価格は下がります。', digits: 2, unit: '％' }],
 ]);
 
 export function getIndicatorReading(seriesId: string, observations: readonly Observation[]) {
@@ -26,7 +26,7 @@ export function getIndicatorReading(seriesId: string, observations: readonly Obs
   const min = Math.min(...window.map(item => item.value));
   const max = Math.max(...window.map(item => item.value));
   const position = max === min ? null : Math.max(0, Math.min(1, (latest.value - min) / (max - min)));
-  const label = position === null ? '期間中は同じ水準' : position === 0 ? '期間内の最低値' : position === 1 ? '期間内の最高値' : position <= 1 / 3 ? '低めの位置' : position >= 2 / 3 ? '高めの位置' : '中ほど';
+  const label = position === null ? 'ずっと同じ値' : position === 0 ? 'いちばん低い' : position === 1 ? 'いちばん高い' : position <= 1 / 3 ? '低め' : position >= 2 / 3 ? '高め' : '中ほど';
   return { ...guide, direction, range: { min, max, latest: latest.value, position, label, fullYear, start: fullYear ? cutoff : window[0].date, end: latest.date, count: window.length } };
 }
 export type IndicatorReading = NonNullable<ReturnType<typeof getIndicatorReading>>;
