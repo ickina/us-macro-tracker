@@ -9,10 +9,36 @@ const js = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarg
 const { getIndicatorReading } = await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
 const point = (date, value) => ({ date, value: String(value) });
 
-test('only the three approved indicators receive guidance', () => {
-  assert.equal(getIndicatorReading('DEXJPUS', []), null);
-  assert.equal(getIndicatorReading('SP500', []), null);
-  assert.equal(getIndicatorReading('DGS2', []), null);
+test('every existing dashboard series has a guide, unknown series remain unsupported', () => {
+  const saved = JSON.parse(fs.readFileSync(new URL('../src/data/macroData.json', import.meta.url), 'utf8')).indicators;
+  assert.equal(Object.keys(saved).length, 41);
+  for (const [id, series] of Object.entries(saved)) {
+    const guide = getIndicatorReading(id, series.observations);
+    assert.ok(guide, id);
+    assert.ok(guide.definition.length > 10, id);
+    assert.ok(guide.reading.length > 10, id);
+    assert.ok(guide.unit, id);
+    assert.ok(guide.range, id);
+  }
+  assert.equal(getIndicatorReading('UNKNOWN', []), null);
+});
+test('rates of change are not described as price levels or total employment changes', () => {
+  const points = [point('2026-01-01', 3), point('2026-02-01', 2)];
+  assert.match(getIndicatorReading('CPIAUCSL', points).direction, /伸び率/);
+  assert.match(getIndicatorReading('CPIAUCSL', points).reading, /値段が下がったとは限りません/);
+  assert.match(getIndicatorReading('CES0500000003', points).direction, /伸び率/);
+  assert.match(getIndicatorReading('PAYEMS', points).reading, /今月増えた人数ではありません/);
+  assert.match(getIndicatorReading('RSAFS', points).definition, /前の月/);
+});
+test('known source distinctions and signed spreads remain explicit', () => {
+  const points = [point('2026-01-01', -0.5), point('2026-02-01', -0.2)];
+  assert.match(getIndicatorReading('T10Y2Y', points).direction, /上がりました/);
+  assert.doesNotMatch(getIndicatorReading('T10Y2Y', points).direction, /広が/);
+  assert.match(getIndicatorReading('GDP', points).definition, /名目/);
+  assert.match(getIndicatorReading('DCOILWTICO', points).definition, /現物/);
+  assert.match(getIndicatorReading('FEDFUNDS', points).reading, /月平均/);
+  assert.match(getIndicatorReading('NASDAQCOM', points).reading, /NASDAQ100 CFDとは/);
+  assert.match(getIndicatorReading('NASDAQXAU', points).reading, /金そのものの価格ではありません/);
 });
 test('EUR/USD explains both directions and equal or missing comparisons', () => {
   assert.equal(getIndicatorReading('DEXUSEU', [point('2026-01-01', 1.1), point('2026-01-02', 1.2)]).direction, 'ユーロが強く、ドルが弱く');
