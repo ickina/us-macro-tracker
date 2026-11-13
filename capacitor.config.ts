@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.ichiro.macrotracker',
-  appName: 'US Macro Tracker',
+  appName: 'ichi Macro',
   webDir: 'out'
 };
 

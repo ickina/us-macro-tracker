@@ -1,7 +1,7 @@
 {
-  "name": "ichiの米国経済指標",
-  "short_name": "ichiの米国経済指標",
-  "description": "米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。",
+  "name": "ichi Macro",
+  "short_name": "ichi Macro",
+  "description": "米国経済・マーケット・ニュースを、ひとつの画面で。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f1f5f9",

@@ -18,7 +18,7 @@ export function Header() {
               <Activity className="w-5 h-5 md:w-6 md:h-6 text-accent" />
             </div>
             <h1 className="text-[22px] min-[360px]:text-2xl sm:text-[28px] lg:text-[32px] xl:text-4xl font-bold bg-gradient-to-r from-ink to-muted bg-clip-text text-transparent min-w-0 truncate leading-tight tracking-tight min-[360px]:tracking-normal lg:tracking-[0.025em]">
-              ichiの米国経済指標
+              ichi Macro
             </h1>
           </Link>
 

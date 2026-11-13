@@ -8,32 +8,32 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://us-macro-tracker.vercel.app'),
-  title: 'ichiの米国経済指標',
-  description: '米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。',
+  title: 'ichi Macro｜米国経済・マーケット・ニュース',
+  description: '米国経済・マーケット・ニュースを、ひとつの画面で。',
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
-    siteName: 'ichiの米国経済指標',
-    title: 'ichiの米国経済指標',
-    description: '米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。',
+    siteName: 'ichi Macro',
+    title: 'ichi Macro｜米国経済・マーケット・ニュース',
+    description: '米国経済・マーケット・ニュースを、ひとつの画面で。',
     images: [{
-      url: '/share/ichi-us-economy-v2.png',
+      url: '/share/ichi-macro-v1.png',
       width: 1200,
       height: 630,
-      alt: 'ichiの米国経済指標：経済指標・マクロニュース・スケジュールをひとつに',
+      alt: 'ichi Macro：米国経済・マーケット・ニュース',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ichiの米国経済指標',
-    description: '米国の経済指標・ニュース・重要スケジュールを、ひとつの画面で。',
-    images: ['/share/ichi-us-economy-v2.png'],
+    title: 'ichi Macro｜米国経済・マーケット・ニュース',
+    description: '米国経済・マーケット・ニュースを、ひとつの画面で。',
+    images: ['/share/ichi-macro-v1.png'],
   },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'ichiの米国経済指標',
+    title: 'ichi Macro',
   },
 };
 
