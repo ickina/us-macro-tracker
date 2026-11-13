@@ -52,7 +52,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts }: Pro
               onClick={() => onSelectCategory(cat.key)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] border border-blue-500 scale-[1.02]'
+                  ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(var(--accent-shadow-rgb),0.4)] border border-blue-500 scale-[1.02]'
                   : 'bg-surface/90 text-muted hover:text-ink hover:bg-raised border border-divider/80'
               }`}
             >

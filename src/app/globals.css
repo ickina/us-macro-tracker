@@ -66,6 +66,59 @@
   --chart-grid: #d5dee9;
 }
 
+/* User-selectable accent palettes. Positive, negative and warning colors stay semantic. */
+:root {
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --accent-shadow-rgb: 37, 99, 235;
+}
+:root[data-accent="pink"] {
+  --background: #fff3f8;
+  --accent: #be185d;
+  --chart-accent: #be185d;
+  --color-blue-400: #f472b6;
+  --color-blue-500: #ec4899;
+  --color-blue-600: #be185d;
+  --color-blue-700: #9d174d;
+  --accent-shadow-rgb: 190, 24, 93;
+}
+:root[data-accent="green"] {
+  --background: #f1faf5;
+  --accent: #047857;
+  --chart-accent: #047857;
+  --color-blue-400: #34d399;
+  --color-blue-500: #10b981;
+  --color-blue-600: #047857;
+  --color-blue-700: #065f46;
+  --accent-shadow-rgb: 4, 120, 87;
+}
+:root[data-accent="purple"] {
+  --background: #f7f3ff;
+  --accent: #7e22ce;
+  --chart-accent: #7e22ce;
+  --color-blue-400: #c084fc;
+  --color-blue-500: #a855f7;
+  --color-blue-600: #7e22ce;
+  --color-blue-700: #6b21a8;
+  --accent-shadow-rgb: 126, 34, 206;
+}
+:root[data-accent="orange"] {
+  --background: #fff5eb;
+  --accent: #c2410c;
+  --chart-accent: #c2410c;
+  --color-blue-400: #fb923c;
+  --color-blue-500: #f97316;
+  --color-blue-600: #c2410c;
+  --color-blue-700: #9a3412;
+  --accent-shadow-rgb: 194, 65, 12;
+}
+:root[data-theme="dark"][data-accent="pink"] { --background: #12070d; --accent: #f472b6; --chart-accent: #f472b6; }
+:root[data-theme="dark"][data-accent="green"] { --background: #06110b; --accent: #34d399; --chart-accent: #34d399; }
+:root[data-theme="dark"][data-accent="purple"] { --background: #0c0715; --accent: #c084fc; --chart-accent: #c084fc; }
+:root[data-theme="dark"][data-accent="orange"] { --background: #140b04; --accent: #fb923c; --chart-accent: #fb923c; }
+
 body {
   color: var(--ink);
   background: var(--background);
@@ -82,20 +135,20 @@ body {
 
 /* Full-width schedule ticker. Only transforms animate; the page never scrolls sideways. */
 .schedule-ticker {
-  --ticker-fill: #e2edff;
-  --ticker-text: #1e40af;
-  --ticker-rule: #bfd4fb;
-  --ticker-heading-fill: #d3e3ff;
+  --ticker-fill: color-mix(in srgb, var(--color-blue-500) 12%, var(--surface));
+  --ticker-text: var(--accent);
+  --ticker-rule: color-mix(in srgb, var(--color-blue-500) 30%, var(--surface));
+  --ticker-heading-fill: color-mix(in srgb, var(--color-blue-500) 18%, var(--surface));
   color: var(--ticker-text);
   background: var(--ticker-fill);
   border-block: 1px solid var(--ticker-rule);
   overflow: hidden;
 }
 [data-theme="dark"] .schedule-ticker {
-  --ticker-fill: #102447;
-  --ticker-text: #bfdbfe;
-  --ticker-rule: #254875;
-  --ticker-heading-fill: #17345e;
+  --ticker-fill: color-mix(in srgb, var(--color-blue-600) 22%, var(--surface));
+  --ticker-text: var(--accent);
+  --ticker-rule: color-mix(in srgb, var(--color-blue-500) 38%, var(--surface));
+  --ticker-heading-fill: color-mix(in srgb, var(--color-blue-600) 30%, var(--surface));
 }
 .ticker-heading { background: var(--ticker-heading-fill); border-right: 1px solid var(--ticker-rule); }
 .ticker-pause { border-left: 1px solid var(--ticker-rule); }

@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
-import { MacroNewsItem } from '../api/news/route';
+import type { MacroNewsItem } from '../api/news/route';
 import { enrichNewsWithLatestInsights } from '@/lib/clientNews';
 import macroData from '@/data/macroData.json';
 import { 
@@ -37,7 +37,7 @@ const CATEGORIES: { key: NewsCategory; label: string; icon: React.ElementType }[
 
 export default function MacroNewsPage() {
   const [news, setNews] = useState<MacroNewsItem[]>(() => {
-    return enrichNewsWithLatestInsights((macroData as any).news || []);
+    return enrichNewsWithLatestInsights((macroData as { news?: MacroNewsItem[] }).news || []);
   });
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -77,7 +77,7 @@ export default function MacroNewsPage() {
       } else {
         setError('ニュースデータの取得に失敗しました');
       }
-    } catch (err) {
+    } catch {
       setError('ネットワークエラー：データの取得に失敗しました');
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ export default function MacroNewsPage() {
                     onClick={() => setSelectedCategory(cat.key)}
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] border border-blue-500 scale-[1.02]'
+                        ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(var(--accent-shadow-rgb),0.4)] border border-blue-500 scale-[1.02]'
                         : 'bg-surface text-muted hover:text-ink hover:bg-raised border border-divider'
                     }`}
                   >

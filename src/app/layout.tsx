@@ -43,9 +43,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" data-theme="light" suppressHydrationWarning>
+    <html lang="ja" data-theme="light" data-accent="blue" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try { document.documentElement.dataset.theme = localStorage.getItem('macro-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try { const root = document.documentElement; root.dataset.theme = localStorage.getItem('macro-theme') === 'dark' ? 'dark' : 'light'; const saved = localStorage.getItem('macro-accent'); root.dataset.accent = ['blue','pink','green','purple','orange'].includes(saved || '') ? saved : 'blue'; } catch { document.documentElement.dataset.theme = 'light'; document.documentElement.dataset.accent = 'blue'; }` }} />
       </head>
       <body className="antialiased bg-canvas text-ink selection:bg-blue-500/30 font-sans">
         {children}
