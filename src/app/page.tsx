@@ -25,7 +25,7 @@ const SERIES_ITEMS: SeriesItem[] = [
   { id: 'DEXJPUS', title: 'ドル円 (USD/JPY)', category: 'rates_fx' },
   { id: 'DTWEXBGS', title: 'ドルインデックス (名目総合)', category: 'rates_fx' },
   { id: 'DEXUSEU', title: 'ユーロドル (EUR/USD)', category: 'rates_fx' },
-  { id: 'FEDFUNDS', title: 'FF金利 (政策金利) (%)', category: 'rates_fx' },
+  { id: 'FEDFUNDS', title: '実効FF金利（月平均）(%)', category: 'rates_fx' },
   { id: 'DGS10', title: '10年国債利回り (%)', category: 'rates_fx' },
   { id: 'DGS2', title: '2年国債利回り (%)', category: 'rates_fx' },
   { id: 'T10Y2Y', title: '10年-2年金利差 (逆イールド) (%)', category: 'rates_fx' },
@@ -60,11 +60,11 @@ const SERIES_ITEMS: SeriesItem[] = [
   { id: 'CBBTCUSD', title: 'ビットコイン (BTC/USD)', category: 'markets' },
   { id: 'CBETHUSD', title: 'イーサリアム (ETH/USD)', category: 'markets' },
   { id: 'NASDAQXAU', title: '金・銀鉱山株指数 (PHLX XAU)', category: 'markets' },
-  { id: 'DCOILWTICO', title: 'WTI 原油先物 (ドル/バレル)', category: 'markets' },
+  { id: 'DCOILWTICO', title: 'WTI原油（Cushing現物）(ドル/バレル)', category: 'markets' },
   { id: 'DHHNGSP', title: '天然ガス (Henry Hub USD/MMBtu)', category: 'markets' },
 
   // 景気・流動性
-  { id: 'GDP', title: '実質国内総生産 (GDP) [前期比年率]', category: 'growth_liquidity' },
+  { id: 'GDP', title: '名目国内総生産 (GDP) [前期比年率]', category: 'growth_liquidity' },
   { id: 'RSAFS', title: '小売売上高 [前月比]', category: 'growth_liquidity' },
   { id: 'INDPRO', title: '鉱工業生産指数', category: 'growth_liquidity' },
   { id: 'HOUST', title: '住宅着工件数', category: 'growth_liquidity' },
@@ -107,7 +107,7 @@ export default function DashboardPage() {
       } else {
         setError(json.error || 'データの取得に失敗しました');
       }
-    } catch (err) {
+    } catch {
       setError('ネットワークエラー：データの取得に失敗しました');
     } finally {
       setLoading(false);

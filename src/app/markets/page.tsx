@@ -12,7 +12,7 @@ import { isValidHistory } from '@/lib/chartHistory';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { MARKET_ITEMS, MARKET_IDS } from '@/lib/marketCatalog';
 import { MARKET_WATCHLIST } from '@/lib/marketWatchlist';
-import { MarketSwipeNavigator } from '@/components/Market/MarketSwipeNavigator';
+import { MarketStepNavigator } from '@/components/Market/MarketStepNavigator';
 import { MarketPicker } from '@/components/Market/MarketPicker';
 
 export default function MarketsPage() {
@@ -64,7 +64,7 @@ export default function MarketsPage() {
       <div className="shrink-0 [&>section]:mb-0"><TodayHighlights /></div>
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col px-3 py-2 sm:px-6">
         <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
-          <MarketSwipeNavigator item={item} items={visibleMarkets} onSelect={select} />
+          <MarketStepNavigator item={item} items={visibleMarkets} onSelect={select} />
           <TradingViewWidget fill key={item.symbol} item={{ id: item.symbol, title: item.title, subtitle: item.status }} />
           <div className="flex shrink-0 flex-wrap items-start justify-between gap-x-3">
             <details className="min-w-0 flex-1 text-xs leading-relaxed text-muted" data-market-freshness>

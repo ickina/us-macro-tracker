@@ -82,7 +82,7 @@ function WidgetInstance({ item, compact = false, fill = false, onRetry }: Props 
     <div aria-busy={status === 'loading'} data-tv-chart className={`w-full ${fill ? 'min-h-[280px] flex-1' : compact ? 'h-[220px]' : 'h-[min(52dvh,480px)] min-h-[280px]'}`}>
       <div ref={host} className={status === 'error' ? 'hidden' : 'h-full w-full'} />
       {status === 'loading' && <span role="status" className="sr-only">グラフを読み込み中…</span>}
-      {status === 'error' && <div role="alert" className="flex h-full min-h-[280px] flex-col items-center justify-center gap-3 px-3 text-center text-sm text-muted"><p>グラフを読み込めませんでした。</p><button type="button" onClick={onRetry} className="min-h-10 rounded-lg border border-divider px-3 text-accent">再試行</button><p className="text-xs">上の銘柄選択から別の銘柄にも移動できます。</p></div>}
+      {status === 'error' && <div role="alert" className="flex h-full min-h-[280px] flex-col items-center justify-center gap-3 px-3 text-center text-sm text-muted"><p>グラフを読み込めませんでした。</p><button type="button" onClick={onRetry} className="min-h-10 rounded-lg border border-divider px-3 text-accent">再試行</button><p className="text-xs">左右ボタンや銘柄一覧から、別の銘柄にも移動できます。</p></div>}
     </div>
     <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3">
       <button type="button" onClick={onRetry} className="min-h-8 text-xs text-accent">グラフを再読み込み</button>

@@ -183,8 +183,3 @@ body {
 /* One compact reserved row keeps schedule controls clear of all page content. */
 .schedule-space { height: calc(56px + env(safe-area-inset-bottom, 0px)); }
 .schedule-button { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
-
-/* Only our symbol label animates; the cross-origin chart stays unobstructed. */
-.market-swipe-current { animation: market-symbol-enter 180ms ease-out; }
-@keyframes market-symbol-enter { from { opacity: .45; transform: translateX(var(--market-entry, 28px)); } to { opacity: 1; transform: translateX(0); } }
-@media (prefers-reduced-motion: reduce) { .market-swipe-current { animation: none; } }
