@@ -181,11 +181,30 @@ body {
 }
 .attention-glow-new {
   inset: -5px;
-  background: color-mix(in srgb, var(--color-blue-500) 42%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-500) 24%, transparent);
+  background: color-mix(in srgb, var(--color-amber-400) 48%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber-400) 28%, transparent);
   animation: attention-signal 1.8s ease-out infinite;
 }
 .attention-update-badge { animation: attention-badge 1.8s ease-in-out infinite; }
+@property --attention-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.attention-tab-orbit {
+  --attention-angle: 0deg;
+  position: absolute;
+  z-index: 4;
+  inset: -2px;
+  padding: 2px;
+  border-radius: 14px;
+  background: conic-gradient(from var(--attention-angle), transparent 0deg 255deg, color-mix(in srgb, var(--color-amber-400) 25%, transparent) 280deg, var(--color-amber-400) 325deg, transparent 360deg);
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: attention-border-orbit 3.2s linear infinite;
+}
 .attention-sparks {
   position: absolute;
   inset: 0;
@@ -196,7 +215,7 @@ body {
   position: absolute;
   inset: -4px;
   z-index: 1;
-  border: 2px solid var(--color-blue-500);
+  border: 2px solid var(--color-amber-400);
   border-radius: 9999px;
   opacity: 0;
   animation: attention-intro-ring 860ms ease-out both;
@@ -205,7 +224,7 @@ body {
   position: absolute;
   display: block;
   border-radius: 9999px;
-  background: var(--color-blue-500);
+  background: var(--color-amber-400);
   opacity: 0;
   animation: attention-spark 840ms ease-out both;
 }
@@ -234,23 +253,26 @@ body {
   50% { opacity: 0.9; transform: scale(1.12); }
 }
 @keyframes attention-signal {
-  0% { opacity: 0.95; transform: scale(0.75); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 55%, transparent); }
+  0% { opacity: 0.95; transform: scale(0.75); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amber-400) 60%, transparent); }
   70% { opacity: 0.28; transform: scale(1.55); box-shadow: 0 0 0 6px transparent; }
   100% { opacity: 0.18; transform: scale(1.65); box-shadow: 0 0 0 8px transparent; }
 }
 @keyframes attention-badge {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 0%, transparent); }
-  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-500) 22%, transparent); }
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amber-400) 0%, transparent); }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-amber-400) 28%, transparent); }
+}
+@keyframes attention-border-orbit {
+  to { --attention-angle: 360deg; }
 }
 @keyframes attention-eye-pop {
   0% { transform: scale(0.82); }
-  38% { transform: scale(1.48); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue-500) 90%, transparent)); }
+  38% { transform: scale(1.48); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-amber-400) 92%, transparent)); }
   72% { transform: scale(0.96); }
   100% { transform: scale(1); filter: none; }
 }
 @keyframes attention-intro-ring {
-  0% { opacity: 0.9; transform: scale(0.62); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 55%, transparent); }
-  45% { opacity: 0.85; transform: scale(1.2); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-500) 22%, transparent); }
+  0% { opacity: 0.9; transform: scale(0.62); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amber-400) 60%, transparent); }
+  45% { opacity: 0.85; transform: scale(1.2); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-amber-400) 28%, transparent); }
   100% { opacity: 0; transform: scale(2.05); box-shadow: 0 0 0 8px transparent; }
 }
 @keyframes attention-spark {
@@ -259,8 +281,9 @@ body {
   100% { opacity: 0; transform: scale(0.65); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .attention-glow, .attention-update-badge, .attention-intro-ring, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
+  .attention-glow, .attention-update-badge, .attention-tab-orbit, .attention-intro-ring, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
   .attention-glow { opacity: 0.85; transform: none; }
+  .attention-tab-orbit { background: var(--color-amber-400); }
   .attention-sparks { display: none; }
 }
 
