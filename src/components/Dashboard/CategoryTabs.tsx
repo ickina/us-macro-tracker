@@ -8,10 +8,11 @@ import {
   Users, 
   BarChart3, 
   Activity,
-  Star
+  Star,
+  Eye
 } from 'lucide-react';
 
-export type CategoryKey = 'all' | 'favorites' | 'rates_fx' | 'inflation' | 'employment' | 'markets' | 'growth_liquidity';
+export type CategoryKey = 'today' | 'all' | 'favorites' | 'rates_fx' | 'inflation' | 'employment' | 'markets' | 'growth_liquidity';
 
 export interface CategoryInfo {
   key: CategoryKey;
@@ -20,6 +21,7 @@ export interface CategoryInfo {
 }
 
 export const CATEGORIES: CategoryInfo[] = [
+  { key: 'today', label: '今日見る3つ', icon: Eye },
   { key: 'all', label: 'すべて', icon: LayoutGrid },
   { key: 'favorites', label: 'お気に入り', icon: Star },
   { key: 'rates_fx', label: '為替・金利', icon: TrendingUp },

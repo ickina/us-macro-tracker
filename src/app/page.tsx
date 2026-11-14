@@ -74,6 +74,7 @@ const SERIES_ITEMS: SeriesItem[] = [
 ];
 
 const VALID_SERIES_IDS = new Set(SERIES_ITEMS.map(item => item.id));
+const TODAY_SERIES_IDS = new Set(['DEXJPUS', 'DGS10', 'SP500']);
 
 export default function DashboardPage() {
   const { favorites, toggleFavorite, sessionOnly } = useFavoriteIndicators(VALID_SERIES_IDS);
@@ -83,7 +84,7 @@ export default function DashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('today');
 
   const fetchData = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
@@ -121,6 +122,7 @@ export default function DashboardPage() {
 
   const counts = useMemo(() => {
     const res: Record<CategoryKey, number> = {
+      today: TODAY_SERIES_IDS.size,
       all: SERIES_ITEMS.length,
       favorites: favorites.size,
       rates_fx: 0,
@@ -138,6 +140,7 @@ export default function DashboardPage() {
   }, [favorites.size]);
 
   const filteredItems = useMemo(() => {
+    if (selectedCategory === 'today') return SERIES_ITEMS.filter(item => TODAY_SERIES_IDS.has(item.id));
     if (selectedCategory === 'all') return SERIES_ITEMS;
     if (selectedCategory === 'favorites') return SERIES_ITEMS.filter(item => favorites.has(item.id));
     return SERIES_ITEMS.filter(item => item.category === selectedCategory);
@@ -215,7 +218,7 @@ export default function DashboardPage() {
 
         {/* メイン指標グリッド */}
         {!loading && !error && (
-          <SummaryGrid>
+          <SummaryGrid featured={selectedCategory === 'today'}>
             {filteredItems.map((item) => {
               const seriesData = data[item.id];
               if (!seriesData) return null;
