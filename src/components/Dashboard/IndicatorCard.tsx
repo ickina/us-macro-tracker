@@ -4,7 +4,6 @@ import { LineChartComponent } from '../Charts/LineChart';
 import { memo, useMemo, useState } from 'react';
 import { getIndicatorReading } from '@/lib/indicatorReading';
 import { IndicatorReading } from './IndicatorReading';
-import { IndicatorContext } from './IndicatorContext';
 import { ChartModal } from './ChartModal';
 
 interface Props {
@@ -14,10 +13,9 @@ interface Props {
   isUpdated: boolean;
   onToggleFavorite: (id: string) => void;
   highlightLabel?: string;
-  showContext?: boolean;
 }
 
-export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite, highlightLabel, showContext = false }: Props) {
+export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite, highlightLabel }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
@@ -86,8 +84,6 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
             <Star aria-hidden="true" className="h-5 w-5" fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
         </div>
-
-        {showContext && <IndicatorContext seriesId={data.seriesId} />}
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium tracking-wide text-muted">最新値</span>

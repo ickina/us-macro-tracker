@@ -227,6 +227,12 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {selectedCategory === 'today' && !loading && !error && (
+          <p className="mx-2 mb-1 text-xs leading-relaxed text-muted sm:text-sm">
+            数字の大きさではなく、それぞれの普段の動きと比べて、変化が目立つ3項目です。
+          </p>
+        )}
+
         {/* メイン指標グリッド */}
         {!loading && !error && (
           <SummaryGrid featured={selectedCategory === 'today'}>
@@ -242,7 +248,6 @@ export default function DashboardPage() {
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
                   highlightLabel={selectedCategory === 'today' ? '変化が目立つ' : undefined}
-                  showContext={selectedCategory === 'today'}
                 />
               );
             })}
