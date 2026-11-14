@@ -2,14 +2,6 @@ import type { FredSeriesData } from './fred';
 
 type IndicatorItem = { id: string; category: string };
 type ValidObservation = { date: string; value: number };
-export type TodayIndicatorSelection = {
-  id: string;
-  category: string;
-  latestDate: string;
-  relativeMove: number;
-  direction: -1 | 0 | 1;
-  score: number;
-};
 
 function median(values: number[]) {
   if (!values.length) return 0;
@@ -35,11 +27,11 @@ function daysBetween(earlier: string, later: string) {
  * Each series is measured against its own recent, non-zero changes and only
  * remains eligible while its latest value is current for that series' cadence.
  */
-export function selectTodayIndicators(
+export function selectTodayIndicatorIds(
   items: readonly IndicatorItem[],
   data: Record<string, FredSeriesData>,
   limit = 3,
-): TodayIndicatorSelection[] {
+) {
   if (limit <= 0) return [];
   const prepared = items.map(item => ({ item, observations: validObservations(data[item.id]) }))
     .filter(entry => entry.observations.length >= 3);
@@ -73,8 +65,6 @@ export function selectTodayIndicators(
       id: item.id,
       category: item.category,
       latestDate: latest.date,
-      relativeMove: latestChange / typicalChange,
-      direction: Math.sign(latest.value - previous.value) as -1 | 0 | 1,
       score: age <= freshnessLimit ? (latestChange / typicalChange) * freshness : -1,
     };
   }).filter(entry => entry.score >= 0)
@@ -82,26 +72,18 @@ export function selectTodayIndicators(
 
   // Keep the first view broad: choose the strongest move from different areas
   // before filling any remaining slot from the overall ranking.
-  const selected: TodayIndicatorSelection[] = [];
+  const selected: string[] = [];
   const categories = new Set<string>();
   for (const entry of ranked) {
     if (categories.has(entry.category)) continue;
-    selected.push(entry);
+    selected.push(entry.id);
     categories.add(entry.category);
     if (selected.length === limit) return selected;
   }
   for (const entry of ranked) {
-    if (selected.some(candidate => candidate.id === entry.id)) continue;
-    selected.push(entry);
+    if (selected.includes(entry.id)) continue;
+    selected.push(entry.id);
     if (selected.length === limit) break;
   }
   return selected;
-}
-
-export function selectTodayIndicatorIds(
-  items: readonly IndicatorItem[],
-  data: Record<string, FredSeriesData>,
-  limit = 3,
-) {
-  return selectTodayIndicators(items, data, limit).map(item => item.id);
 }
