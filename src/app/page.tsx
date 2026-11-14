@@ -8,12 +8,14 @@ import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { EmploymentStoryEntry } from '@/components/Dashboard/EmploymentStoryEntry';
 import { EmploymentStoryModal } from '@/components/Dashboard/EmploymentStoryModal';
+import { EmploymentStoryToast } from '@/components/Dashboard/EmploymentStoryToast';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
+import { useEmploymentStoryNotice } from '@/hooks/useEmploymentStoryNotice';
 import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
 import { buildEmploymentStory, EMPLOYMENT_THEME_IDS } from '@/lib/employmentStory';
 
@@ -87,7 +89,7 @@ export default function DashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('today');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
   const [isEmploymentStoryOpen, setIsEmploymentStoryOpen] = useState(false);
 
   const fetchData = async (isManual = false) => {
@@ -145,6 +147,22 @@ export default function DashboardPage() {
 
   const todaySeriesIds = EMPLOYMENT_THEME_IDS;
   const employmentStory = useMemo(() => buildEmploymentStory(data), [data]);
+  const employmentNotice = useEmploymentStoryNotice(data);
+
+  const openEmploymentStory = () => {
+    employmentNotice.markSeen();
+    setIsEmploymentStoryOpen(true);
+  };
+
+  const openEmploymentStoryFromToast = () => {
+    setSelectedCategory('today');
+    employmentNotice.dismissToast();
+    window.setTimeout(() => {
+      const entryButton = document.querySelector<HTMLButtonElement>('[data-employment-story-entry] button');
+      entryButton?.focus();
+      openEmploymentStory();
+    }, 0);
+  };
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'today') {
@@ -188,6 +206,7 @@ export default function DashboardPage() {
             selectedCategory={selectedCategory} 
             onSelectCategory={setSelectedCategory} 
             counts={counts} 
+            todayHasUpdate={employmentNotice.hasUpdate}
           />
         </div>
 
@@ -228,7 +247,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {selectedCategory === 'today' && !loading && !error && <EmploymentStoryEntry onOpen={() => setIsEmploymentStoryOpen(true)} />}
+        {selectedCategory === 'today' && !loading && !error && <EmploymentStoryEntry onOpen={openEmploymentStory} />}
 
         {/* メイン指標グリッド */}
         {!loading && !error && (
@@ -253,6 +272,7 @@ export default function DashboardPage() {
         </div>
       </main>
       <div aria-hidden="true" className="schedule-space shrink-0 border-t border-divider bg-canvas" />
+      {employmentNotice.showToast && !loading && !error && <EmploymentStoryToast onOpen={openEmploymentStoryFromToast} onDismiss={employmentNotice.dismissToast} />}
       {isEmploymentStoryOpen && <EmploymentStoryModal story={employmentStory} onClose={() => setIsEmploymentStoryOpen(false)} />}
     </div>
   );

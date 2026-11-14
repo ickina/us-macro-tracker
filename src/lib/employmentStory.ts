@@ -2,6 +2,7 @@ import type { FredSeriesData } from './fred';
 
 export const EMPLOYMENT_THEME_IDS = ['PAYEMS', 'ICSA', 'UNRATE'] as const;
 export const EMPLOYMENT_FRESHNESS_DAYS = { monthly: 75, weekly: 14 } as const;
+const EMPLOYMENT_VERSION_WINDOWS = { PAYEMS: 3, ICSA: 5, UNRATE: 2 } as const;
 
 type Signal = 'strong' | 'weak' | 'neutral' | 'mixed';
 type StoryStatus = 'strong' | 'weak' | 'mixed' | 'hold';
@@ -37,6 +38,15 @@ function observations(series?: FredSeriesData) {
     }
   });
   return [...byDate].map(([date, value]) => ({ date, value })).sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function createEmploymentStoryVersion(data: Record<string, FredSeriesData>) {
+  const parts = EMPLOYMENT_THEME_IDS.map(id => {
+    const window = observations(data[id]).slice(-EMPLOYMENT_VERSION_WINDOWS[id]);
+    if (window.length < EMPLOYMENT_VERSION_WINDOWS[id]) return null;
+    return `${id}:${window.map(item => `${item.date}=${item.value}`).join(',')}`;
+  });
+  return parts.some(part => part === null) ? null : `employment-v1|${parts.join('|')}`;
 }
 
 function daysBetween(earlier: string, later: string) {

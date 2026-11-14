@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import macroData from '../src/data/macroData.json' with { type: 'json' };
 // @ts-expect-error Node's built-in type stripping requires the explicit extension for this standalone check.
-import { buildEmploymentStory } from '../src/lib/employmentStory.ts';
+import { buildEmploymentStory, createEmploymentStoryVersion } from '../src/lib/employmentStory.ts';
 import type { FredSeriesData } from '../src/lib/fred';
 
 const referenceDate = '2026-11-14';
@@ -58,6 +58,9 @@ const afterRevision = buildEmploymentStory(fixture({
 }), referenceDate);
 assert.notEqual(beforeRevision.sections[0].lines[1], afterRevision.sections[0].lines[1]);
 assert.match(afterRevision.sections[0].lines[1], /1,000人広がりました/);
+assert.notEqual(createEmploymentStoryVersion(fixture()), createEmploymentStoryVersion(fixture({
+  PAYEMS: series('PAYEMS', [['2026-08-01', 100], ['2026-09-01', 112], ['2026-10-01', 125]]),
+})));
 
 const actual = buildEmploymentStory((macroData as { indicators: Record<string, FredSeriesData> }).indicators, referenceDate);
 assert.equal(actual.status, 'mixed');
