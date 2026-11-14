@@ -57,7 +57,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
               aria-pressed={isActive}
               aria-label={isToday && todayHasUpdate ? `${cat.label}、新しい読み解きがあります` : undefined}
               onClick={() => onSelectCategory(cat.key)}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 cursor-pointer sm:px-3.5 ${
+              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 cursor-pointer sm:px-3.5 ${isToday ? 'font-semibold' : 'font-medium'} ${
                 isActive
                   ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(var(--accent-shadow-rgb),0.4)] border border-blue-500 scale-[1.02]'
                   : 'bg-surface/90 text-muted hover:text-ink hover:bg-raised border border-divider/80'
