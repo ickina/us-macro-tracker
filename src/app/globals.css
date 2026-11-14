@@ -183,27 +183,7 @@ body {
   inset: -5px;
   background: color-mix(in srgb, var(--color-amber-400) 48%, transparent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber-400) 28%, transparent);
-  animation: attention-signal 1.8s ease-out infinite;
-}
-.attention-update-badge { animation: attention-badge 1.8s ease-in-out infinite; }
-@property --attention-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-.attention-tab-orbit {
-  --attention-angle: 0deg;
-  position: absolute;
-  z-index: 4;
-  inset: -2px;
-  padding: 2px;
-  border-radius: 14px;
-  background: conic-gradient(from var(--attention-angle), transparent 0deg 255deg, color-mix(in srgb, var(--color-amber-400) 25%, transparent) 280deg, var(--color-amber-400) 325deg, transparent 360deg);
-  pointer-events: none;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: attention-border-orbit 3.2s linear infinite;
+  animation: attention-new-breathe 3.6s ease-in-out infinite;
 }
 .attention-sparks {
   position: absolute;
@@ -252,17 +232,9 @@ body {
   0%, 100% { opacity: 0.35; transform: scale(0.82); }
   50% { opacity: 0.9; transform: scale(1.12); }
 }
-@keyframes attention-signal {
-  0% { opacity: 0.95; transform: scale(0.75); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amber-400) 60%, transparent); }
-  70% { opacity: 0.28; transform: scale(1.55); box-shadow: 0 0 0 6px transparent; }
-  100% { opacity: 0.18; transform: scale(1.65); box-shadow: 0 0 0 8px transparent; }
-}
-@keyframes attention-badge {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amber-400) 0%, transparent); }
-  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-amber-400) 28%, transparent); }
-}
-@keyframes attention-border-orbit {
-  to { --attention-angle: 360deg; }
+@keyframes attention-new-breathe {
+  0%, 100% { opacity: 0.42; transform: scale(0.9); }
+  50% { opacity: 0.95; transform: scale(1.22); }
 }
 @keyframes attention-eye-pop {
   0% { transform: scale(0.82); }
@@ -281,9 +253,8 @@ body {
   100% { opacity: 0; transform: scale(0.65); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .attention-glow, .attention-update-badge, .attention-tab-orbit, .attention-intro-ring, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
+  .attention-glow, .attention-intro-ring, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
   .attention-glow { opacity: 0.85; transform: none; }
-  .attention-tab-orbit { background: var(--color-amber-400); }
   .attention-sparks { display: none; }
 }
 

@@ -57,13 +57,14 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
               aria-pressed={isActive}
               aria-label={isToday && todayHasUpdate ? `${cat.label}、新しい読み解きがあります` : undefined}
               onClick={() => onSelectCategory(cat.key)}
-              className={`relative isolate flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 cursor-pointer sm:px-3.5 ${isToday ? 'font-semibold' : 'font-medium'} ${isToday && todayHasUpdate ? 'attention-tab-new' : ''} ${
+              className={`relative isolate flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 cursor-pointer sm:px-3.5 ${isToday ? 'font-semibold' : 'font-medium'} ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(var(--accent-shadow-rgb),0.4)] border border-blue-500 scale-[1.02]'
-                  : 'bg-surface/90 text-muted hover:text-ink hover:bg-raised border border-divider/80'
+                  ? `bg-blue-600 text-white shadow-[0_0_15px_rgba(var(--accent-shadow-rgb),0.4)] border scale-[1.02] ${isToday && todayHasUpdate ? 'border-amber-400' : 'border-blue-500'}`
+                  : isToday && todayHasUpdate
+                    ? 'bg-amber-500/10 text-muted hover:text-ink hover:bg-amber-500/15 border border-amber-400/70'
+                    : 'bg-surface/90 text-muted hover:text-ink hover:bg-raised border border-divider/80'
               }`}
             >
-              {isToday && todayHasUpdate && <span aria-hidden="true" className="attention-tab-orbit" />}
               <span className={`relative grid h-4 w-4 shrink-0 place-items-center ${isToday && todayPlayIntro ? 'attention-intro' : ''}`}>
                 {isToday && !isActive && <span aria-hidden="true" className={`attention-glow ${todayHasUpdate ? 'attention-glow-new' : ''}`} />}
                 {isToday && todayPlayIntro && (
@@ -83,7 +84,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
                   isActive
                     ? 'bg-white/20 text-white'
                     : isToday && todayHasUpdate
-                      ? 'attention-update-badge bg-amber-400 text-amber-950 font-bold'
+                      ? 'bg-amber-400 text-amber-950 font-bold'
                       : 'bg-raised text-muted'
                 }`}
               >
