@@ -242,6 +242,7 @@ export default function DashboardPage() {
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
                   highlightLabel={selectedCategory === 'today' ? '変化が目立つ' : undefined}
+                  showContext={selectedCategory === 'today'}
                 />
               );
             })}
