@@ -21,7 +21,7 @@ export interface CategoryInfo {
 }
 
 export const CATEGORIES: CategoryInfo[] = [
-  { key: 'today', label: '今日の変化', icon: Eye },
+  { key: 'today', label: '直近の注目', icon: Eye },
   { key: 'all', label: 'すべて', icon: LayoutGrid },
   { key: 'favorites', label: 'お気に入り', icon: Star },
   { key: 'rates_fx', label: '為替・金利', icon: TrendingUp },

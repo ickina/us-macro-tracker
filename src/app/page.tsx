@@ -6,6 +6,8 @@ import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
+import { EmploymentStoryEntry } from '@/components/Dashboard/EmploymentStoryEntry';
+import { EmploymentStoryModal } from '@/components/Dashboard/EmploymentStoryModal';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
@@ -13,7 +15,7 @@ import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
-import { selectTodayIndicatorIds } from '@/lib/todayIndicators';
+import { buildEmploymentStory, EMPLOYMENT_THEME_IDS } from '@/lib/employmentStory';
 
 interface SeriesItem {
   id: string;
@@ -86,6 +88,7 @@ export default function DashboardPage() {
   const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('today');
+  const [isEmploymentStoryOpen, setIsEmploymentStoryOpen] = useState(false);
 
   const fetchData = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
@@ -140,10 +143,8 @@ export default function DashboardPage() {
     return res;
   }, [favorites.size]);
 
-  const todaySeriesIds = useMemo(
-    () => selectTodayIndicatorIds(SERIES_ITEMS, data, TODAY_INDICATOR_COUNT),
-    [data],
-  );
+  const todaySeriesIds = EMPLOYMENT_THEME_IDS;
+  const employmentStory = useMemo(() => buildEmploymentStory(data), [data]);
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'today') {
@@ -227,11 +228,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {selectedCategory === 'today' && !loading && !error && (
-          <p className="mx-2 mb-1 text-xs leading-relaxed text-muted sm:text-sm">
-            数字の大きさではなく、それぞれの普段の動きと比べて、変化が目立つ3項目です。
-          </p>
-        )}
+        {selectedCategory === 'today' && !loading && !error && <EmploymentStoryEntry onOpen={() => setIsEmploymentStoryOpen(true)} />}
 
         {/* メイン指標グリッド */}
         {!loading && !error && (
@@ -247,7 +244,7 @@ export default function DashboardPage() {
                   isFavorite={favorites.has(item.id)}
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
-                  highlightLabel={selectedCategory === 'today' ? '変化が目立つ' : undefined}
+                  highlightLabel={selectedCategory === 'today' ? '雇用を見る3指標' : undefined}
                 />
               );
             })}
@@ -256,6 +253,7 @@ export default function DashboardPage() {
         </div>
       </main>
       <div aria-hidden="true" className="schedule-space shrink-0 border-t border-divider bg-canvas" />
+      {isEmploymentStoryOpen && <EmploymentStoryModal story={employmentStory} onClose={() => setIsEmploymentStoryOpen(false)} />}
     </div>
   );
 }
