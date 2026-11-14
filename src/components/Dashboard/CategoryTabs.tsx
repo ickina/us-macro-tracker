@@ -67,6 +67,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
                 {isToday && !isActive && <span aria-hidden="true" className={`attention-glow ${todayHasUpdate ? 'attention-glow-new' : ''}`} />}
                 {isToday && todayPlayIntro && (
                   <span aria-hidden="true" className="attention-sparks">
+                    <span className="attention-intro-ring" />
                     <span className="attention-spark-ray attention-spark-top" />
                     <span className="attention-spark-ray attention-spark-right" />
                     <span className="attention-spark-ray attention-spark-bottom" />

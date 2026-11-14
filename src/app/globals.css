@@ -192,31 +192,43 @@ body {
   z-index: 2;
   pointer-events: none;
 }
+.attention-intro-ring {
+  position: absolute;
+  inset: -4px;
+  z-index: 1;
+  border: 2px solid var(--color-blue-500);
+  border-radius: 9999px;
+  opacity: 0;
+  animation: attention-intro-ring 860ms ease-out both;
+}
 .attention-spark-ray {
   position: absolute;
   display: block;
   border-radius: 9999px;
   background: var(--color-blue-500);
   opacity: 0;
-  animation: attention-spark 720ms ease-out both;
+  animation: attention-spark 840ms ease-out both;
 }
 .attention-spark-top,
 .attention-spark-bottom {
-  left: 7px;
-  width: 2px;
-  height: 6px;
+  left: 6.5px;
+  width: 3px;
+  height: 8px;
 }
 .attention-spark-left,
 .attention-spark-right {
-  top: 7px;
-  width: 6px;
-  height: 2px;
+  top: 6.5px;
+  width: 8px;
+  height: 3px;
 }
-.attention-spark-top { top: -8px; }
-.attention-spark-right { right: -8px; }
-.attention-spark-bottom { bottom: -8px; }
-.attention-spark-left { left: -8px; }
-.attention-intro .attention-eye-icon { animation: attention-eye-pop 720ms cubic-bezier(0.2, 0.85, 0.3, 1.25) both; }
+.attention-spark-top { top: -11px; }
+.attention-spark-right { right: -11px; }
+.attention-spark-bottom { bottom: -11px; }
+.attention-spark-left { left: -11px; }
+.attention-intro .attention-eye-icon {
+  z-index: 3;
+  animation: attention-eye-pop 840ms cubic-bezier(0.2, 0.85, 0.3, 1.25) both;
+}
 @keyframes attention-breathe {
   0%, 100% { opacity: 0.35; transform: scale(0.82); }
   50% { opacity: 0.9; transform: scale(1.12); }
@@ -232,9 +244,14 @@ body {
 }
 @keyframes attention-eye-pop {
   0% { transform: scale(0.82); }
-  38% { transform: scale(1.32); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-blue-500) 72%, transparent)); }
+  38% { transform: scale(1.48); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue-500) 90%, transparent)); }
   72% { transform: scale(0.96); }
   100% { transform: scale(1); filter: none; }
+}
+@keyframes attention-intro-ring {
+  0% { opacity: 0.9; transform: scale(0.62); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 55%, transparent); }
+  45% { opacity: 0.85; transform: scale(1.2); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-500) 22%, transparent); }
+  100% { opacity: 0; transform: scale(2.05); box-shadow: 0 0 0 8px transparent; }
 }
 @keyframes attention-spark {
   0% { opacity: 0; transform: scale(0.25); }
@@ -242,7 +259,7 @@ body {
   100% { opacity: 0; transform: scale(0.65); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .attention-glow, .attention-update-badge, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
+  .attention-glow, .attention-update-badge, .attention-intro-ring, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
   .attention-glow { opacity: 0.85; transform: none; }
   .attention-sparks { display: none; }
 }
