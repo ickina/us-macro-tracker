@@ -12,9 +12,10 @@ interface Props {
   isFavorite: boolean;
   isUpdated: boolean;
   onToggleFavorite: (id: string) => void;
+  highlightLabel?: string;
 }
 
-export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite }: Props) {
+export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite, highlightLabel }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
@@ -90,6 +91,11 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
             <span aria-label="前回表示から更新あり" title="このブラウザーで前回表示した値から更新されています"
               className="rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold leading-4 tracking-wide text-accent">
               NEW
+            </span>
+          )}
+          {highlightLabel && (
+            <span className="rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold leading-4 tracking-wide text-accent">
+              {highlightLabel}
             </span>
           )}
           {isInverted && (

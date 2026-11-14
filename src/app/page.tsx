@@ -13,6 +13,7 @@ import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
+import { selectTodayIndicatorIds } from '@/lib/todayIndicators';
 
 interface SeriesItem {
   id: string;
@@ -74,7 +75,7 @@ const SERIES_ITEMS: SeriesItem[] = [
 ];
 
 const VALID_SERIES_IDS = new Set(SERIES_ITEMS.map(item => item.id));
-const TODAY_SERIES_IDS = new Set(['DEXJPUS', 'DGS10', 'SP500']);
+const TODAY_INDICATOR_COUNT = 3;
 
 export default function DashboardPage() {
   const { favorites, toggleFavorite, sessionOnly } = useFavoriteIndicators(VALID_SERIES_IDS);
@@ -122,7 +123,7 @@ export default function DashboardPage() {
 
   const counts = useMemo(() => {
     const res: Record<CategoryKey, number> = {
-      today: TODAY_SERIES_IDS.size,
+      today: TODAY_INDICATOR_COUNT,
       all: SERIES_ITEMS.length,
       favorites: favorites.size,
       rates_fx: 0,
@@ -139,12 +140,22 @@ export default function DashboardPage() {
     return res;
   }, [favorites.size]);
 
+  const todaySeriesIds = useMemo(
+    () => selectTodayIndicatorIds(SERIES_ITEMS, data, TODAY_INDICATOR_COUNT),
+    [data],
+  );
+
   const filteredItems = useMemo(() => {
-    if (selectedCategory === 'today') return SERIES_ITEMS.filter(item => TODAY_SERIES_IDS.has(item.id));
+    if (selectedCategory === 'today') {
+      return todaySeriesIds.flatMap(id => {
+        const item = SERIES_ITEMS.find(candidate => candidate.id === id);
+        return item ? [item] : [];
+      });
+    }
     if (selectedCategory === 'all') return SERIES_ITEMS;
     if (selectedCategory === 'favorites') return SERIES_ITEMS.filter(item => favorites.has(item.id));
     return SERIES_ITEMS.filter(item => item.category === selectedCategory);
-  }, [selectedCategory, favorites]);
+  }, [selectedCategory, favorites, todaySeriesIds]);
 
   return (
     <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
@@ -230,6 +241,7 @@ export default function DashboardPage() {
                   isFavorite={favorites.has(item.id)}
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
+                  highlightLabel={selectedCategory === 'today' ? '変化が目立つ' : undefined}
                 />
               );
             })}
