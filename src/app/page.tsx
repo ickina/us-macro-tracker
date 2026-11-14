@@ -13,7 +13,8 @@ import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
 import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
-import { selectTodayIndicatorIds } from '@/lib/todayIndicators';
+import { selectTodayIndicators } from '@/lib/todayIndicators';
+import { getTodayIndicatorInsight } from '@/lib/todayIndicatorInsights';
 
 interface SeriesItem {
   id: string;
@@ -140,22 +141,26 @@ export default function DashboardPage() {
     return res;
   }, [favorites.size]);
 
-  const todaySeriesIds = useMemo(
-    () => selectTodayIndicatorIds(SERIES_ITEMS, data, TODAY_INDICATOR_COUNT),
+  const todaySelections = useMemo(
+    () => selectTodayIndicators(SERIES_ITEMS, data, TODAY_INDICATOR_COUNT),
     [data],
+  );
+  const todaySelectionById = useMemo(
+    () => new Map(todaySelections.map(selection => [selection.id, selection])),
+    [todaySelections],
   );
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'today') {
-      return todaySeriesIds.flatMap(id => {
-        const item = SERIES_ITEMS.find(candidate => candidate.id === id);
+      return todaySelections.flatMap(selection => {
+        const item = SERIES_ITEMS.find(candidate => candidate.id === selection.id);
         return item ? [item] : [];
       });
     }
     if (selectedCategory === 'all') return SERIES_ITEMS;
     if (selectedCategory === 'favorites') return SERIES_ITEMS.filter(item => favorites.has(item.id));
     return SERIES_ITEMS.filter(item => item.category === selectedCategory);
-  }, [selectedCategory, favorites, todaySeriesIds]);
+  }, [selectedCategory, favorites, todaySelections]);
 
   return (
     <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
@@ -241,7 +246,9 @@ export default function DashboardPage() {
                   isFavorite={favorites.has(item.id)}
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
-                  highlightLabel={selectedCategory === 'today' ? '変化が目立つ' : undefined}
+                  todayInsight={selectedCategory === 'today' && todaySelectionById.has(item.id)
+                    ? getTodayIndicatorInsight(todaySelectionById.get(item.id)!)
+                    : undefined}
                 />
               );
             })}

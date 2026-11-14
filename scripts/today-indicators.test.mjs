@@ -9,6 +9,12 @@ async function loadModule() {
   return import(`data:text/javascript;base64,${Buffer.from(javascript).toString('base64')}`);
 }
 
+async function loadInsightModule() {
+  const source = await readFile(new URL('../src/lib/todayIndicatorInsights.ts', import.meta.url), 'utf8');
+  const javascript = ts.transpile(source, { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 });
+  return import(`data:text/javascript;base64,${Buffer.from(javascript).toString('base64')}`);
+}
+
 const observations = (values, start = 1) => values.map((value, index) => ({
   date: `2026-11-${String(start + index).padStart(2, '0')}`,
   value: String(value),
@@ -54,4 +60,23 @@ test('does not promote a series whose latest value is stale for its own cadence'
     stale: { seriesId: 'stale', observations: observations([1, 2, 3, 4, 100], 1) },
   };
   assert.deepEqual(selectTodayIndicatorIds(items, data, 2), ['fresh']);
+});
+
+test('every dashboard series has cautious up and down insight text', async () => {
+  const { TODAY_INSIGHT_IDS, getTodayIndicatorInsight } = await loadInsightModule();
+  const macroData = JSON.parse(await readFile(new URL('../src/data/macroData.json', import.meta.url), 'utf8'));
+  const ids = Object.keys(macroData.indicators);
+  assert.equal(ids.length, 41);
+  assert.deepEqual(ids.filter(id => !TODAY_INSIGHT_IDS.has(id)), []);
+
+  for (const id of ids) {
+    const base = { id, category: 'test', latestDate: '2026-11-14', relativeMove: 2.5, score: 2.5 };
+    const up = getTodayIndicatorInsight({ ...base, direction: 1 });
+    const down = getTodayIndicatorInsight({ ...base, direction: -1 });
+    assert.match(up, /^普段の約2\.5倍の変化です。/);
+    assert.match(down, /^普段の約2\.5倍の変化です。/);
+    assert.notEqual(up, down);
+    assert(up.length <= 100, `${id} up insight is too long`);
+    assert(down.length <= 100, `${id} down insight is too long`);
+  }
 });

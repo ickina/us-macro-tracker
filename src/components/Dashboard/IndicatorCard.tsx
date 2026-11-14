@@ -12,10 +12,10 @@ interface Props {
   isFavorite: boolean;
   isUpdated: boolean;
   onToggleFavorite: (id: string) => void;
-  highlightLabel?: string;
+  todayInsight?: string | null;
 }
 
-export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite, highlightLabel }: Props) {
+export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavorite, isUpdated, onToggleFavorite, todayInsight }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obs = data.observations;
@@ -85,17 +85,19 @@ export const IndicatorCard = memo(function IndicatorCard({ title, data, isFavori
           </button>
         </div>
 
+        {todayInsight && (
+          <div className="mt-2 rounded-xl border border-blue-500/20 bg-blue-500/[0.06] px-3 py-2 text-[13px] leading-5 text-body">
+            <span className="mr-1.5 font-semibold text-accent">なぜ注目？</span>
+            {todayInsight}
+          </div>
+        )}
+
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium tracking-wide text-muted">最新値</span>
           {isUpdated && (
             <span aria-label="前回表示から更新あり" title="このブラウザーで前回表示した値から更新されています"
               className="rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold leading-4 tracking-wide text-accent">
               NEW
-            </span>
-          )}
-          {highlightLabel && (
-            <span className="rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold leading-4 tracking-wide text-accent">
-              {highlightLabel}
             </span>
           )}
           {isInverted && (
