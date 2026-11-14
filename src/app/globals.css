@@ -180,10 +180,12 @@ body {
   animation: attention-breathe 3.2s ease-in-out infinite;
 }
 .attention-glow-new {
-  background: color-mix(in srgb, var(--color-blue-500) 34%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-500) 18%, transparent);
-  animation-duration: 1.8s;
+  inset: -5px;
+  background: color-mix(in srgb, var(--color-blue-500) 42%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-500) 24%, transparent);
+  animation: attention-signal 1.8s ease-out infinite;
 }
+.attention-update-badge { animation: attention-badge 1.8s ease-in-out infinite; }
 .story-toast { animation: story-toast-in 220ms ease-out; }
 @keyframes attention-breathe {
   0%, 100% { opacity: 0.35; transform: scale(0.82); }
@@ -193,8 +195,17 @@ body {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes attention-signal {
+  0% { opacity: 0.95; transform: scale(0.75); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 55%, transparent); }
+  70% { opacity: 0.28; transform: scale(1.55); box-shadow: 0 0 0 6px transparent; }
+  100% { opacity: 0.18; transform: scale(1.65); box-shadow: 0 0 0 8px transparent; }
+}
+@keyframes attention-badge {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 0%, transparent); }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-500) 22%, transparent); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .attention-glow, .story-toast { animation: none; }
+  .attention-glow, .attention-update-badge, .story-toast { animation: none; }
   .attention-glow { opacity: 0.85; transform: none; }
 }
 

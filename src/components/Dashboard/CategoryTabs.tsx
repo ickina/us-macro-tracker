@@ -72,7 +72,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
                   isActive
                     ? 'bg-white/20 text-white'
                     : isToday && todayHasUpdate
-                      ? 'bg-blue-500/15 text-accent font-semibold'
+                      ? 'attention-update-badge bg-blue-600 text-white font-semibold'
                       : 'bg-raised text-muted'
                 }`}
               >
