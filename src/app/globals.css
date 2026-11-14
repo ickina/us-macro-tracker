@@ -186,14 +186,40 @@ body {
   animation: attention-signal 1.8s ease-out infinite;
 }
 .attention-update-badge { animation: attention-badge 1.8s ease-in-out infinite; }
-.story-toast { animation: story-toast-in 220ms ease-out; }
+.attention-sparks {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.attention-spark-ray {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  background: var(--color-blue-500);
+  opacity: 0;
+  animation: attention-spark 720ms ease-out both;
+}
+.attention-spark-top,
+.attention-spark-bottom {
+  left: 7px;
+  width: 2px;
+  height: 6px;
+}
+.attention-spark-left,
+.attention-spark-right {
+  top: 7px;
+  width: 6px;
+  height: 2px;
+}
+.attention-spark-top { top: -8px; }
+.attention-spark-right { right: -8px; }
+.attention-spark-bottom { bottom: -8px; }
+.attention-spark-left { left: -8px; }
+.attention-intro .attention-eye-icon { animation: attention-eye-pop 720ms cubic-bezier(0.2, 0.85, 0.3, 1.25) both; }
 @keyframes attention-breathe {
   0%, 100% { opacity: 0.35; transform: scale(0.82); }
   50% { opacity: 0.9; transform: scale(1.12); }
-}
-@keyframes story-toast-in {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 @keyframes attention-signal {
   0% { opacity: 0.95; transform: scale(0.75); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 55%, transparent); }
@@ -204,9 +230,21 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blue-500) 0%, transparent); }
   50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-500) 22%, transparent); }
 }
+@keyframes attention-eye-pop {
+  0% { transform: scale(0.82); }
+  38% { transform: scale(1.32); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-blue-500) 72%, transparent)); }
+  72% { transform: scale(0.96); }
+  100% { transform: scale(1); filter: none; }
+}
+@keyframes attention-spark {
+  0% { opacity: 0; transform: scale(0.25); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.65); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .attention-glow, .attention-update-badge, .story-toast { animation: none; }
+  .attention-glow, .attention-update-badge, .attention-spark-ray, .attention-intro .attention-eye-icon { animation: none; }
   .attention-glow { opacity: 0.85; transform: none; }
+  .attention-sparks { display: none; }
 }
 
 .market-sheet[open] { animation: market-sheet-rise 220ms ease-out; }

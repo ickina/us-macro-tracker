@@ -36,9 +36,10 @@ interface Props {
   onSelectCategory: (category: CategoryKey) => void;
   counts: Record<CategoryKey, number>;
   todayHasUpdate?: boolean;
+  todayPlayIntro?: boolean;
 }
 
-export function CategoryTabs({ selectedCategory, onSelectCategory, counts, todayHasUpdate = false }: Props) {
+export function CategoryTabs({ selectedCategory, onSelectCategory, counts, todayHasUpdate = false, todayPlayIntro = false }: Props) {
   return (
     <div className="w-full overflow-x-auto pb-2 pt-1 scrollbar-none">
       <div className="flex min-w-max items-center gap-1.5 px-2 sm:gap-2 md:px-0">
@@ -62,9 +63,17 @@ export function CategoryTabs({ selectedCategory, onSelectCategory, counts, today
                   : 'bg-surface/90 text-muted hover:text-ink hover:bg-raised border border-divider/80'
               }`}
             >
-              <span className="relative grid h-4 w-4 shrink-0 place-items-center">
+              <span className={`relative grid h-4 w-4 shrink-0 place-items-center ${isToday && todayPlayIntro ? 'attention-intro' : ''}`}>
                 {isToday && !isActive && <span aria-hidden="true" className={`attention-glow ${todayHasUpdate ? 'attention-glow-new' : ''}`} />}
-                <Icon className={`relative h-4 w-4 ${isActive ? 'text-white' : isToday ? 'text-accent' : 'text-muted'}`} />
+                {isToday && todayPlayIntro && (
+                  <span aria-hidden="true" className="attention-sparks">
+                    <span className="attention-spark-ray attention-spark-top" />
+                    <span className="attention-spark-ray attention-spark-right" />
+                    <span className="attention-spark-ray attention-spark-bottom" />
+                    <span className="attention-spark-ray attention-spark-left" />
+                  </span>
+                )}
+                <Icon className={`${isToday ? 'attention-eye-icon' : ''} relative h-4 w-4 ${isActive ? 'text-white' : isToday ? 'text-accent' : 'text-muted'}`} />
               </span>
               <span>{cat.label}</span>
               <span

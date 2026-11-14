@@ -8,7 +8,6 @@ import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { EmploymentStoryEntry } from '@/components/Dashboard/EmploymentStoryEntry';
 import { EmploymentStoryModal } from '@/components/Dashboard/EmploymentStoryModal';
-import { EmploymentStoryToast } from '@/components/Dashboard/EmploymentStoryToast';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
@@ -150,18 +149,7 @@ export default function DashboardPage() {
   const employmentNotice = useEmploymentStoryNotice(data);
 
   const openEmploymentStory = () => {
-    employmentNotice.markSeen();
     setIsEmploymentStoryOpen(true);
-  };
-
-  const openEmploymentStoryFromToast = () => {
-    setSelectedCategory('today');
-    employmentNotice.dismissToast();
-    window.setTimeout(() => {
-      const entryButton = document.querySelector<HTMLButtonElement>('[data-employment-story-entry] button');
-      entryButton?.focus();
-      openEmploymentStory();
-    }, 0);
   };
 
   const filteredItems = useMemo(() => {
@@ -207,6 +195,7 @@ export default function DashboardPage() {
             onSelectCategory={setSelectedCategory} 
             counts={counts} 
             todayHasUpdate={employmentNotice.hasUpdate}
+            todayPlayIntro={employmentNotice.playIntro}
           />
         </div>
 
@@ -272,7 +261,6 @@ export default function DashboardPage() {
         </div>
       </main>
       <div aria-hidden="true" className="schedule-space shrink-0 border-t border-divider bg-canvas" />
-      {employmentNotice.showToast && !loading && !error && <EmploymentStoryToast onOpen={openEmploymentStoryFromToast} onDismiss={employmentNotice.dismissToast} />}
       {isEmploymentStoryOpen && <EmploymentStoryModal story={employmentStory} onClose={() => setIsEmploymentStoryOpen(false)} />}
     </div>
   );
