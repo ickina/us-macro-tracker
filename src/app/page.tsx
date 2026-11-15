@@ -6,17 +6,19 @@ import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
 import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
-import { EmploymentStoryEntry } from '@/components/Dashboard/EmploymentStoryEntry';
-import { EmploymentStoryModal } from '@/components/Dashboard/EmploymentStoryModal';
+import { AttentionStoryEntry } from '@/components/Dashboard/AttentionStoryEntry';
+import { AttentionStoryModal } from '@/components/Dashboard/AttentionStoryModal';
 import { CategoryTabs, CategoryKey } from '@/components/Dashboard/CategoryTabs';
 import { FredSeriesData } from '@/lib/fred';
 import { updateRealtimeFxClientSide } from '@/lib/clientFx';
 import { syncLatestMacroDataClientSide } from '@/lib/clientLiveSync';
 import { useIndicatorUpdates } from '@/hooks/useIndicatorUpdates';
 import { useFavoriteIndicators } from '@/hooks/useFavoriteIndicators';
-import { useEmploymentStoryNotice } from '@/hooks/useEmploymentStoryNotice';
+import { useAttentionStoryNotice, type AttentionTheme } from '@/hooks/useAttentionStoryNotice';
 import { Loader2, AlertCircle, RefreshCw, Star, LayoutDashboard } from 'lucide-react';
 import { buildEmploymentStory, EMPLOYMENT_THEME_IDS } from '@/lib/employmentStory';
+import { buildInflationStory, INFLATION_THEME_IDS } from '@/lib/inflationStory';
+import { buildRateCutView } from '@/lib/rateCutView';
 
 interface SeriesItem {
   id: string;
@@ -89,7 +91,8 @@ export default function DashboardPage() {
   const [justUpdated, setJustUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
-  const [isEmploymentStoryOpen, setIsEmploymentStoryOpen] = useState(false);
+  const [selectedAttentionTheme, setSelectedAttentionTheme] = useState<AttentionTheme>('employment');
+  const [openStoryTheme, setOpenStoryTheme] = useState<AttentionTheme | null>(null);
 
   const fetchData = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
@@ -144,12 +147,26 @@ export default function DashboardPage() {
     return res;
   }, [favorites.size]);
 
-  const todaySeriesIds = EMPLOYMENT_THEME_IDS;
+  const todaySeriesIds = selectedAttentionTheme === 'employment' ? EMPLOYMENT_THEME_IDS : INFLATION_THEME_IDS;
   const employmentStory = useMemo(() => buildEmploymentStory(data), [data]);
-  const employmentNotice = useEmploymentStoryNotice(data);
+  const inflationStory = useMemo(() => buildInflationStory(data), [data]);
+  const rateCutView = useMemo(() => buildRateCutView(employmentStory, inflationStory), [employmentStory, inflationStory]);
+  const attentionNotice = useAttentionStoryNotice(data);
 
-  const openEmploymentStory = () => {
-    setIsEmploymentStoryOpen(true);
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ichi-attention-theme-v1');
+      if (saved === 'employment' || saved === 'inflation') setSelectedAttentionTheme(saved);
+    } catch { /* Theme persistence is optional. */ }
+  }, []);
+
+  useEffect(() => {
+    if (attentionNotice.preferredTheme) setSelectedAttentionTheme(attentionNotice.preferredTheme);
+  }, [attentionNotice.preferredTheme]);
+
+  const selectAttentionTheme = (theme: AttentionTheme) => {
+    setSelectedAttentionTheme(theme);
+    try { localStorage.setItem('ichi-attention-theme-v1', theme); } catch { /* Theme persistence is optional. */ }
   };
 
   const filteredItems = useMemo(() => {
@@ -194,8 +211,8 @@ export default function DashboardPage() {
             selectedCategory={selectedCategory} 
             onSelectCategory={setSelectedCategory} 
             counts={counts} 
-            todayHasUpdate={employmentNotice.hasUpdate}
-            todayPlayIntro={employmentNotice.playIntro}
+            todayHasUpdate={attentionNotice.hasUpdate}
+            todayPlayIntro={attentionNotice.playIntro}
           />
         </div>
 
@@ -236,7 +253,15 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {selectedCategory === 'today' && !loading && !error && <EmploymentStoryEntry onOpen={openEmploymentStory} />}
+        {selectedCategory === 'today' && !loading && !error && (
+          <AttentionStoryEntry
+            theme={selectedAttentionTheme}
+            onSelectTheme={selectAttentionTheme}
+            onOpen={() => setOpenStoryTheme(selectedAttentionTheme)}
+            rateCutView={rateCutView}
+            themeHasUpdate={attentionNotice.themeHasUpdate}
+          />
+        )}
 
         {/* メイン指標グリッド */}
         {!loading && !error && (
@@ -252,7 +277,7 @@ export default function DashboardPage() {
                   isFavorite={favorites.has(item.id)}
                   isUpdated={updatedIndicators.has(item.id)}
                   onToggleFavorite={toggleFavorite}
-                  highlightLabel={selectedCategory === 'today' ? '雇用を見る3指標' : undefined}
+                  highlightLabel={selectedCategory === 'today' ? `${selectedAttentionTheme === 'employment' ? '雇用' : '物価'}を見る3指標` : undefined}
                 />
               );
             })}
@@ -261,7 +286,13 @@ export default function DashboardPage() {
         </div>
       </main>
       <div aria-hidden="true" className="schedule-space shrink-0 border-t border-divider bg-canvas" />
-      {isEmploymentStoryOpen && <EmploymentStoryModal story={employmentStory} onClose={() => setIsEmploymentStoryOpen(false)} />}
+      {openStoryTheme && (
+        <AttentionStoryModal
+          theme={openStoryTheme}
+          story={openStoryTheme === 'employment' ? employmentStory : inflationStory}
+          onClose={() => setOpenStoryTheme(null)}
+        />
+      )}
     </div>
   );
 }
