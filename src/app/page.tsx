@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Header } from '@/components/Layout/Header';
 import { PageHeading } from '@/components/Layout/PageHeading';
 import { TodayHighlights } from '@/components/Dashboard/TodayHighlights';
+import { FirstVisitGuide } from '@/components/Dashboard/FirstVisitGuide';
 import { SummaryGrid } from '@/components/Dashboard/SummaryGrid';
 import { IndicatorCard } from '@/components/Dashboard/IndicatorCard';
 import { AttentionStoryEntry } from '@/components/Dashboard/AttentionStoryEntry';
@@ -204,6 +205,8 @@ export default function DashboardPage() {
         <TodayHighlights />
 
         <div className="mx-auto w-full max-w-[1400px] px-2 md:px-6">
+
+        <FirstVisitGuide onOpenAttention={() => setSelectedCategory('today')} />
 
         {/* カテゴリ別タブフィルター */}
         <div className="mb-4 md:mb-6 px-2">
