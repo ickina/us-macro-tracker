@@ -102,10 +102,10 @@ export default function MacroNewsPage() {
   }, [news, selectedCategory, searchQuery]);
 
   return (
-    <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
+    <div className="mobile-browser-scroll-shell h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
       <Header />
       
-      <main className="min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
+      <main className="mobile-browser-scroll-main min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
         <PageHeading title="マクロニュース" icon={Newspaper}>
           <button
             onClick={() => fetchNews(true)}

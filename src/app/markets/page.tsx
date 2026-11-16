@@ -79,15 +79,15 @@ export default function MarketsPage() {
     return () => document.removeEventListener('keydown', escape);
   }, [historyOpen]);
 
-  return <div className="market-page flex h-dvh flex-col overflow-hidden bg-canvas">
+  return <div className="market-page mobile-browser-scroll-shell flex h-dvh flex-col overflow-hidden bg-canvas">
     <Header />
-    <main className="flex min-h-0 flex-1 flex-col overflow-hidden" id="market-content">
+    <main className="mobile-browser-scroll-main flex min-h-0 flex-1 flex-col overflow-hidden" id="market-content">
       <PageHeading title="マーケット" icon={ChartNoAxesCombined}>
         <button type="button" aria-haspopup="dialog" aria-expanded={pickerOpen} onClick={() => setPickerOpen(true)} className="flex min-h-9 items-center gap-1.5 rounded-lg border border-divider bg-surface px-2.5 text-sm font-semibold text-accent"><List className="h-4 w-4" />銘柄一覧<span className="rounded-full bg-blue-500/10 px-1.5 text-xs">{onlyFavorites ? `${visibleMarkets.length}/15` : '15'}</span></button>
       </PageHeading>
       <div className="shrink-0 [&>section]:mb-0"><TodayHighlights /></div>
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col px-3 py-2 sm:px-6">
-        <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
+        <section aria-label={`${item.title}の詳細`} className="market-detail-card mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
           <MarketStepNavigator item={item} items={visibleMarkets} onSelect={select} />
           <div data-market-chart-deck className="relative min-h-[312px] flex-1">
             {[item, ...(preloadAllowed && nextItem && readySymbols.has(item.symbol) ? [nextItem] : [])].map(chartItem => {

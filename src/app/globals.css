@@ -271,3 +271,30 @@ body {
 /* One compact reserved row keeps schedule controls clear of all page content. */
 .schedule-space { height: calc(56px + env(safe-area-inset-bottom, 0px)); }
 .schedule-button { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
+
+/*
+ * Mobile browser chrome collapses only when the document itself scrolls.
+ * Keep the fixed app viewport for installed/PWA mode and larger screens.
+ */
+@media (max-width: 767px) and (display-mode: browser) {
+  .mobile-browser-scroll-shell {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .mobile-browser-scroll-main {
+    min-height: auto;
+    flex: 1 0 auto;
+    overflow: visible;
+  }
+
+  .market-page .mobile-browser-scroll-main {
+    min-height: calc(100dvh - 112px);
+  }
+
+  .market-page .market-detail-card {
+    min-height: 440px;
+    overflow: visible;
+  }
+}

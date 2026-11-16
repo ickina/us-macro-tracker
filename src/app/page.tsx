@@ -183,9 +183,9 @@ export default function DashboardPage() {
   }, [selectedCategory, favorites, todaySeriesIds]);
 
   return (
-    <div className="h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
+    <div className="mobile-browser-scroll-shell h-dvh min-h-0 flex flex-col overflow-hidden bg-canvas">
       <Header />
-      <main className="min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
+      <main className="mobile-browser-scroll-main min-h-0 flex-1 w-full overflow-y-auto pb-4 md:pb-8">
         <PageHeading title="経済指標" icon={LayoutDashboard}>
           <button
             onClick={() => fetchData(true)}
