@@ -268,14 +268,25 @@ body {
   .market-page .market-source { display: none; }
 }
 
-/* One compact reserved row keeps schedule controls clear of all page content. */
-.schedule-space { height: calc(56px + env(safe-area-inset-bottom, 0px)); }
+/*
+ * Keep the floating control inside both the CSS safe area and the rounded
+ * physical display edge. Screenshots do not include that physical masking.
+ */
+.schedule-space {
+  height: 60px;
+  height: calc(48px + max(12px, env(safe-area-inset-bottom, 0px)));
+}
 .schedule-button {
-  right: calc(16px + env(safe-area-inset-right, 0px));
-  bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+  right: 16px;
+  bottom: 12px;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(12px, env(safe-area-inset-bottom, 0px));
 }
 @media (min-width: 640px) {
-  .schedule-button { right: calc(24px + env(safe-area-inset-right, 0px)); }
+  .schedule-button {
+    right: 24px;
+    right: max(24px, env(safe-area-inset-right, 0px));
+  }
 }
 
 /*
