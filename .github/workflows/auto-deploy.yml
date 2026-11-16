@@ -47,6 +47,9 @@ jobs:
       - name: Fetch Official Macro Data
         run: node scripts/fetch-macro-data.mjs
 
+      - name: Validate Attention Stories
+        run: npm run test:stories
+
       - name: Commit & Push if any changes (Triggers Vercel Deployment)
         run: |
           git config --global user.name "github-actions[bot]"

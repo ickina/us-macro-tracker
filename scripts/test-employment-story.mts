@@ -62,9 +62,9 @@ assert.notEqual(createEmploymentStoryVersion(fixture()), createEmploymentStoryVe
   PAYEMS: series('PAYEMS', [['2026-08-01', 100], ['2026-09-01', 112], ['2026-10-01', 125]]),
 })));
 
-const actual = buildEmploymentStory((macroData as { indicators: Record<string, FredSeriesData> }).indicators, referenceDate);
-assert.equal(actual.status, 'mixed');
-assert.equal(actual.statusLabel, '強さの中に、少し揺れ');
+// The live snapshot is allowed to change status as official data changes.
+// Fixture assertions above protect the logic; this output is for manual inspection.
+const actual = buildEmploymentStory((macroData as { indicators: Record<string, FredSeriesData> }).indicators);
 
 console.log(JSON.stringify({
   cases: {

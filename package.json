@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "fetch-data": "node scripts/fetch-macro-data.mjs",
-    "build": "node scripts/fetch-macro-data.mjs && next build",
+    "test:stories": "node --test scripts/attention-stories.test.mjs",
+    "build": "node scripts/fetch-macro-data.mjs && npm run test:stories && next build",
     "start": "next start",
     "lint": "eslint"
   },

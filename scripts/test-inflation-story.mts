@@ -80,11 +80,10 @@ assert.equal(buildRateCutView(strongEmployment, cooling).status, 'tug');
 assert.equal(buildRateCutView(strongEmployment, mismatched).status, 'hold');
 
 const actualData = (macroData as { indicators: Record<string, FredSeriesData> }).indicators;
-const actualInflation = buildInflationStory(actualData, referenceDate);
-const actualEmployment = buildEmploymentStory(actualData, referenceDate);
+// Live outcomes are not fixed expectations. They legitimately change with each release.
+const actualInflation = buildInflationStory(actualData);
+const actualEmployment = buildEmploymentStory(actualData);
 const actualRateCut = buildRateCutView(actualEmployment, actualInflation);
-assert.equal(actualInflation.status, 'heating');
-assert.equal(actualRateCut.status, 'tug');
 
 console.log(JSON.stringify({
   cases: {

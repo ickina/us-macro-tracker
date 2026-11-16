@@ -26,7 +26,11 @@ export type InflationStory = {
 const DAY_MS = 86_400_000;
 
 function validDate(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(`${value}T00:00:00Z`));
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const [, year, month, day] = match.map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month - 1 && parsed.getUTCDate() === day;
 }
 
 function observations(series?: FredSeriesData) {
@@ -172,9 +176,13 @@ export function buildInflationStory(data: Record<string, FredSeriesData>, refere
       : 'mixed';
   const statusLabel = status === 'cooling' ? '物価は落ち着く方向' : status === 'heating' ? '物価に再加速の気配' : '物価の動きはまちまち';
   const summary = status === 'cooling'
-    ? '3つの数字はそろって低下方向です。物価の伸びが落ち着く流れが続くか、次の統計も確認します。'
+    ? signals.every(item => item === 'cooling')
+      ? '3つの数字がそろって低下しました。物価の伸びが落ち着く流れが続くか、次の統計も確認します。'
+      : '3つの数字は低下または横ばいです。物価の伸びが落ち着く流れが続くか、次の統計も確認します。'
     : status === 'heating'
-      ? '3つの数字はそろって上昇方向です。物価の伸びが再び強まっていないか、次の統計も確認します。'
+      ? signals.every(item => item === 'heating')
+        ? '3つの数字がそろって上昇しました。物価の伸びが再び強まっていないか、次の統計も確認します。'
+        : '3つの数字は上昇または横ばいです。物価の伸びが再び強まっていないか、次の統計も確認します。'
       : '3つの動きはそろっていません。全体の物価と基調を分けて見ます。';
 
   return {
