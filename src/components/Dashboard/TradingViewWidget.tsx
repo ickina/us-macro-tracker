@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 type WidgetMarket = { id: string; title: string; subtitle: string };
-type Props = { item: WidgetMarket; compact?: boolean; fill?: boolean };
+type Props = { item: WidgetMarket; compact?: boolean; fill?: boolean; onLoading?: (id: string) => void; onReady?: (id: string) => void };
 
 export function TradingViewWidget(props: Props) {
   const [attempt, setAttempt] = useState(0);
   return <WidgetInstance key={`${props.item.id}-${attempt}`} {...props} onRetry={() => setAttempt(value => value + 1)} />;
 }
 
-function WidgetInstance({ item, compact = false, fill = false, onRetry }: Props & { onRetry: () => void }) {
+function WidgetInstance({ item, compact = false, fill = false, onRetry, onLoading, onReady }: Props & { onRetry: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   useEffect(() => {
@@ -19,6 +19,7 @@ function WidgetInstance({ item, compact = false, fill = false, onRetry }: Props 
     let disposeMount = () => {};
     const mount = () => {
       disposeMount();
+      onLoading?.(item.id);
       container.replaceChildren();
       // Isolate each mount: a late script can only populate its detached old wrapper.
       const wrapper = document.createElement('div');
@@ -34,7 +35,7 @@ function WidgetInstance({ item, compact = false, fill = false, onRetry }: Props 
       let active = true;
       let iframe: HTMLIFrameElement | null = null;
       const timeout = window.setTimeout(() => { if (active) setStatus('error'); }, 25000);
-      const loaded = () => { if (active) { window.clearTimeout(timeout); setStatus('ready'); } };
+      const loaded = () => { if (active) { window.clearTimeout(timeout); setStatus('ready'); onReady?.(item.id); } };
       const failed = () => { if (active) { window.clearTimeout(timeout); setStatus('error'); } };
       const frameObserver = new MutationObserver(() => {
         if (iframe) return;
@@ -77,7 +78,7 @@ function WidgetInstance({ item, compact = false, fill = false, onRetry }: Props 
     const themeObserver = new MutationObserver(() => { setStatus('loading'); mount(); });
     themeObserver.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
     return () => { themeObserver.disconnect(); disposeMount(); container.replaceChildren(); };
-  }, [item.id, compact]);
+  }, [item.id, compact, onLoading, onReady]);
   return <>
     <div aria-busy={status === 'loading'} data-tv-chart className={`w-full ${fill ? 'min-h-[280px] flex-1' : compact ? 'h-[220px]' : 'h-[min(52dvh,480px)] min-h-[280px]'}`}>
       <div ref={host} className={status === 'error' ? 'hidden' : 'h-full w-full'} />

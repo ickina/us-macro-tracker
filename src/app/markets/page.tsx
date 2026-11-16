@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ChartNoAxesCombined, List, RefreshCw, X } from 'lucide-react';
 import { Header } from '@/components/Layout/Header';
 import { PageHeading } from '@/components/Layout/PageHeading';
@@ -25,12 +25,36 @@ export default function MarketsPage() {
   const [snapshot, setSnapshot] = useState<Record<string, FredSeriesData> | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [retry, setRetry] = useState(0);
+  const [readySymbols, setReadySymbols] = useState<Set<string>>(() => new Set());
+  const [preloadAllowed] = useState(() => {
+    if (typeof navigator === 'undefined') return true;
+    return (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData !== true;
+  });
   const item = MARKET_WATCHLIST.find(market => market.id === selected)!;
   const favoriteMarkets = MARKET_WATCHLIST.filter(market => favorites.has(market.id));
   const visibleMarkets = onlyFavorites ? favoriteMarkets : MARKET_WATCHLIST;
+  const selectedIndex = visibleMarkets.findIndex(market => market.id === selected);
+  const nextItem = selectedIndex >= 0 ? visibleMarkets[selectedIndex + 1] : undefined;
   const historyItem = MARKET_ITEMS.find(market => market.id === item.historyId);
 
   const select = (id: string) => { setHistoryOpen(false); setSelected(id); };
+  const markChartReady = useCallback((symbol: string) => {
+    setReadySymbols(current => {
+      if (current.has(symbol)) return current;
+      const next = new Set(current);
+      next.add(symbol);
+      return next;
+    });
+  }, []);
+  const markChartLoading = useCallback((symbol: string) => {
+    setReadySymbols(current => {
+      if (!current.has(symbol)) return current;
+      const next = new Set(current);
+      next.delete(symbol);
+      return next;
+    });
+  }, []);
+
   // The saved-data endpoint is only needed when an existing history is opened.
   useEffect(() => {
     if (!historyOpen || snapshot || !item.historyId) return;
@@ -65,7 +89,17 @@ export default function MarketsPage() {
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col px-3 py-2 sm:px-6">
         <section aria-label={`${item.title}の詳細`} className="mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
           <MarketStepNavigator item={item} items={visibleMarkets} onSelect={select} />
-          <TradingViewWidget fill key={item.symbol} item={{ id: item.symbol, title: item.title, subtitle: item.status }} />
+          <div data-market-chart-deck className="relative min-h-[312px] flex-1">
+            {[item, ...(preloadAllowed && nextItem && readySymbols.has(item.symbol) ? [nextItem] : [])].map(chartItem => {
+              const active = chartItem.id === item.id;
+              return (
+                <div key={chartItem.symbol} aria-hidden={active ? undefined : true} data-market-chart-preload={active ? undefined : chartItem.symbol}
+                  className={`absolute inset-0 flex min-h-0 flex-col ${active ? '' : 'invisible pointer-events-none'}`}>
+                  <TradingViewWidget fill item={{ id: chartItem.symbol, title: chartItem.title, subtitle: chartItem.status }} onLoading={markChartLoading} onReady={markChartReady} />
+                </div>
+              );
+            })}
+          </div>
           <div className="flex shrink-0 flex-wrap items-start justify-between gap-x-3">
             <details className="min-w-0 flex-1 text-xs leading-relaxed text-muted" data-market-freshness>
               <summary className="cursor-pointer py-1">{item.status} · 詳細</summary>
