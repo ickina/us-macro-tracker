@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, Moon, Palette, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { Check, Info, Moon, Palette, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
 type Accent = 'blue' | 'pink' | 'green' | 'purple' | 'orange';
@@ -81,6 +82,12 @@ export function ThemeToggle() {
           </button>)}
         </div>
         <p className="mt-3 text-[11px] leading-4 text-muted">背景と選択中のボタンが、選んだ色に変わります。</p>
+        <div className="mt-4 border-t border-divider pt-3">
+          <Link href="/about" onClick={() => setOpen(false)} className="flex min-h-11 items-center justify-between rounded-xl px-3 text-sm font-semibold text-body hover:bg-raised hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+            <span className="flex items-center gap-2"><Info aria-hidden="true" className="h-4 w-4 text-accent" />データと利用について</span>
+            <span aria-hidden="true" className="text-muted">›</span>
+          </Link>
+        </div>
       </div>}
     </div>
   );
