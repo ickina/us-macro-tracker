@@ -34,8 +34,12 @@ export default function MarketsPage() {
   const favoriteMarkets = MARKET_WATCHLIST.filter(market => favorites.has(market.id));
   const visibleMarkets = onlyFavorites ? favoriteMarkets : MARKET_WATCHLIST;
   const selectedIndex = visibleMarkets.findIndex(market => market.id === selected);
+  const previousItem = selectedIndex > 0 ? visibleMarkets[selectedIndex - 1] : undefined;
   const nextItem = selectedIndex >= 0 ? visibleMarkets[selectedIndex + 1] : undefined;
   const historyItem = MARKET_ITEMS.find(market => market.id === item.historyId);
+  const adjacentItems = preloadAllowed && readySymbols.has(item.symbol)
+    ? [previousItem, nextItem].filter((candidate): candidate is NonNullable<typeof candidate> => candidate !== undefined)
+    : [];
 
   const select = (id: string) => { setHistoryOpen(false); setSelected(id); };
   const markChartReady = useCallback((symbol: string) => {
@@ -90,7 +94,7 @@ export default function MarketsPage() {
         <section aria-label={`${item.title}の詳細`} className="market-detail-card mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
           <MarketStepNavigator item={item} items={visibleMarkets} onSelect={select} />
           <div data-market-chart-deck className="relative min-h-[312px] flex-1">
-            {[item, ...(preloadAllowed && nextItem && readySymbols.has(item.symbol) ? [nextItem] : [])].map(chartItem => {
+            {[item, ...adjacentItems].map(chartItem => {
               const active = chartItem.id === item.id;
               return (
                 <div key={chartItem.symbol} aria-hidden={active ? undefined : true} data-market-chart-preload={active ? undefined : chartItem.symbol}
