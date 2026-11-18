@@ -28,9 +28,20 @@ export function isUsDaylightSavingTime(dateStr: string): boolean {
   return dateStr >= '2026-03-08' && dateStr < '2026-11-01';
 }
 
-// 2026年 米政府・連銀（BEA / BLS / FRB）公式確定公表スケジュール
+type ScheduleOverrides = {
+  gdp?: string;
+  pce?: string;
+  cpi?: string;
+  nfp?: string;
+  ppi?: string;
+  retail?: string;
+  housing?: string;
+  fomc?: string;
+};
+
+// 米政府・連銀（BEA / BLS / Census / FRB）公式確定公表スケジュール
 // ※2026年のFOMCは11月会合は存在せず、10/27-28の次は12/8-9です。
-const OFFICIAL_SCHEDULE_OVERRIDES: Record<string, { gdp?: string; pce?: string; cpi?: string; nfp?: string; ppi?: string; retail?: string; fomc?: string }> = {
+const OFFICIAL_SCHEDULE_OVERRIDES: Record<string, ScheduleOverrides> = {
   '2026-09': {
     nfp: '2026-09-04',
     cpi: '2026-09-11',
@@ -51,6 +62,7 @@ const OFFICIAL_SCHEDULE_OVERRIDES: Record<string, { gdp?: string; pce?: string; 
     cpi: '2026-11-10',    // 10月分CPI (BLS公式: 11/10 22:30 JST)
     ppi: '2026-11-11',    // 10月分PPI (BLS公式: 11/11 22:30 JST)
     retail: '2026-11-17', // 10月分小売売上高 (22:30 JST)
+    housing: '2026-11-18', // 10月分住宅着工・建設許可 (Census公式: 11/18 22:30 JST)
     gdp: '2026-11-25',    // Q3 GDP改定値 (BEA公式: 11/25 22:30 JST 感謝祭前倒し)
     pce: '2026-11-25'     // 10月分PCEデフレーター (BEA公式: 11/25 22:30 JST 感謝祭前倒し)
   },
@@ -59,10 +71,27 @@ const OFFICIAL_SCHEDULE_OVERRIDES: Record<string, { gdp?: string; pce?: string; 
     fomc: '2026-12-09',   // 12/8-9会合 (FRB公式: 日本時間12/10 04:00 JST / SEPドットチャートあり)
     cpi: '2026-12-10',    // 11月分CPI (BLS公式: 12/10 22:30 JST)
     ppi: '2026-12-11',    // 11月分PPI
+    housing: '2026-12-17', // 11月分住宅着工・建設許可 (Census公式)
     gdp: '2026-12-22',    // Q3 GDP確定値
     pce: '2026-12-23'     // 11月分PCE (クリスマス前倒し)
+  },
+  '2027-01': {
+    housing: '2027-01-20' // 12月分住宅着工・建設許可 (Census公式)
   }
 };
+
+// FRB公式カレンダーに掲載された2026年FOMC議事要旨の公表日（米国東部時間）。
+// 14:00 ETのため、日本では必ず翌日の03:00（夏時間）または04:00（標準時間）になる。
+const FOMC_MINUTES_RELEASES_2026 = [
+  { releaseDateUs: '2026-02-18', meeting: '1月27–28日会合' },
+  { releaseDateUs: '2026-04-08', meeting: '3月17–18日会合' },
+  { releaseDateUs: '2026-05-20', meeting: '4月28–29日会合' },
+  { releaseDateUs: '2026-07-08', meeting: '6月16–17日会合' },
+  { releaseDateUs: '2026-08-19', meeting: '7月28–29日会合' },
+  { releaseDateUs: '2026-10-07', meeting: '9月15–16日会合' },
+  { releaseDateUs: '2026-11-18', meeting: '10月27–28日会合' },
+  { releaseDateUs: '2026-12-30', meeting: '12月8–9日会合' },
+] as const;
 
 // 米国発表時刻に応じた日本時間（JST）の動的決定ヘルパー
 function getJstTimeForUs830(dateStr: string): string {
@@ -73,8 +102,24 @@ function getJstTimeForUs1000(dateStr: string): string {
   return isUsDaylightSavingTime(dateStr) ? '23:00' : '24:00';
 }
 
+function addCalendarDays(dateStr: string, days: number): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  return date.toISOString().slice(0, 10);
+}
+
+function getJstDateForUs1400(dateStr: string): string {
+  return addCalendarDays(dateStr, 1);
+}
+
+function getJstTimeForUs1400(dateStr: string): string {
+  return isUsDaylightSavingTime(dateStr) ? '03:00' : '04:00';
+}
+
 function getJstTimeForFomc(dateStr: string): string {
-  return isUsDaylightSavingTime(dateStr) ? '03:00 (会見 03:30)' : '04:00 (会見 04:30)';
+  const statementTime = getJstTimeForUs1400(dateStr);
+  const pressConferenceTime = isUsDaylightSavingTime(dateStr) ? '03:30' : '04:30';
+  return `${statementTime} (会見 ${pressConferenceTime})`;
 }
 
 // 毎月の定例発表ルールに基づき、指定された年月以降のイベントを自動生成する
@@ -96,7 +141,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     const overrides = OFFICIAL_SCHEDULE_OVERRIDES[ymKey] || {};
 
     // 1. ISM製造業景況指数 (毎月第1営業日 米国10:00 AM)
-    let ismDate = new Date(y, m, 1);
+    const ismDate = new Date(y, m, 1);
     while (ismDate.getDay() === 0 || ismDate.getDay() === 6) {
       ismDate.setDate(ismDate.getDate() + 1);
     }
@@ -115,7 +160,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     // 2. 米雇用統計 (毎月第1金曜日 米国8:30 AM)
     let nfpDateStr = overrides.nfp;
     if (!nfpDateStr) {
-      let nfpDate = new Date(y, m, 1);
+      const nfpDate = new Date(y, m, 1);
       while (nfpDate.getDay() !== 5) {
         nfpDate.setDate(nfpDate.getDate() + 1);
       }
@@ -133,7 +178,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     });
 
     // 3. ISM非製造業景況指数 (第3営業日前後 米国10:00 AM)
-    let ismNfgDate = new Date(y, m, 3);
+    const ismNfgDate = new Date(y, m, 3);
     while (ismNfgDate.getDay() === 0 || ismNfgDate.getDay() === 6) {
       ismNfgDate.setDate(ismNfgDate.getDate() + 1);
     }
@@ -152,7 +197,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     // 4. 消費者物価指数 (CPI) (毎月中旬 米国8:30 AM)
     let cpiDateStr = overrides.cpi;
     if (!cpiDateStr) {
-      let cpiDate = new Date(y, m, 11);
+      const cpiDate = new Date(y, m, 11);
       while (cpiDate.getDay() !== 3 && cpiDate.getDay() !== 4) {
         cpiDate.setDate(cpiDate.getDate() + 1);
       }
@@ -173,7 +218,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     let ppiDateStr = overrides.ppi;
     if (!ppiDateStr) {
       const baseCpi = new Date(cpiDateStr);
-      let ppiDate = new Date(baseCpi);
+      const ppiDate = new Date(baseCpi);
       ppiDate.setDate(ppiDate.getDate() + 1);
       if (ppiDate.getDay() === 6) ppiDate.setDate(ppiDate.getDate() + 2);
       if (ppiDate.getDay() === 0) ppiDate.setDate(ppiDate.getDate() + 1);
@@ -193,7 +238,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     // 6. 小売売上高 (毎月15日前後 米国8:30 AM)
     let retailDateStr = overrides.retail;
     if (!retailDateStr) {
-      let retailDate = new Date(y, m, 15);
+      const retailDate = new Date(y, m, 15);
       while (retailDate.getDay() === 0 || retailDate.getDay() === 6) {
         retailDate.setDate(retailDate.getDate() + 1);
       }
@@ -210,10 +255,25 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
       period: `${prevMonthNum}月分`
     });
 
-    // 7. 実質GDP (BEA公式スケジュールまたは最終木曜 米国8:30 AM)
+    // 7. 住宅着工・建設許可 (Census公式 米国8:30 AM)
+    // 同じ「New Residential Construction」公表に含まれるため、別カードへ重複させない。
+    if (overrides.housing) {
+      events.push({
+        id: `housing-${y}-${m}`,
+        title: '米住宅着工件数・建設許可件数',
+        category: 'growth',
+        impact: 'High',
+        date: overrides.housing,
+        timeJST: getJstTimeForUs830(overrides.housing),
+        description: '住宅建設の着工と今後の建設計画を示す、米住宅市場の先行材料。',
+        period: `${prevMonthNum}月分`
+      });
+    }
+
+    // 8. 実質GDP (BEA公式スケジュールまたは最終木曜 米国8:30 AM)
     let gdpDateStr = overrides.gdp;
     if (!gdpDateStr) {
-      let gdpDate = new Date(y, m + 1, 0); // 月末日
+      const gdpDate = new Date(y, m + 1, 0); // 月末日
       while (gdpDate.getDay() !== 4) {
         gdpDate.setDate(gdpDate.getDate() - 1);
       }
@@ -231,13 +291,13 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
       period: quarterStr
     });
 
-    // 8. PCEデフレーター (BEA公式スケジュール: 米国8:30 AM)
+    // 9. PCEデフレーター (BEA公式スケジュール: 米国8:30 AM)
     let pceDateStr = overrides.pce;
     if (!pceDateStr) {
       if (monthNum % 3 === 1) {
         pceDateStr = gdpDateStr;
       } else {
-        let pceDate = new Date(y, m + 1, 0);
+        const pceDate = new Date(y, m + 1, 0);
         while (pceDate.getDay() !== 5) {
           pceDate.setDate(pceDate.getDate() - 1);
         }
@@ -255,7 +315,7 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
       period: `${prevMonthNum}月分`
     });
 
-    // 9. FOMC政策金利発表 (2026年FRB公式年間スケジュール)
+    // 10. FOMC政策金利発表 (2026年FRB公式年間スケジュール)
     let fomcDateStr = overrides.fomc;
     const fomcSchedule2026: Record<number, number> = {
       0: 28, // 1月28日
@@ -274,20 +334,36 @@ export function generateUpcomingEvents(baseDate: Date = new Date()): EconomicEve
     }
 
     if (fomcDateStr) {
+      const fomcDateJst = getJstDateForUs1400(fomcDateStr);
       events.push({
         id: `fomc-${y}-${m}`,
         title: 'FOMC 政策金利発表 & パウエル議長会見',
         category: 'policy',
         impact: 'Critical',
-        date: fomcDateStr,
+        date: fomcDateJst,
         timeJST: getJstTimeForFomc(fomcDateStr),
         description: 'FRBのFF金利誘導目標の決定、経済見通し(SEP)、議長定例記者会見。',
         period: '金融政策会合'
       });
     }
 
-    // 10. ミシガン大学消費者態度指数 (第2金曜 米国10:00 AM)
-    let michDate = new Date(y, m, 8);
+    // 11. FOMC議事要旨 (FRB公式 米国14:00 ET)
+    for (const minutes of FOMC_MINUTES_RELEASES_2026) {
+      if (!minutes.releaseDateUs.startsWith(ymKey)) continue;
+      events.push({
+        id: `fomc-minutes-${minutes.releaseDateUs}`,
+        title: 'FOMC 議事要旨',
+        category: 'policy',
+        impact: 'Critical',
+        date: getJstDateForUs1400(minutes.releaseDateUs),
+        timeJST: getJstTimeForUs1400(minutes.releaseDateUs),
+        description: '政策決定時の議論や、委員が重視した景気・物価・金利の材料を確認する公表。',
+        period: minutes.meeting
+      });
+    }
+
+    // 12. ミシガン大学消費者態度指数 (第2金曜 米国10:00 AM)
+    const michDate = new Date(y, m, 8);
     while (michDate.getDay() !== 5) {
       michDate.setDate(michDate.getDate() + 1);
     }
