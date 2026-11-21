@@ -14,6 +14,7 @@ import { MARKET_ITEMS, MARKET_IDS } from '@/lib/marketCatalog';
 import { MARKET_WATCHLIST } from '@/lib/marketWatchlist';
 import { MarketStepNavigator } from '@/components/Market/MarketStepNavigator';
 import { MarketPicker } from '@/components/Market/MarketPicker';
+import { getStableMarketChartDeck } from '@/lib/marketChartDeck';
 
 export default function MarketsPage() {
   // Read existing favorites without rewriting or transferring them to another product.
@@ -40,6 +41,9 @@ export default function MarketsPage() {
   const adjacentItems = preloadAllowed && readySymbols.has(item.symbol)
     ? [previousItem, nextItem].filter((candidate): candidate is NonNullable<typeof candidate> => candidate !== undefined)
     : [];
+  // Keep overlapping iframe nodes in watchlist order. Reordering a mounted cross-origin iframe can
+  // make iOS reload it, which defeats the preload and delays the next swipe.
+  const chartDeckItems = getStableMarketChartDeck(visibleMarkets, item, adjacentItems);
 
   const select = (id: string) => { setHistoryOpen(false); setSelected(id); };
   const markChartReady = useCallback((symbol: string) => {
@@ -94,7 +98,7 @@ export default function MarketsPage() {
         <section aria-label={`${item.title}の詳細`} className="market-detail-card mt-1 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-2xl border border-divider bg-surface p-2 shadow-sm">
           <MarketStepNavigator item={item} items={visibleMarkets} onSelect={select} />
           <div data-market-chart-deck className="relative min-h-[312px] flex-1">
-            {[item, ...adjacentItems].map(chartItem => {
+            {chartDeckItems.map(chartItem => {
               const active = chartItem.id === item.id;
               return (
                 <div key={chartItem.symbol} aria-hidden={active ? undefined : true} data-market-chart-preload={active ? undefined : chartItem.symbol}
