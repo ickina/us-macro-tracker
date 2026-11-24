@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T00:39:40.018Z",
+  "updatedAt": "2026-11-24T01:23:07.280Z",
   "indicators": {
     "DEXJPUS": {
       "seriesId": "DEXJPUS",
@@ -25990,10 +25990,6 @@
       "seriesId": "CBBTCUSD",
       "observations": [
         {
-          "date": "2026-01-27",
-          "value": "89296"
-        },
-        {
           "date": "2026-01-28",
           "value": "88963.96"
         },
@@ -27188,16 +27184,16 @@
         {
           "date": "2026-11-22",
           "value": "60991.86"
+        },
+        {
+          "date": "2026-11-23",
+          "value": "61299.74"
         }
       ]
     },
     "CBETHUSD": {
       "seriesId": "CBETHUSD",
       "observations": [
-        {
-          "date": "2026-01-27",
-          "value": "3019.93"
-        },
         {
           "date": "2026-01-28",
           "value": "3005.32"
@@ -28393,6 +28389,10 @@
         {
           "date": "2026-11-22",
           "value": "1713.59"
+        },
+        {
+          "date": "2026-11-23",
+          "value": "1712.82"
         }
       ]
     },
